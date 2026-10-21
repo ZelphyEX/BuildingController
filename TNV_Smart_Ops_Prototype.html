@@ -11,6 +11,7 @@
   --red:#D64545;--orange:#E8833A;--yellow:#D9A21B;--blue:#3B82C4;--green:#2E9E5B;
   --red-t:#FBE9E9;--orange-t:#FDEEE1;--yellow-t:#FBF3DC;--blue-t:#E6F0FA;--green-t:#E5F4EB;
   --red-d:#A32727;--orange-d:#9A4A0B;--yellow-d:#6E5200;--blue-d:#1F5E99;--green-d:#1F7040;
+  --orange-text:#B5651D;--yellow-text:#9A7208;--red-t2:#FDEDED;--chart-grey:#B9C3CC;
   --font:Arial,"Segoe UI",Helvetica,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -282,6 +283,144 @@ a{color:var(--teal)}
 }
 .tbl th.tr{text-align:right}
 
+/* ===== Web vận hành: bám theo slide 5–10 (chỉ áp dụng trong .web) ===== */
+.rel{position:relative}
+.mk{position:absolute;top:-11px;right:-11px;width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;box-shadow:0 0 0 2px #fff;z-index:6;pointer-events:none}
+.web .card,.web .kpi{position:relative}
+/* Sidebar + header */
+.web .side .logo{padding:20px 20px 18px;font-size:15px;letter-spacing:.2px}
+.web .side a{margin:2px 10px;padding:10px 12px;border-radius:9px;color:#C9D6E0}
+.web .side a:hover{background:rgba(255,255,255,.07)}
+.web .side a.on{background:var(--teal);color:#fff}
+.web .hdr{padding:0 24px;min-height:58px}
+.web .hdr h1{font-size:19px}
+.web .hdr .meta{display:flex;align-items:center;gap:4px}
+.web .lang{display:flex;align-items:center;gap:2px;color:var(--mute2);font-size:13px}
+.web .lang button{padding:4px 5px;color:var(--muted);font-weight:600}
+.web .lang button.on{color:var(--navy);font-weight:700}
+.web .hdr .role select{border:0;background:none;color:var(--muted);padding:4px;font-size:13px;cursor:pointer}
+.web .hdr .av{background:var(--teal);color:#fff;font-size:11px;width:34px;height:34px}
+.web .hdr .msel{border:0;background:none;color:var(--ink2);font-weight:700;padding:0 2px;font-size:13px;cursor:pointer}
+/* Bảng ghi chú UX như panel bên phải slide */
+.web + .uxdrawer{background:var(--tealbg);border-left:0;box-shadow:-6px 0 18px rgba(18,50,74,.08)}
+.web + .uxdrawer h3{font-size:18px}
+.web + .uxdrawer .bp{margin-top:22px}
+.web + .uxdrawer .bp .n{background:var(--orange);box-shadow:0 0 0 2px #fff}
+@media (min-width:981px){.web.ux .main{margin-right:340px}}
+/* Chip đặc (slide dùng chip nền màu, chữ trắng) */
+.web .chip.cao{background:var(--orange);color:#fff}.web .chip.tb{background:var(--yellow);color:#fff}.web .chip.tin{background:var(--blue);color:#fff}
+.web .chip.cao::before,.web .chip.tb::before,.web .chip.tin::before{background:#fff}
+.web .card h3 .hlink{float:right;font-size:12px;font-weight:700;text-decoration:none}
+.web .btn.ghost{border-color:var(--muted);color:var(--muted)}
+.web .btn.red{background:var(--red);border-color:var(--red);color:#fff}.web .btn.red:hover{background:#c13a3a}
+.web .bar{height:9px;background:#E4E8EC}
+.web .bar.teal>i{background:var(--teal)}
+/* Tổng quan */
+.web .kpi .kic{position:absolute;right:12px;top:12px;width:34px;height:34px;border-radius:50%;background:var(--tealbg);color:var(--teal);display:grid;place-items:center}
+.web .kpi .l{padding-right:40px}
+.web .kpi .d.red{color:var(--red)}.web .kpi .d.org{color:var(--orange-text)}
+.arow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #eef1f4;cursor:pointer}
+.arow:last-child{border:0}.arow:hover .grow{color:var(--teal)}
+.arow .chip{min-width:52px;justify-content:center}
+.g3w{display:grid;grid-template-columns:1.55fr 1fr .82fr;gap:16px}
+.g3w>*,.acgrid>*,.en1>*,.en2>*,.tbgrid>*,.tb2>*,.an1>*,.an2>*,.tlgrid>*{min-width:0}
+.occ{margin-bottom:16px}.occ .bar{margin-top:6px}
+.gain{display:flex;gap:10px;align-items:flex-start;color:var(--teal);margin-bottom:14px}
+.gain b{display:block;color:var(--navy);font-size:14px}.gain span{font-size:12px;color:var(--muted)}
+/* Trung tâm cảnh báo */
+.acgrid{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;align-items:start}
+.lvtabs{display:flex;gap:8px;flex-wrap:wrap}
+.lvp{padding:6px 16px;border-radius:999px;font-weight:700;font-size:13px;min-width:80px}
+.lvp.all{background:#fff;color:var(--navy);border:1px solid var(--line)}.lvp.all.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.lvp.khan{background:var(--red-t);color:var(--red-d)}.lvp.khan.on{background:var(--red);color:#fff}
+.lvp.cao{background:var(--orange-t);color:var(--orange-d)}.lvp.cao.on{background:var(--orange);color:#fff}
+.lvp.tb{background:var(--yellow-t);color:var(--yellow-d)}.lvp.tb.on{background:var(--yellow);color:#fff}
+.lvp.tin{background:var(--blue-t);color:var(--blue-d)}.lvp.tin.on{background:var(--blue);color:#fff}
+.lvp.cur{box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--navy)}
+.web .tblcard{padding:6px 6px 10px}
+.web .tbl th{text-transform:none;letter-spacing:0;font-size:12px}
+.web .tbl tr.sel td{background:transparent}
+.web .tbl tr.sel{outline:2px solid var(--teal);outline-offset:-2px}
+.web .tbl tr.k td{background:var(--red-t2);border-bottom-color:#fff}
+.web .tbl tr.k td:first-child{box-shadow:none;border-radius:8px 0 0 8px}.web .tbl tr.k td:last-child{border-radius:0 8px 8px 0}
+.web .tbl td.stnew{color:var(--red);font-weight:700}
+.aibox{background:var(--tealbg);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--ink);margin-top:12px;line-height:1.5}
+.aih{display:flex;align-items:center;gap:6px;color:var(--teal);font-weight:700;margin-bottom:4px}
+.acts{margin-top:12px}.acts.col{gap:8px}
+.btn2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+/* Năng lượng */
+.web .pill-tabs button{border-color:transparent;color:var(--navy);font-weight:700;min-width:92px}
+.web .pill-tabs button.on{background:var(--navy);color:#fff}
+.en1{display:grid;grid-template-columns:1.88fr 1fr;gap:16px}
+.en2{display:grid;grid-template-columns:1.6fr 1.75fr 1fr;gap:16px}
+.odd{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px}
+.odd i{width:11px;height:11px;border-radius:50%;flex:none;margin-top:4px}
+.odd i.cao{background:var(--orange)}.odd i.tb{background:var(--yellow)}.odd i.tin{background:var(--blue)}
+.odd b{display:block;font-size:14px}.odd span{font-size:12px;color:var(--muted)}
+.bal{margin-bottom:10px}.bal span{display:block;font-size:12px;color:var(--muted)}.bal b{font-size:20px}
+.dev{display:inline-block;background:var(--orange);color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:4px 14px}
+/* Thiết bị */
+.tbgrid{display:grid;grid-template-columns:1.28fr 1fr;gap:16px;align-items:start}
+.tb2{display:grid;grid-template-columns:1.36fr 1fr;gap:16px}
+.hl{display:grid;grid-template-columns:1fr 38% 32px;gap:4px 12px;align-items:center;margin-bottom:12px}
+.hl .nm{font-size:13px}.hl .sc{text-align:right;font-size:15px}.hl .why{grid-column:1/-1;font-size:12px;color:var(--muted)}
+.hl .bar>i{background:var(--chart-grey)}
+.hl.cao .bar>i{background:var(--orange)}.hl.cao .sc{color:var(--orange-text)}
+.hl.tb .bar>i{background:var(--yellow)}.hl.tb .sc{color:var(--yellow-text)}
+.sugg2 .what{font-size:14px;color:var(--ink);margin-bottom:8px;line-height:1.45}
+/* An ninh (thẻ camera dùng cả ở trang luồng K8 nên không giới hạn trong .web) */
+.an1{display:grid;grid-template-columns:1fr 1.26fr;gap:16px;align-items:start}
+.an2{display:grid;grid-template-columns:2.3fr 1fr;gap:16px;align-items:start}
+.camimg.ev{background:#2B3A47;height:170px}
+.camimg.ev .box{left:34%;width:32%;top:22%;height:70%;border-color:var(--orange)}
+.camimg.ev .lbl{left:34%;width:32%;top:calc(22% - 16px);height:16px;line-height:16px;text-align:center;color:#fff;border-radius:3px 3px 0 0;font-family:var(--font);font-size:10px}
+.camimg.ev .ts{top:auto;bottom:8px;color:#fff}.camimg.ev .ts.r{left:auto;right:8px;color:#cfe0ee}
+.camimg.ev .rv{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.14);color:#fff;border-radius:6px;padding:4px 8px;font-size:11px;display:flex;align-items:center;gap:4px}
+.camimg.ev .rv:hover{background:rgba(255,255,255,.26)}
+.secacts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.secacts .btn{flex:1;min-width:96px}
+.dt{color:var(--navy);font-size:15px}
+.web .tbl.log td{padding:8px}.web .tbl.log th{padding:6px 8px}
+.okc{color:var(--green);text-align:right}.okc.no{color:var(--red)}
+.web .mat td{padding:4px 3px}.web .mat th{text-align:center}
+.web .cell{display:block;width:100%;padding:4px 0;background:#F2F4F6;color:var(--ink);font-size:12px}
+.web .cell.m{background:var(--tealbg);color:var(--ink)}.web .cell.q,.web .cell.g{background:#FFF4E5;color:var(--ink)}
+.web .cell.x{background:var(--red-t2);color:var(--red)}
+.param{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid #eef1f4;font-size:13px}
+.param input{border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+.cap{margin-bottom:14px}.cap .bar{height:12px;border-radius:6px;margin:6px 0 3px}.cap .bar>i{border-radius:6px}
+.cap b.hi{color:var(--orange-text)}
+.capnote{color:var(--orange-text);font-size:13px;margin-top:4px}
+.lnk{color:var(--teal);font-weight:700;font-size:12px;margin-top:6px;text-decoration:underline}
+/* Trợ lý AI */
+.tlgrid{display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:stretch}
+.chatc{display:flex;flex-direction:column}
+.web .msg.u{border-radius:16px;padding:9px 16px}
+.web .msg.a{display:flex;gap:10px;position:relative;padding:12px 14px}
+.web .msg.a.typing{display:block}
+.web .msg .aic{color:var(--teal);flex:none;margin-top:1px}
+.web .msg .mb{min-width:0}
+.web .msg .src{color:var(--teal);border-top:0;padding-top:0;margin-top:6px}
+.web .msg table{border-collapse:collapse}.web .msg th,.web .msg td{border:0;border-bottom:1px solid #eef1f4;padding:4px 16px 4px 6px}
+.web .msg tr:first-child th{background:var(--bg)}
+.web .sugg button{background:var(--tealbg);border-color:transparent;font-weight:700}
+.web .sugg button:hover{background:#d5ebe9}
+.web .askbox{position:relative}
+.web .askbox input{border-color:#9AA6B2;border-radius:999px;padding:11px 48px 11px 18px}
+.web .askbox .send{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;color:var(--teal);display:grid;place-items:center}
+.web .askbox .send:hover{background:var(--tealbg)}
+.shiftc{display:flex;flex-direction:column}
+.ss{margin-bottom:14px}.ss b{color:var(--navy);display:block;margin-bottom:3px}.ss p{font-size:13px;color:var(--ink);line-height:1.5}
+@media (max-width:1240px){
+  .g3w,.en2{grid-template-columns:1fr 1fr}
+  .tbgrid,.an1{grid-template-columns:1fr}
+}
+@media (max-width:980px){
+  .g3w,.acgrid,.en1,.en2,.tb2,.an2,.tlgrid{grid-template-columns:1fr}
+  .web .tbl{display:block;overflow-x:auto}
+  .web .hdr{padding:10px 16px}
+  .mk{right:-4px}
+}
+
 </style></head>
 <body><div id="root"></div>
 <script>
@@ -341,7 +480,9 @@ const ICONS = {
   send:'<path d="M3 11l18-8-8 18-2-8z"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h0"/>',
-  play:'<path d="M7 4l13 8-13 8z"/>'
+  play:'<path d="M7 4l13 8-13 8z"/>',
+  bars:'<path d="M6 20v-6M12 20V5M18 20v-9"/>',
+  fan:'<circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 1-7 4-7s3 4-2 7M14 12c4 0 7 1 7 4s-4 3-7-2M12 14c0 4-1 7-4 7s-3-4 2-7M10 12c-4 0-7-1-7-4s4-3 7 2"/>'
 };
 function ic(n, s, sw){ return '<svg width="'+(s||20)+'" height="'+(s||20)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.8)+'" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[n]||'')+'</svg>'; }
 
@@ -353,7 +494,7 @@ function lvChip(l, full){ return '<span class="chip '+l+'">'+(full ? LV[l][1] : 
 /* ---------- Biểu đồ SVG ---------- */
 /* series: [{d:[...], c:'#..', dash:true, w:2, area:true}] ; null = đứt đoạn */
 function lineChart(o){
-  const W = o.w || 560, H = o.h || 220, pl = 40, pr = 12, pt = 10, pb = 26;
+  const W = o.w || 560, H = o.h || 220, pl = 40, pr = o.pr || 12, pt = 10, pb = 26;
   const n = Math.max.apply(null, o.series.map(s => s.d.length));
   const all = [].concat.apply([], o.series.map(s => s.d.filter(v => v != null)));
   let lo = o.min != null ? o.min : Math.floor(Math.min.apply(null, all) * 0.9);
@@ -383,13 +524,21 @@ function lineChart(o){
 /* bars: [{l, v, hi}] – nền xám, chỉ tô màu cột bất thường (nguyên tắc "xám trước, màu sau") */
 function barChart(o){
   const W = o.w || 520, H = o.h || 200, pl = 34, pb = 26, pt = 16;
-  const mx = o.max || Math.max.apply(null, o.data.map(d => d.v)) * 1.15;
+  const mx = o.max || Math.max.apply(null, o.data.map(d => d.vs ? Math.max.apply(null, d.vs) : d.v)) * 1.15;
   const bw = (W - pl - 8) / o.data.length;
   let s = '';
   for (let k = 0; k <= 2; k++){ const y = pt + (H - pt - pb) * (1 - k / 2); s += '<line x1="'+pl+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#e6ebf0"/><text x="'+(pl-5)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="#6B7785">'+(o.yfmt ? o.yfmt(mx*k/2) : Math.round(mx*k/2*10)/10)+'</text>'; }
   o.data.forEach((d, i) => {
+    if (d.vs){ // nhóm cột: o.colors[k] cho chuỗi k
+      const gw = bw * .72 / d.vs.length;
+      d.vs.forEach((v, k) => { const h = (H - pt - pb) * v / mx, x = pl + i * bw + bw * .14 + k * gw, y = H - pb - h;
+        s += '<rect x="'+x+'" y="'+y+'" width="'+(gw - 2)+'" height="'+h+'" rx="2" fill="'+o.colors[k]+'"/>';
+        if (o.labels && k === d.vs.length - 1) s += '<text x="'+(x+gw/2-1)+'" y="'+(y-4)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#1A2330">'+v+'</text>'; });
+      s += '<text x="'+(pl + i * bw + bw / 2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="11" fill="#6B7785">'+d.l+'</text>';
+      return;
+    }
     const h = (H - pt - pb) * d.v / mx, x = pl + i * bw + bw * .18, w = bw * .64, y = H - pb - h;
-    s += '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+(d.hi ? (o.hiColor || '#E8833A') : '#C5CED7')+'"/>';
+    s += '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+(d.hi ? (o.hiColor || '#E8833A') : (o.color || '#C5CED7'))+'"/>';
     s += '<text x="'+(x+w/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="11" fill="#6B7785">'+d.l+'</text>';
     if (d.hi || o.labels) s += '<text x="'+(x+w/2)+'" y="'+(y-4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#1A2330">'+(o.vfmt ? o.vfmt(d.v) : d.v)+'</text>';
   });
@@ -398,7 +547,7 @@ function barChart(o){
 }
 function hbars(rows, o){
   o = o || {}; const mx = o.max || Math.max.apply(null, rows.map(r => r.v));
-  return rows.map(r => '<div style="margin-bottom:10px"><div class="row sm" style="margin-bottom:3px"><span class="grow">'+r.l+'</span><b>'+(o.fmt ? o.fmt(r.v) : r.v)+'</b></div><div class="bar '+(r.warn ? 'warn' : '')+'"><i style="width:'+Math.min(100, r.v / mx * 100)+'%"></i></div></div>').join('');
+  return rows.map(r => '<div style="margin-bottom:10px"><div class="row sm" style="margin-bottom:3px"><span class="grow">'+r.l+'</span><b>'+(o.fmt ? o.fmt(r.v) : r.v)+'</b></div><div class="bar '+(r.warn ? 'warn' : '')+'"><i style="width:'+Math.min(100, r.v / mx * 100)+'%'+(o.color ? ';background:'+o.color : '')+'"></i></div></div>').join('');
 }
 /* QR minh họa (không phải mã thật): lưới 25x25 sinh từ hạt giống */
 function qrSvg(seed, size){
@@ -420,8 +569,8 @@ function personSvg(blur, w, h){
 
 /* ---------- Dữ liệu minh họa ---------- */
 const APTS = (function(){
-  const raw = [['2A',612,14,0],['2B',540,11,-3],['2C',735,16,38],['2D',498,9,1],['3A',702,13,2],['3B',655,21,6],['3C',1105,17,11],['3D',590,12,-1],
-    ['4A',820,15,3],['4B',1190,18,-2],['4C',640,10,0],['4D',710,14,4],['5A',1284,22,4],['5B',760,13,-4],['5C',905,16,5],['5D',580,11,-2]];
+  const raw = [['2A',940,14,0],['2B',540,11,-3],['2C',735,16,38],['2D',498,9,1],['3A',702,13,2],['3B',655,21,6],['3C',1105,17,11],['3D',590,12,-1],
+    ['4A',820,15,3],['4B',1190,18,-2],['4C',640,10,0],['4D',905,14,4],['5A',1284,22,4],['5B',760,13,-4],['5C',860,16,5],['5D',980,11,-2]];
   return raw.map(r => ({ id:r[0], kwh:r[1], m3:r[2], dv:r[3], e:Math.round(r[1]*2697.5/1000)*1000, w:r[2]*27500 }));
 })();
 const DAYS_F = (function(){ // dự báo 31 ngày (MWh), 20 ngày đầu cộng = 51,3
@@ -432,8 +581,8 @@ const DAYS_A = (function(){ // thực tế 20 ngày, cộng = 48,2
   const raw = DAYS_F.slice(0, 20).map((v, i) => v * (0.94 + 0.03 * Math.sin(i * 1.7)));
   const k = 48.2 / raw.reduce((a, b) => a + b, 0); return raw.map(v => +(v * k).toFixed(2));
 })();
-const HOUR_F = [118,112,110,108,110,124,158,196,224,238,242,246,252,248,240,236,232,238,262,288,282,248,196,148];
-const HOUR_A = [121,114,113,109,112,126,162,201,229,243,247]; // đến 10:00
+const HOUR_F = [36,33,32,44,80,94,101,100,95,121,112,64]; // mỗi 2 giờ, 00h–22h (kW)
+const HOUR_A = [38,34,33,45,82,96,104,99,92,118,110,62];
 
 function initState(){
   return {
@@ -555,6 +704,7 @@ const ROLES = {
   'Kỹ thuật':['canh-bao','nang-luong','thiet-bi','tro-ly']
 };
 const ROLE_HOME = { 'CĐT':'tong-quan','BQL':'tong-quan','Bảo vệ':'an-ninh','Kỹ thuật':'thiet-bi' };
+const ROLE_AV = { 'CĐT':'CĐT','BQL':'BQL','Bảo vệ':'BV','Kỹ thuật':'KT' };
 const NOTES = {
   'tong-quan':[['Năm chỉ số đầu trang','Trả lời “tòa nhà có ổn không” trong 5 giây, trước khi đọc chi tiết'],['Luôn có ngữ cảnh','Số liệu đặt cạnh dự báo AI hoặc kỳ trước; con số đứng một mình không nói lên điều gì'],['Chỉ hiện việc cần quyết','CĐT chỉ thấy cảnh báo Khẩn/Cao; bấm vào để xem chi tiết'],['Định lượng giá trị AI','Tiết kiệm nước, điện, sự cố tránh được: cơ sở đánh giá hiệu quả đầu tư']],
   'canh-bao':[['Nền xám, màu cho bất thường','Theo ISA-101: dòng khẩn nổi bật ngay giữa danh sách bình thường'],['4 mức ưu tiên, gom trùng','Theo ISA-18.2: một sự cố không sinh hàng chục cảnh báo rời'],['AI phải giải thích','Đề xuất kèm dữ liệu căn cứ và biểu đồ, người trực hiểu vì sao trước khi bấm'],['Một chạm, có nhật ký','Duyệt, từ chối hoặc tạo phiếu việc không phải gõ lại; mọi lệnh được ghi vết']],
@@ -568,16 +718,18 @@ function alertCounts(){
   const a = S.alerts, c = { all:a.length }; ['khan','cao','tb','tin'].forEach(k => c[k] = a.filter(x => x.lv === k).length); return c;
 }
 function visibleAlerts(){ return S.role === 'CĐT' ? S.alerts.filter(a => a.lv === 'khan' || a.lv === 'cao') : S.alerts; }
+/* Số chú thích cam (khớp với “Best practice áp dụng”), chỉ hiện khi mở Ghi chú UX */
+function mk(n){ return S.ux ? '<span class="mk">'+n+'</span>' : ''; }
 
 function webShell(sub, title, meta, body){
-  const allowed = ROLES[S.role], c = alertCounts();
+  const allowed = ROLES[S.role];
   const nav = NAV.filter(n => allowed.indexOf(n[0]) > -1).map(n =>
-    '<a class="'+(n[0] === sub ? 'on' : '')+'" href="#/web/'+n[0]+'">'+ic(n[3], 18)+'<span>'+t(n[1], n[2])+'</span>'+(n[0] === 'canh-bao' ? '<span class="bd">'+c.all+'</span>' : '')+'</a>').join('');
-  return '<div class="web"><aside class="side"><div class="logo"><i>TNV</i>Smart Ops</div>'+nav+
+    '<a class="'+(n[0] === sub ? 'on' : '')+'" href="#/web/'+n[0]+'">'+ic(n[3], 17)+'<span>'+t(n[1], n[2])+'</span></a>').join('');
+  return '<div class="web'+(S.ux ? ' ux' : '')+'"><aside class="side"><div class="logo">TNV · Smart Ops</div>'+nav+
     '<div class="ft">Claude · Gemini qua cổng AI Gimasys</div></aside><div class="main">' +
     '<div class="hdr"><h1>'+title+'</h1><span class="meta">'+(meta || '')+'</span><span class="sp"></span>' +
-    '<div class="seg"><button class="'+(S.lang === 'vi' ? 'on' : '')+'" data-a="lang" data-v="vi">VI</button><button class="'+(S.lang === 'en' ? 'on' : '')+'" data-a="lang" data-v="en">EN</button></div>' +
-    '<div class="role"><div class="av">'+esc(S.role.slice(0, 3))+'</div><select data-c="role" aria-label="Vai trò">'+Object.keys(ROLES).map(r => '<option '+(r === S.role ? 'selected' : '')+'>'+r+'</option>').join('')+'</select></div></div>' +
+    '<div class="lang"><button class="'+(S.lang === 'vi' ? 'on' : '')+'" data-a="lang" data-v="vi">VI</button><span>|</span><button class="'+(S.lang === 'en' ? 'on' : '')+'" data-a="lang" data-v="en">EN</button></div>' +
+    '<div class="role"><select data-c="role" aria-label="Vai trò">'+Object.keys(ROLES).map(r => '<option '+(r === S.role ? 'selected' : '')+'>'+r+'</option>').join('')+'</select><div class="av">'+esc(ROLE_AV[S.role])+'</div></div></div>' +
     '<div class="mnav">'+NAV.filter(n => allowed.indexOf(n[0]) > -1).map(n => '<a class="'+(n[0] === sub ? 'on' : '')+'" href="#/web/'+n[0]+'">'+t(n[1], n[2])+'</a>').join('')+'</div><div class="page">'+body+'</div></div></div>' + uxDrawer(title, NOTES[sub] || []);
 }
 ACT.role = (d, el) => { S.role = el.value; const a = ROLES[S.role]; const r = route(); if (r.v === 'web' && a.indexOf(r.sub) < 0) go('web/' + ROLE_HOME[S.role]); else render(); };
@@ -596,29 +748,31 @@ VIEWS.web = function(sub){
 
 /* ---------- Tổng quan CĐT ---------- */
 const PAGES = {};
+const TQ_SHORT = { 1:'Rò rỉ nước tầng 3 – nhánh căn 3B', 2:'Bơm tăng áp 02 khởi động dày', 3:'Trạm sạc 03 hầm B2 mất kết nối', 4:'Lọc gió FAF-02 cần vệ sinh' };
 PAGES['tong-quan'] = {
-  title:'Tổng quan tòa nhà', en:'Building overview', meta:() => 'Tháng 10/2026 · cập nhật 10:15',
+  title:'Tổng quan tòa nhà', en:'Building overview', meta:() => t('Tháng 10/2026','October 2026')+' ▾',
   body(){
     const c = alertCounts(), list = visibleAlerts().filter(a => a.lv !== 'tin' && (S.role === 'CĐT' ? true : a.lv !== 'tb' || a.id === 4)).slice(0, 4);
-    const kpi = (l, v, d, w, u) => '<div class="kpi '+(w ? 'warn' : '')+'"><div class="l">'+l+'</div><div class="v">'+v+(u ? '<small>'+u+'</small>' : '')+'</div><div class="d">'+d+'</div></div>';
-    const open = S.alerts.length;
-    return '<div class="g5">' +
-      kpi(t('Điện năng tháng','Electricity (month)'), '48,2', '▼ 6% '+t('so dự báo','vs forecast'), 0, 'MWh') +
-      kpi(t('Nước tháng','Water (month)'), '1.240', '▼ 3% '+t('so T9','vs Sep'), 0, 'm³') +
-      kpi(t('Chi phí vận hành','Operating cost'), '312', '▼ 4% '+t('so kế hoạch','vs plan'), 0, 'tr đ') +
-      kpi(t('Cảnh báo đang mở','Open alerts'), open, c.khan+' '+t('khẩn','urgent')+' · '+c.cao+' '+t('cao','high'), 1) +
-      kpi(t('Thiết bị sẵn sàng','Equipment ready'), '98,6%', '2 '+t('thiết bị cần kiểm tra','need checking'), 0) + '</div>' +
-      '<div class="g2"><div class="card"><h3>'+t('Điện năng theo ngày: thực tế và dự báo AI (MWh)','Daily electricity: actual vs AI forecast (MWh)')+'</h3>' +
-      lineChart({ series:[{d:DAYS_F,c:'#8A96A3',dash:true,w:2},{d:DAYS_A,c:'#1B7F79',w:2.6,area:true}], min:1.5, max:3.1, yfmt:v => fmt(v,1), xl:i => (i+1), xevery:3, vline:19, vlabel:'hôm nay', label:'Điện năng theo ngày' }) +
-      '<div class="leg" style="margin-top:6px"><span><i style="background:#1B7F79"></i>'+t('Thực tế','Actual')+'</span><span><i style="background:#8A96A3"></i>'+t('Dự báo AI','AI forecast')+'</span></div></div>' +
-      '<div class="card"><h3>'+t('Cảnh báo cần quyết định','Alerts needing a decision')+'</h3><div class="col" style="gap:0">' +
-      list.map(a => '<div class="lrow" style="cursor:pointer" data-a="alertOpen" data-id="'+a.id+'">'+lvChip(a.lv)+'<span class="grow">'+shortDesc(a)+'</span><span class="mut sm">'+a.time+'</span></div>').join('') +
-      '</div><p style="margin-top:10px"><a class="btn sm" href="#/web/canh-bao">Mở Trung tâm cảnh báo →</a></p></div></div>' +
-      '<div class="g3"><div class="card"><h3>'+t('Điện theo khu vực (MWh)','Electricity by area (MWh)')+'</h3>' +
-      hbars([{l:'Căn hộ tầng 2–5',v:17.4},{l:'Nhà hàng B1',v:8.9},{l:'Rooftop bar',v:6.2},{l:'Hầm & thông gió',v:5.6},{l:'Khu thương mại',v:5.3},{l:'Thang máy & bơm',v:4.8}], {fmt:v => fmt(v,1)}) + '</div>' +
+    const kpi = (l, v, u, d, tone, icn) => '<div class="kpi"><span class="kic">'+ic(icn, 16)+'</span><div class="l">'+l+'</div><div class="v">'+v+(u ? '<small>'+u+'</small>' : '')+'</div><div class="d '+(tone || '')+'">'+d+'</div></div>';
+    const occ = [['Nhà hàng B1',86,150],['Rooftop',108,120],['Sảnh T1',12,60]];
+    const gain = [['drop','−22% '+t('nước tưới','irrigation water'),'so lịch tưới cố định'],['fan','−310 kWh '+t('quạt hầm','garage fans'),'chạy theo CO và lượt xe'],['check','1 '+t('rò rỉ phát hiện sớm','leak caught early'),'ước tính tránh mất 3,5 m³']];
+    return '<div class="g5 rel">'+mk(1) +
+      kpi(t('Điện năng tháng','Electricity (month)'), '48,2', 'MWh', '▼ 6% '+t('so dự báo','vs forecast'), '', 'bolt') +
+      kpi(t('Nước tháng','Water (month)'), '1.240', 'm³', '▼ 3% '+t('so T9','vs Sep'), '', 'drop') +
+      kpi(t('Chi phí vận hành','Operating cost'), '312', 'tr đ', '▼ 4% '+t('so kế hoạch','vs plan'), '', 'bars') +
+      kpi(t('Cảnh báo đang mở','Open alerts'), S.alerts.length, '', c.khan+' '+t('khẩn','urgent')+' · '+c.cao+' '+t('cao','high'), 'red', 'bell') +
+      kpi(t('Thiết bị sẵn sàng','Equipment ready'), '98,6%', '', '2 '+t('thiết bị cần kiểm tra','need checking'), 'org', 'wrench') + '</div>' +
+      '<div class="g2"><div class="card">'+mk(2)+'<h3>'+t('Điện năng theo ngày: thực tế và dự báo AI (MWh)','Daily electricity: actual vs AI forecast (MWh)')+'</h3>' +
+      lineChart({ series:[{d:DAYS_F,c:'#B9C3CC',w:2},{d:DAYS_A,c:'#1B7F79',w:2.6,area:true}], min:1.5, max:3.1, yfmt:v => fmt(v,1), xl:i => (i+1), xevery:3, vline:19, vlabel:'hôm nay', label:'Điện năng theo ngày' }) +
+      '<div class="leg" style="margin-top:6px"><span><i style="background:#1B7F79"></i>'+t('Thực tế','Actual')+'</span><span><i style="background:#B9C3CC"></i>'+t('Dự báo AI','AI forecast')+'</span></div></div>' +
+      '<div class="card">'+mk(3)+'<h3>'+t('Cảnh báo cần quyết định','Alerts needing a decision')+'<a class="hlink" href="#/web/canh-bao">'+t('Tất cả','All')+' →</a></h3>' +
+      list.map(a => '<div class="arow" data-a="alertOpen" data-id="'+a.id+'">'+lvChip(a.lv)+'<span class="grow">'+(TQ_SHORT[a.id] || a.desc)+'</span><span class="mut sm">'+a.time+'</span></div>').join('') + '</div></div>' +
+      '<div class="g3w"><div class="card"><h3>'+t('Điện theo khu vực (MWh)','Electricity by area (MWh)')+'</h3>' +
+      hbars([{l:'Căn hộ',v:14.1},{l:'Nhà hàng B1',v:10.8},{l:'Thương mại',v:7.9},{l:'Hầm, kỹ thuật',v:6.4},{l:'Rooftop',v:5.2},{l:'Chung',v:3.8}], {fmt:v => fmt(v,1), color:'var(--teal)'}) + '</div>' +
       '<div class="card"><h3>'+t('Khách đang có mặt','Current occupancy')+'</h3>' +
-      [['Nhà hàng B1',86,150],['Rooftop',108,120],['Sảnh T1',12,60]].map(r => '<div style="margin-bottom:12px"><div class="row sm"><span class="grow">'+r[0]+'</span><b>'+r[1]+' / '+r[2]+'</b>'+(r[1]/r[2] >= .9 ? '<span class="chip cao">'+Math.round(r[1]/r[2]*100)+'%</span>' : '')+'</div><div class="bar '+(r[1]/r[2] >= .9 ? 'warn' : '')+'" style="margin-top:4px"><i style="width:'+(r[1]/r[2]*100)+'%"></i></div></div>').join('') + '</div>' +
-      '<div class="card"><h3>'+t('Hiệu quả AI tháng này','AI impact this month')+'</h3><div class="col"><div class="stat"><b>−22% '+t('nước tưới','irrigation water')+'</b><span>so lịch tưới cố định</span></div><div class="stat"><b>−310 kWh '+t('quạt hầm','garage fans')+'</b><span>chạy theo CO và lượt xe</span></div><div class="stat"><b>1 '+t('rò rỉ phát hiện sớm','leak caught early')+'</b><span>ước tính tránh mất 3,5 m³</span></div></div></div></div>';
+      occ.map(r => { const hi = r[1]/r[2] >= .9; return '<div class="occ"><div class="row sm"><span class="grow">'+r[0]+'</span><b>'+r[1]+' / '+r[2]+'</b></div><div class="bar '+(hi ? 'warn' : 'teal')+'"><i style="width:'+(r[1]/r[2]*100)+'%"></i></div></div>'; }).join('') + '</div>' +
+      '<div class="card">'+mk(4)+'<h3>'+t('Hiệu quả AI tháng này','AI impact this month')+'</h3>' +
+      gain.map(g => '<div class="gain">'+ic(g[0], 18, 2.2)+'<div><b>'+g[1]+'</b><span>'+g[2]+'</span></div></div>').join('') + '</div></div>';
   }
 };
 ACT.alertOpen = d => { S.alertSel = +d.id; go('web/canh-bao'); };
@@ -632,44 +786,44 @@ const AI_DETAIL = {
   6:{ t:'Đèn sảnh bật ngoài lịch', s:'Sảnh T1 · lịch chiếu sáng · 17:45', ai:'Đèn bật lúc 17:45, sớm 15 phút so với lịch. Trùng với sự kiện đã đặt tại nhà hàng. Đã xác nhận.', btn:null },
   7:{ t:'Rooftop mở cửa, đổi quyền thang', s:'Tầng tum · lịch hoạt động · 18:00', ai:'Theo tham số “giờ mở rooftop 17:00–24:00”, hệ thống tự cho phép thang lên tầng tum. Thông tin, không cần xử lý.', btn:null }
 };
-function flowSeries(){ // lưu lượng 22:00–04:00 (m³/h) mỗi 30 phút
-  const base = .057, hrs = []; for (let i = 0; i < 13; i++){ hrs.push(i < 8 ? base + (i % 3) * .004 : .8); }
-  hrs[8] = .08; for (let i = 9; i < 13; i++) hrs[i] = .8;
-  if (S.valve === 'closed') for (let i = 10; i < 13; i++) hrs[i] = .0; // sau 02:41
-  return hrs;
+const LEAK_X = ['00:00','00:30','01:00','01:30','02:00','02:30','03:00'];
+function flowSeries(){ // lưu lượng 00:00–03:00 (m³/h) mỗi 30 phút
+  const d = [.05,.04,.03,.04,.05,.82,.8];
+  if (S.valve === 'closed') d[6] = 0; // đóng van lúc 02:41
+  return d;
 }
 PAGES['canh-bao'] = {
   title:'Trung tâm cảnh báo', en:'Alert center', meta:() => 'Ca đêm · Bảo vệ: Tuấn · KT: Hùng',
   body(){
-    const c = alertCounts(), vis = visibleAlerts();
-    const list = S.alertFilter === 'all' ? vis : vis.filter(a => a.lv === S.alertFilter);
+    const c = alertCounts(), vis = visibleAlerts(), f = S.alertFilter;
+    const list = f === 'all' ? vis : vis.filter(a => a.lv === f);
     const sel = S.alerts.filter(a => a.id === S.alertSel)[0] || list[0];
-    const tabs = [['all','Tất cả'],['khan','Khẩn'],['cao','Cao'],['tb','TB'],['tin','Tin']].map(x => '<button class="'+(S.alertFilter === x[0] ? 'on' : '')+'" data-a="alertFilter" data-v="'+x[0]+'">'+x[1]+'<span class="n">'+(S.role === 'CĐT' && (x[0] === 'tb' || x[0] === 'tin') ? 0 : c[x[0]])+'</span></button>').join('');
-    const rows = list.map(a => '<tr class="click '+(a.lv === 'khan' ? 'k' : '')+' '+(a.id === sel.id ? 'sel' : '')+'" data-a="alertSelect" data-id="'+a.id+'"><td>'+lvChip(a.lv)+'</td><td>'+a.time+'</td><td>'+a.loc+'</td><td>'+a.desc+'</td><td class="'+(a.st === 'Chưa xác nhận' ? 'b' : 'mut')+'">'+a.st+'</td></tr>').join('');
-    return '<div class="pill-tabs">'+tabs+'</div><div class="g2" style="grid-template-columns:1.35fr 1fr;align-items:start"><div class="card" style="padding:6px 6px 10px"><table class="tbl"><thead><tr><th>Mức</th><th>Giờ</th><th>Vị trí</th><th>Mô tả</th><th>Trạng thái</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+alertDetail(sel)+'</div>';
+    const tabs = [['all','Tất cả'],['khan','Khẩn'],['cao','Cao'],['tb','TB'],['tin','Tin']].map(x => '<button class="lvp '+x[0]+(f === 'all' || f === x[0] ? ' on' : '')+(f === x[0] ? ' cur' : '')+'" data-a="alertFilter" data-v="'+x[0]+'">'+x[1]+' '+(S.role === 'CĐT' && (x[0] === 'tb' || x[0] === 'tin') ? 0 : c[x[0]])+'</button>').join('');
+    const rows = list.map(a => '<tr class="click '+(a.lv === 'khan' ? 'k' : '')+' '+(sel && a.id === sel.id ? 'sel' : '')+'" data-a="alertSelect" data-id="'+a.id+'"><td>'+lvChip(a.lv)+'</td><td>'+a.time+'</td><td class="mut">'+a.loc+'</td><td class="'+(a.lv === 'khan' ? 'b' : '')+'">'+a.desc+'</td><td class="'+(a.st === 'Chưa xác nhận' ? 'stnew' : 'mut')+'">'+a.st+'</td></tr>').join('');
+    return '<div class="acgrid"><div class="col" style="gap:12px"><div class="lvtabs rel">'+mk(2)+tabs+'</div><div class="card tblcard">'+mk(1)+'<table class="tbl"><thead><tr><th>Mức</th><th>Giờ</th><th>Vị trí</th><th>Mô tả</th><th>Trạng thái</th></tr></thead><tbody>'+rows+'</tbody></table>'+(list.length ? '' : '<p class="mut sm" style="padding:12px 10px">Không có cảnh báo ở mức này.</p>')+'</div></div>'+(sel ? alertDetail(sel) : '<div></div>')+'</div>';
   }
 };
 function alertDetail(a){
   const canAct = S.role === 'BQL' || S.role === 'Kỹ thuật';
   if (a.id === 1){
-    const closed = S.valve === 'closed';
-    const fl = flowSeries();
-    return '<div class="card" style="border-color:'+(closed ? 'var(--line)' : 'var(--red)')+';background:'+(closed ? '#fff' : '#fffafa')+'"><div class="row">'+lvChip('khan')+'<b style="color:var(--navy);font-size:16px">Rò rỉ nước · Tầng 3, nhánh căn 3B</b></div>' +
-      '<div class="mut sm" style="margin:4px 0 10px">Đồng hồ FM-T3-02 · cảm biến rò LS-T3-02 · 02:31</div>' +
-      lineChart({ series:[{d:fl,c:closed ? '#2E9E5B' : '#D64545',w:2.4,area:true},{d:fl.map(() => .057),c:'#8A96A3',dash:true,w:1.5}], w:430, h:150, min:0, max:1, yfmt:v => fmt(v,1), xl:i => { const m = 22*60 + i*30; return String(Math.floor(m/60)%24).padStart(2,'0')+':'+(m%60 ? '30' : '00'); }, xevery:2, label:'Lưu lượng đêm' }) +
-      '<div class="leg"><span><i style="background:'+(closed ? '#2E9E5B' : '#D64545')+'"></i>Lưu lượng m³/h</span><span><i style="background:#8A96A3"></i>Mức nền ban đêm</span></div>' +
+    const closed = S.valve === 'closed', fl = flowSeries(), col = closed ? '#2E9E5B' : '#D64545';
+    return '<div class="card detail"><div class="row">'+lvChip('khan')+'<b class="dt">Rò rỉ nước · Tầng 3, nhánh căn 3B</b></div>' +
+      '<div class="mut sm" style="margin:4px 0 8px">Đồng hồ FM-T3-02 · cảm biến rò LS-T3-02 · 02:31</div>' +
+      lineChart({ series:[{d:fl.map(() => .06),c:'#B9C3CC',w:1.8},{d:fl,c:col,w:2.4,area:true}], w:430, h:150, pr:22, min:0, max:1, yfmt:v => fmt(v,1), xl:i => LEAK_X[i], xevery:1, label:'Lưu lượng đêm' }) +
+      '<div class="leg"><span><i style="background:'+col+'"></i>Lưu lượng m³/h</span><span><i style="background:#B9C3CC"></i>Mức nền ban đêm</span></div>' +
       (closed
         ? '<div class="note" style="margin-top:12px;background:var(--green-t)"><b style="color:var(--green-d)">✓ Đã đóng van V-T3-02 lúc 02:41</b><br>Người duyệt: '+S.role+' · phản hồi van: ĐÓNG · lưu lượng về 0 · nhật ký lệnh #L-2031 (giá trị cũ MỞ → mới ĐÓNG)</div>'
         : S.valve === 'rejected' ? '<div class="warnbox" style="margin-top:12px">Đề xuất đã bị từ chối. Cảnh báo vẫn mở, cần xử lý thủ công.</div>'
-        : '<div class="note" style="margin-top:12px"><b style="color:var(--navy)">AI đề xuất:</b> Đóng van điện từ V-T3-02 (khu căn 3B).<br><b>Căn cứ:</b> cảm biến rò xác nhận; lưu lượng gấp 14 lần mức nền ban đêm trong 30 phút. Không ảnh hưởng nước chữa cháy.<div class="mut sm" style="margin-top:6px">Mức can thiệp: ghi có giới hạn · ưu tiên BACnet 12 · có nhật ký</div></div>') +
-      (S.valve === 'open' && canAct ? '<div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="btn primary" data-a="valveOk">Phê duyệt đóng van</button><button class="btn" data-a="alertTicket" data-id="1">Tạo phiếu việc</button><button class="btn danger" data-a="valveNo">Từ chối</button></div>' : '') +
+        : '<div class="aibox rel">'+mk(3)+'<div class="aih">'+ic('spark', 16)+'AI đề xuất</div>Đóng van điện từ V-T3-02 (khu căn 3B). <b>Căn cứ:</b> cảm biến rò xác nhận; lưu lượng gấp 14 lần mức nền ban đêm trong 30 phút. Không ảnh hưởng nước chữa cháy.<div class="mut xs" style="margin-top:6px">Mức can thiệp: ghi có giới hạn · ưu tiên BACnet 12 · có nhật ký</div></div>') +
+      (S.valve === 'open' && canAct ? '<div class="acts rel">'+mk(4)+'<button class="btn red block" data-a="valveOk">Phê duyệt đóng van</button><div class="btn2"><button class="btn" data-a="alertTicket" data-id="1">Tạo phiếu việc</button><button class="btn ghost" data-a="valveNo">Từ chối</button></div></div>' : '') +
       (S.valve === 'open' && !canAct ? '<div class="mut sm" style="margin-top:12px">Vai trò “'+S.role+'” chỉ xem. Duyệt lệnh dành cho BQL / Kỹ thuật.</div>' : '') +
       '<div class="mut sm" style="margin-top:10px">Đã gửi tới: app BQL, KT trực'+(S.alerts[0].st.indexOf('Phiếu') === 0 ? ' · '+S.alerts[0].st : '')+'</div></div>';
   }
   const d = AI_DETAIL[a.id];
-  return '<div class="card"><div class="row">'+lvChip(a.lv)+'<b style="color:var(--navy);font-size:16px">'+d.t+'</b></div><div class="mut sm" style="margin:4px 0 10px">'+d.s+'</div><div class="note"><b style="color:var(--navy)">AI giải thích:</b> '+d.ai+'</div>' +
-    '<div class="row" style="margin-top:12px;flex-wrap:wrap">'+(d.btn && canAct ? (d.btn[1] === 'go' ? '<button class="btn primary" data-a="go" data-to="'+d.btn[2]+'">'+d.btn[0]+'</button>' : '<button class="btn primary" data-a="alertTicket" data-id="'+a.id+'">'+d.btn[0]+'</button>') : '')+
-    (a.st === 'Chưa xác nhận' || a.st === 'KT Hùng' ? '<button class="btn" data-a="alertAck" data-id="'+a.id+'">Xác nhận đã xem</button>' : '')+'</div></div>';
+  const main = d.btn && canAct ? (d.btn[1] === 'go' ? '<button class="btn primary block" data-a="go" data-to="'+d.btn[2]+'">'+d.btn[0]+'</button>' : '<button class="btn primary block" data-a="alertTicket" data-id="'+a.id+'">'+d.btn[0]+'</button>') : '';
+  const ack = a.st === 'Chưa xác nhận' || a.st === 'KT Hùng' ? '<button class="btn ghost block" data-a="alertAck" data-id="'+a.id+'">Xác nhận đã xem</button>' : '';
+  return '<div class="card detail"><div class="row">'+lvChip(a.lv)+'<b class="dt">'+d.t+'</b></div><div class="mut sm" style="margin:4px 0 10px">'+d.s+'</div><div class="aibox"><div class="aih">'+ic('spark', 16)+'AI giải thích</div>'+d.ai+'</div>' +
+    (main || ack ? '<div class="acts col">'+main+ack+'</div>' : '')+'</div>';
 }
 ACT.alertFilter = d => { S.alertFilter = d.v; render(); };
 ACT.alertSelect = d => { S.alertSel = +d.id; render(); };
@@ -685,23 +839,27 @@ ACT.alertTicket = d => {
 };
 
 /* ---------- Năng lượng & nước ---------- */
+const FLOOR_NIGHT = [['B1',.04],['T1',.03],['Lửng',.02],['T2',.05],['T3',.81],['T4',.06],['T5',.04],['Tum',.02]];
+function nightFlowChart(h){ return barChart({data:FLOOR_NIGHT.map(x => ({l:x[0],v:x[1],hi:x[0] === 'T3'})), h:h, max:1, yfmt:v => fmt(v,1), vfmt:v => fmt(v,2), color:'#B9C3CC', hiColor:'#D64545', label:'Lưu lượng ban đêm theo tầng'}); }
 PAGES['nang-luong'] = {
-  title:'Năng lượng & nước', en:'Energy & water', meta:() => 'Hôm nay 20/10/2026 · 47 đồng hồ điện, 28 đồng hồ nước qua BMS Azbil',
+  title:'Năng lượng & nước', en:'Energy & water', meta:() => t('Hôm nay 20/10/2026','Today 20/10/2026'),
   body(){
     const tabs = [['dien','Điện'],['nuoc','Nước'],['hoadon','Hóa đơn'],['xanh','Công trình xanh']].map(x => '<button class="'+(S.energyTab === x[0] ? 'on' : '')+'" data-a="enTab" data-v="'+x[0]+'">'+x[1]+'</button>').join('');
     let b = '';
     if (S.energyTab === 'dien'){
-      const top = APTS.slice().sort((a, b) => b.kwh - a.kwh).slice(0, 5);
-      b = '<div class="g2"><div class="card"><h3>Phụ tải hôm nay theo giờ (kW): thực tế và dự báo</h3>' +
-        lineChart({ series:[{d:HOUR_F,c:'#8A96A3',dash:true,w:2},{d:HOUR_A,c:'#1B7F79',w:2.6,area:true}], min:80, max:300, xl:i => String(i).padStart(2,'0')+'h', xevery:3, vline:10, vlabel:'10:00', label:'Phụ tải theo giờ' }) +
-        '<div class="leg" style="margin-top:6px"><span><i style="background:#1B7F79"></i>Thực tế</span><span><i style="background:#8A96A3"></i>Dự báo AI</span></div></div>' +
-        '<div class="card"><h3>Căn hộ dùng điện nhiều nhất (kWh)</h3>'+hbars(top.map(x => ({l:'Căn '+x.id,v:x.kwh})), {fmt:v => fmt(v)})+'</div></div>' +
-        '<div class="card"><h3>Tiêu thụ bất thường (AI)</h3><div class="g3">' +
-        [['TĐ-SPA chạy 02:00–05:00','4,2 kWh (nền 0,6) · chạy ngoài lịch hoạt động','Cao'],['Lộ đèn hầm B1-04','Bật ngoài lịch 3 đêm liên tiếp','TB'],['Căn 2C tăng 38%','So cùng kỳ, đã báo cư dân','TB']].map(r => '<div class="stat" style="background:#fff;border:1px solid var(--line)"><div class="row">'+lvChip(r[2] === 'Cao' ? 'cao' : 'tb')+'</div><b style="color:var(--ink);font-size:15px;margin-top:6px">'+r[0]+'</b><span>'+r[1]+'</span></div>').join('') + '</div></div>';
+      const top = APTS.slice().sort((a, b) => b.kwh - a.kwh).slice(0, 6);
+      const odd = [['cao','TĐ-SPA chạy 02:00–05:00','4,2 kWh (nền 0,6)'],['tb','Lộ đèn hầm B1-04','Bật ngoài lịch 3 đêm'],['tin','Căn 2C tăng 38%','So cùng kỳ, đã báo cư dân']];
+      b = '<div class="en1"><div class="card">'+mk(1)+'<h3>Phụ tải hôm nay theo giờ (kW): thực tế và dự báo</h3>' +
+        lineChart({ series:[{d:HOUR_F,c:'#B9C3CC',w:2},{d:HOUR_A,c:'#1B7F79',w:2.6,area:true}], min:0, max:150, yfmt:v => Math.round(v), xl:i => String(i*2).padStart(2,'0')+'h', xevery:1, label:'Phụ tải theo giờ' }) +
+        '<div class="leg" style="margin-top:6px"><span><i style="background:#1B7F79"></i>Thực tế</span><span><i style="background:#B9C3CC"></i>Dự báo AI</span></div></div>' +
+        '<div class="card"><h3>Căn hộ dùng điện nhiều nhất (kWh)</h3>'+hbars(top.map(x => ({l:'Căn '+x.id,v:x.kwh})), {fmt:v => fmt(v), color:'var(--navy)'})+'</div></div>' +
+        '<div class="en2"><div class="card">'+mk(2)+'<h3>Tiêu thụ bất thường (AI)</h3>' +
+        odd.map(r => '<div class="odd"><i class="'+r[0]+'"></i><div><b>'+r[1]+'</b><span>'+r[2]+'</span></div></div>').join('') + '</div>' +
+        '<div class="card">'+mk(3)+'<h3>Lưu lượng ban đêm 1–4h (m³/h)</h3>'+nightFlowChart(170)+'</div>' +
+        '<div class="card">'+mk(4)+'<h3>Cân bằng tổng – nhánh</h3><div class="bal"><span>Đồng hồ tổng</span><b>41,2 m³</b></div><div class="bal"><span>Tổng nhánh</span><b>38,9 m³</b></div><span class="dev">Lệch 5,6% ▲</span><div class="mut xs" style="margin-top:6px">Ngưỡng 5% · kiểm tra nhánh T3 (căn 3B)</div></div></div>';
     } else if (S.energyTab === 'nuoc'){
-      const fl = [['B2',.05],['B1',.08],['T1',.06],['T2',.09],['T3',.8],['T4',.07],['T5',.08],['Mái',.03]];
-      b = '<div class="g2"><div class="card"><h3>Lưu lượng ban đêm 1–4h (m³/h)</h3>'+barChart({data:fl.map(x => ({l:x[0],v:x[1],hi:x[0] === 'T3'})), h:210, max:1, yfmt:v => fmt(v,1), vfmt:v => fmt(v,1), hiColor:'#D64545', label:'Lưu lượng ban đêm theo tầng'})+'<p class="mut sm" style="margin-top:6px">Tầng 3 nổi bật giữa nền xám: lưu lượng liên tục 0,8 m³/h trong khi mức nền khoảng 0,06.</p></div>' +
-        '<div class="card"><h3>Cân bằng tổng – nhánh</h3><div class="col" style="gap:12px"><div class="row"><span class="grow mut">Đồng hồ tổng</span><b style="font-size:20px">41,2 m³</b></div><div class="row"><span class="grow mut">Tổng nhánh</span><b style="font-size:20px">38,9 m³</b></div><div class="row"><span class="grow mut">Lệch</span><span class="chip cao">5,6% ▲ vượt ngưỡng 5%</span></div><div class="warnbox">Gợi ý: kiểm tra đoạn ống nhánh tầng 3 (khu căn 3B), trùng vị trí cảnh báo rò rỉ lúc 02:31.</div></div></div></div>' +
+      b = '<div class="g2"><div class="card"><h3>Lưu lượng ban đêm 1–4h (m³/h)</h3>'+nightFlowChart(210)+'<p class="mut sm" style="margin-top:6px">Tầng 3 nổi bật giữa nền xám: lưu lượng liên tục 0,81 m³/h trong khi các tầng khác dưới 0,06.</p></div>' +
+        '<div class="card"><h3>Cân bằng tổng – nhánh</h3><div class="col" style="gap:12px"><div class="row"><span class="grow mut">Đồng hồ tổng</span><b style="font-size:20px">41,2 m³</b></div><div class="row"><span class="grow mut">Tổng nhánh</span><b style="font-size:20px">38,9 m³</b></div><div class="row"><span class="grow mut">Lệch</span><span class="dev">5,6% ▲ vượt ngưỡng 5%</span></div><div class="warnbox">Gợi ý: kiểm tra đoạn ống nhánh tầng 3 (khu căn 3B), trùng vị trí cảnh báo rò rỉ lúc 02:31.</div></div></div></div>' +
         '<div class="g3"><div class="kpi"><div class="l">Nước tháng</div><div class="v">1.240<small>m³</small></div><div class="d">▼ 3% so T9</div></div><div class="kpi"><div class="l">Đồng hồ nước đang online</div><div class="v">28 / 28</div><div class="d">Báo pin: 1 đồng hồ T5 (phiếu #1039)</div></div><div class="kpi"><div class="l">Nước tưới (AI)</div><div class="v">−22%<small>so lịch cố định</small></div><div class="d">Độ ẩm bồn ≥ ngưỡng 94% thời gian</div></div></div>';
     } else if (S.energyTab === 'hoadon'){
       b = '<div class="card" style="padding:6px 6px 10px"><h3 style="padding:10px 10px 0">Hóa đơn điện, nước theo căn hộ · tháng 10/2026 (tạm tính đến 19/10)</h3><table class="tbl"><thead><tr><th>Căn</th><th class="tr">Điện (kWh)</th><th class="tr">Tiền điện (đ)</th><th class="tr">Nước (m³)</th><th class="tr">Tiền nước (đ)</th><th class="tr">So T9</th></tr></thead><tbody>' +
@@ -718,77 +876,79 @@ PAGES['nang-luong'] = {
 ACT.enTab = d => { S.energyTab = d.v; render(); };
 
 /* ---------- Thiết bị & bảo trì dự đoán ---------- */
+/* Tọa độ theo sơ đồ slide 8 (khung 390 × 400) */
 const DEVS = {
-  'SH-01':{x:448,y:72,n:'Bơm sinh hoạt 01'},'SH-02':{x:493,y:72,n:'Bơm sinh hoạt 02'},'BTA-01':{x:538,y:72,n:'Bơm tăng áp 01'},'BTA-02':{x:583,y:72,n:'Bơm tăng áp 02',bad:'cao'},
-  'MF':{x:467,y:192,n:'Máy phát'},'MBA':{x:572,y:192,n:'Trạm biến áp'},
-  'QH-01':{x:60,y:62,n:'Quạt hầm 01'},'QH-02':{x:340,y:62,n:'Quạt hầm 02'},'CO':{x:200,y:190,n:'Cảm biến CO'},
-  'EV-01':{x:60,y:292,n:'Sạc xe điện 01'},'EV-02':{x:105,y:292,n:'Sạc xe điện 02'},'EV-03':{x:150,y:292,n:'Sạc xe điện 03',bad:'cao'},'TĐ':{x:350,y:292,n:'Tủ điện B2'}
+  'SH-01':{x:34,y:67,n:'Bơm sinh hoạt 01'},'SH-02':{x:88,y:67,n:'Bơm sinh hoạt 02'},'BTA-02':{x:34,y:99,n:'Bơm tăng áp 02',bad:'cao'},
+  'MF':{x:180,y:72,n:'Máy phát'},'MBA':{x:305,y:72,n:'Trạm biến áp'},
+  'QH-01':{x:75,y:209,n:'Quạt hầm 01'},'QH-02':{x:295,y:209,n:'Quạt hầm 02'},'CO':{x:199,y:182,n:'Cảm biến CO'},
+  'TĐ':{x:55,y:369,n:'Tủ điện B2'},'EV-03':{x:315,y:365,n:'Sạc xe điện 03',bad:'cao'}
 };
 function floorMap(){
-  const rm = (x, y, w, h, l) => '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="8" fill="#EEF1F4" stroke="#D5DCE3"/><text x="'+(x+8)+'" y="'+(y+18)+'" font-size="11" font-weight="700" fill="#6B7785">'+l+'</text>';
-  let s = rm(20,20,380,320,'Hầm xe B2')+rm(420,20,200,110,'Trạm bơm')+rm(420,140,95,90,'Máy phát')+rm(525,140,95,90,'Trạm biến áp')+rm(420,240,95,100,'Phòng bảo vệ')+rm(525,240,95,100,'Rack trung tâm')+
-    '<text x="30" y="262" font-size="11" font-weight="700" fill="#6B7785">Sạc xe điện (EV)</text>';
+  const rm = (x, y, w, h, l) => '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#EEF1F4" stroke="#B9C3CC"/><text x="'+(x+6)+'" y="'+(y+14)+'" font-size="9" fill="#6B7785">'+l+'</text>';
+  let s = '<rect x=".5" y=".5" width="389" height="399" fill="#fff" stroke="#9AA6B2"/>' +
+    rm(8,8,125,110,'Trạm bơm')+rm(138,8,115,110,'Máy phát')+rm(258,8,124,110,'Trạm biến áp')+rm(8,122,374,183,'Hầm xe B2')+
+    rm(8,310,125,82,'Phòng bảo vệ')+rm(138,310,125,82,'Rack trung tâm')+rm(267,310,115,82,'Sạc xe điện');
   Object.keys(DEVS).forEach(k => {
     const d = DEVS[k], bad = !!d.bad, sel = S.devSel === k;
     s += '<g data-a="devSel" data-id="'+k+'" style="cursor:pointer" role="button" aria-label="'+d.n+(bad ? ' – cần chú ý' : '')+'">' +
-      (bad ? '<circle cx="'+d.x+'" cy="'+d.y+'" r="21" fill="#E8833A" opacity=".18"/>' : '') +
-      '<circle cx="'+d.x+'" cy="'+d.y+'" r="14" fill="'+(bad ? '#E8833A' : '#fff')+'" stroke="'+(sel ? '#1B7F79' : (bad ? '#E8833A' : '#A9B4BF'))+'" stroke-width="'+(sel ? 3.5 : 2)+'"/>' +
-      '<text x="'+d.x+'" y="'+(d.y+4)+'" text-anchor="middle" font-size="12" font-weight="700" fill="'+(bad ? '#1A2330' : '#6B7785')+'">'+(bad ? '!' : '•')+'</text>' +
-      '<text x="'+d.x+'" y="'+(d.y+30)+'" text-anchor="middle" font-size="11" font-weight="'+(bad ? 700 : 400)+'" fill="'+(bad ? '#9A4A0B' : '#6B7785')+'">'+k+'</text></g>';
+      (sel ? '<circle cx="'+d.x+'" cy="'+d.y+'" r="12.5" fill="none" stroke="#1B7F79" stroke-width="2.2"/>' : '') +
+      '<circle cx="'+d.x+'" cy="'+d.y+'" r="8.5" fill="'+(bad ? '#E8833A' : '#B9C3CC')+'" stroke="#fff" stroke-width="1.5"/>' +
+      '<text x="'+(d.x+15)+'" y="'+(d.y+3)+'" font-size="9" font-weight="'+(bad ? 700 : 400)+'" fill="#1A2330">'+k+'</text></g>';
   });
-  return '<svg viewBox="0 0 640 360" width="100%" role="img" aria-label="Sơ đồ hầm B2">'+s+'</svg>';
+  return '<svg viewBox="0 0 390 400" width="100%" role="img" aria-label="Sơ đồ hầm B2">'+s+'</svg>';
 }
 PAGES['thiet-bi'] = {
-  title:'Thiết bị & bảo trì', en:'Equipment & maintenance', meta:() => 'Tầng: Hầm B2 · trạng thái, giờ chạy, số lần khởi động, dòng điện, biến tần',
+  title:'Thiết bị & bảo trì', en:'Equipment & maintenance', meta:() => 'Tầng: Hầm B2 ▾',
   body(){
-    const health = [['Bơm tăng áp BTA-02',61,'cao','Khởi động 3× mức nền; kiểm tra van một chiều'],['Quạt cấp FAF-02',74,'tb','Chênh áp lọc tăng 40% trong 3 tuần'],['Bơm sinh hoạt SH-01',92,'ok','Bình thường · 2.140 giờ chạy'],['Bơm sinh hoạt SH-02',88,'ok','Bình thường · luân phiên tối nay'],['Máy phát MF',95,'ok','Lần chạy thử gần nhất 14/10']];
+    const health = [['Bơm tăng áp 02',61,'cao','Khởi động 3× mức nền; kiểm tra van một chiều'],['Quạt cấp FAF-02',74,'tb','Chênh áp lọc tăng 40% trong 3 tuần'],['Bơm sinh hoạt 01',92,'ok','Bình thường · 2.140 giờ chạy'],['Bơm sinh hoạt 02',88,'ok','Bình thường · luân phiên tối nay'],['Máy phát',95,'ok','Lần chạy thử gần nhất 14/10']];
     const d = DEVS[S.devSel];
-    return '<div class="g2"><div class="card"><h3>Sơ đồ hầm B2<small>chỉ thiết bị bất thường có màu · bấm vào thiết bị để xem</small></h3>'+floorMap()+
-      '<div class="leg" style="margin-top:6px"><span><i style="background:#E8833A;height:8px;width:8px;border-radius:50%"></i>Cần chú ý (kèm dấu “!”)</span><span><i style="background:#A9B4BF;height:8px;width:8px;border-radius:50%"></i>Bình thường</span></div>' +
+    const A01 = [22,24,21,23,25,20,19], A02 = [23,31,44,52,61,66,70];
+    return '<div class="tbgrid"><div class="card">'+mk(1)+'<h3>Sơ đồ hầm B2 (chỉ thiết bị bất thường có màu)</h3>'+floorMap()+
       '<div class="note" style="margin-top:10px"><b>'+S.devSel+' · '+d.n+'</b> — '+(d.bad ? (S.devSel === 'BTA-02' ? 'Điểm sức khỏe 61/100, khởi động 70 lần/ngày.' : 'Mất kết nối OCPP từ 10:05.') : 'Hoạt động bình thường.')+'</div></div>' +
-      '<div class="card"><h3>Chỉ số sức khỏe thiết bị (0–100)</h3>'+health.map(h => '<div style="margin-bottom:13px"><div class="row sm"><b class="grow">'+h[0]+'</b>'+(h[2] === 'ok' ? '' : lvChip(h[2]))+'<b style="font-size:16px;width:30px;text-align:right">'+h[1]+'</b></div><div class="bar '+(h[2] === 'cao' ? 'warn' : '')+'" style="margin:4px 0"><i style="width:'+h[1]+'%;'+(h[2] === 'tb' ? 'background:#D9A21B' : '')+'"></i></div><div class="mut sm">'+h[3]+'</div></div>').join('')+'</div></div>' +
-      '<div class="g2e"><div class="card"><h3>Lần khởi động/ngày · BTA-02 · 7 ngày gần nhất</h3>'+barChart({data:[22,24,23,35,48,61,70].map((v, i) => ({l:['T2','T3','T4','T5','T6','T7','CN'][i],v:v,hi:i === 6})), h:200, base:23, baseLabel:'mức nền 23', yfmt:v => Math.round(v), labels:true, label:'Số lần khởi động bơm'})+'<p class="mut sm">Xu hướng tăng dần trong 7 ngày là dấu hiệu sớm của hỏng van một chiều.</p></div>' +
-      '<div class="card"><h3>Đề xuất bảo trì</h3><div class="note" style="margin-bottom:10px"><b style="color:var(--navy)">Kiểm tra van một chiều bơm tăng áp 02 trong 7 ngày</b></div><div class="warnbox">Nếu bỏ qua: bơm chạy liên tục, nguy cơ cháy động cơ.</div>' +
-      (S.ticketMade ? '<div class="note" style="margin-top:12px;background:var(--green-t)"><b style="color:var(--green-d)">✓ Đã tạo phiếu #1047</b> · hạn 27/10 · giao KT Hùng. Mở <a href="#/vanhanh/viec">app vận hành → Việc của tôi</a> để xem.</div>' : '<p style="margin-top:12px"><button class="btn primary" data-a="mkTicket">Tạo phiếu việc</button></p>') + '</div></div>';
+      '<div class="col" style="gap:16px"><div class="card">'+mk(2)+'<h3>Chỉ số sức khỏe thiết bị (0–100)</h3>'+health.map(h => '<div class="hl '+h[2]+'"><b class="nm">'+h[0]+'</b><div class="bar"><i style="width:'+h[1]+'%"></i></div><b class="sc">'+h[1]+'</b><div class="why">'+h[3]+'</div></div>').join('')+'</div>' +
+      '<div class="tb2"><div class="card">'+mk(3)+'<h3>Lần khởi động/ngày</h3>'+barChart({data:['T2','T3','T4','T5','T6','T7','CN'].map((l, i) => ({l:l, vs:[A01[i], A02[i]]})), colors:['#B9C3CC','#E8833A'], w:240, h:180, yfmt:v => Math.round(v), labels:true, label:'Số lần khởi động bơm tăng áp 01 và 02'})+
+      '<div class="leg"><span><i style="background:#B9C3CC"></i>BTA-01</span><span><i style="background:#E8833A"></i>BTA-02</span></div></div>' +
+      '<div class="card sugg2">'+mk(4)+'<h3>Đề xuất bảo trì</h3><p class="what">Kiểm tra van một chiều bơm tăng áp 02 trong 7 ngày</p><p class="mut sm">Nếu bỏ qua: bơm chạy liên tục, nguy cơ cháy động cơ</p>' +
+      (S.ticketMade ? '<div class="note" style="margin-top:10px;background:var(--green-t)"><b style="color:var(--green-d)">✓ Đã tạo phiếu #1047</b> · hạn 27/10 · giao KT Hùng. Mở <a href="#/vanhanh/viec">app vận hành → Việc của tôi</a>.</div>' : '<button class="btn primary block" style="margin-top:12px" data-a="mkTicket">Tạo phiếu việc</button>') + '</div></div></div></div>';
   }
 };
 ACT.devSel = d => { S.devSel = d.id; render(); };
 ACT.mkTicket = () => { S.ticketMade = true; addTicket({id:1047,lv:'cao',title:'Kiểm tra van một chiều BTA-02',loc:'Trạm bơm B2',due:'hạn 27/10',st:'new'}); toast('Đã tạo phiếu #1047 · giao KT Hùng'); render(); };
 
 /* ---------- An ninh & vào ra ---------- */
-function secCard(compact){
-  const q = S.sec, st = q.stage, canSee = S.role === 'BQL' || S.role === 'Bảo vệ';
-  if (st === 'idle') return '<div class="card"><h3>Sự kiện camera AI</h3><div class="mut">Chưa có sự kiện. Camera AI đang giám sát 83 camera; mọi sự kiện sẽ được đối chiếu với nhật ký vào ra.</div></div>';
-  const img = '<div class="camimg"><span class="ts">CAM-B2-17 · 20/10 '+q.at+'</span><div style="margin-top:14px">'+personSvg(!q.reveal, 70, 90)+'</div><span class="box" style="left:41%;top:26%;width:20%;height:62%"></span><span class="lbl" style="left:41%;top:20%">NGƯỜI · 0,94</span></div>';
+function secCard(){
+  const q = S.sec, st = q.stage;
+  if (st === 'idle') return '<div class="card">'+mk(1)+'<h3>Sự kiện camera AI</h3><div class="mut">Chưa có sự kiện. Camera AI đang giám sát 83 camera; mọi sự kiện sẽ được đối chiếu với nhật ký vào ra.</div></div>';
+  const img = '<div class="camimg ev">'+personSvg(!q.reveal, 58, 74)+'<span class="box"></span><span class="lbl">NGƯỜI · 0,94</span><span class="ts">CAM-B2-17 · '+q.at+'</span><span class="ts r">phát hiện sau '+fmt(q.secs,1)+' s</span>' +
+    '<button class="rv" data-a="secReveal" title="Ảnh làm mờ mặc định; mở xem được ghi nhật ký">'+ic('eye',13)+' '+(q.reveal ? 'Làm mờ lại' : 'Xem ảnh gốc')+'</button></div>';
   let body = '';
   if (st === 'detected' || st === 'accepted'){
-    body = '<div class="row" style="margin-bottom:8px">'+lvChip('cao')+'<b style="color:var(--navy);font-size:15px">Có người ở khu kỹ thuật Z10 ngoài giờ</b></div>' +
-      '<div class="mut sm" style="margin-bottom:10px">Không có lượt quét vào ra hợp lệ trong 10 phút trước · phát hiện sau '+fmt(q.secs,1)+' giây (mục tiêu ≤ 10 giây)</div>' + img +
-      '<div class="row" style="margin-top:6px"><button class="btn ghost sm" data-a="secReveal">'+ic('eye',14)+' '+(q.reveal ? 'Làm mờ lại' : 'Xem ảnh gốc')+'</button><span class="mut xs">Ảnh làm mờ mặc định; mở xem được ghi nhật ký</span></div>' +
-      (st === 'accepted' ? '<div class="note" style="margin:10px 0"><b>'+q.owner+' (bảo vệ) đang xử lý</b> · nhận lúc 23:48</div>' : '') +
-      (q.esc && st === 'detected' ? '<div class="warnbox" style="margin:10px 0">Không ai nhận sau 3 phút → <b>đã leo thang Trưởng BQL</b> (anh Dũng) qua app + SMS.</div>' : '') +
-      '<div class="row" style="margin-top:12px;flex-wrap:wrap">'+(st === 'detected' ? '<button class="btn primary" data-a="secCall">Gọi bảo vệ</button>' : '')+'<button class="btn" data-a="secVerify">Đã xác minh</button><button class="btn ghost" data-a="secFalse">Báo giả</button></div>';
+    body = img + '<div class="row" style="margin-top:10px">'+lvChip('cao')+'<b class="dt">Có người ở khu kỹ thuật Z10 ngoài giờ</b></div>' +
+      '<div class="mut sm" style="margin-top:4px">Không có lượt quét vào ra hợp lệ trong 10 phút trước</div>' +
+      (st === 'accepted' ? '<div class="note" style="margin-top:10px"><b>'+q.owner+' (bảo vệ) đang xử lý</b> · nhận lúc 23:48</div>' : '') +
+      (q.esc && st === 'detected' ? '<div class="warnbox" style="margin-top:10px">Không ai nhận sau 3 phút → <b>đã leo thang Trưởng BQL</b> (anh Dũng) qua app + SMS.</div>' : '') +
+      '<div class="secacts">'+(st === 'detected' ? '<button class="btn primary" data-a="secCall">Gọi bảo vệ</button>' : '')+'<button class="btn" data-a="secVerify">Đã xác minh</button><button class="btn ghost" data-a="secFalse">Báo giả</button></div>';
   } else if (st === 'closed'){
-    body = '<div class="row" style="margin-bottom:8px"><span class="chip ok">ĐÃ ĐÓNG</span><b style="color:var(--navy)">Khu kỹ thuật Z10 · 23:47</b></div><div class="note" style="background:var(--green-t)">Đã xác minh: nhân viên kỹ thuật trực (Hùng) · đóng lúc 23:52 · '+(q.owner || 'Tuấn')+' xử lý. Sự kiện đã đưa vào <a href="#/web/tro-ly">tóm tắt ca</a>.</div>';
+    body = '<div class="row" style="margin-bottom:8px"><span class="chip ok">ĐÃ ĐÓNG</span><b class="dt">Khu kỹ thuật Z10 · 23:47</b></div><div class="note" style="background:var(--green-t)">Đã xác minh: nhân viên kỹ thuật trực (Hùng) · đóng lúc 23:52 · '+(q.owner || 'Tuấn')+' xử lý. Sự kiện đã đưa vào <a href="#/web/tro-ly">tóm tắt ca</a>.</div>';
   } else {
-    body = '<div class="row" style="margin-bottom:8px"><span class="chip neutral">BÁO GIẢ</span><b style="color:var(--navy)">Khu kỹ thuật Z10 · 23:47</b></div><div class="note">Đã đánh dấu báo giả để hiệu chỉnh vùng phát hiện camera CAM-B2-17. Không tạo cảnh báo mới.</div>';
+    body = '<div class="row" style="margin-bottom:8px"><span class="chip neutral">BÁO GIẢ</span><b class="dt">Khu kỹ thuật Z10 · 23:47</b></div><div class="note">Đã đánh dấu báo giả để hiệu chỉnh vùng phát hiện camera CAM-B2-17. Không tạo cảnh báo mới.</div>';
   }
-  return '<div class="card" style="'+(st === 'detected' || st === 'accepted' ? 'border-color:var(--orange)' : '')+'"><h3>Sự kiện camera AI</h3>'+body+'</div>';
+  return '<div class="card">'+mk(1)+'<h3>Sự kiện camera AI</h3>'+body+'</div>';
 }
 PAGES['an-ninh'] = {
-  title:'An ninh & vào ra', en:'Security & access', meta:() => 'Ca đêm · 23:47 · Kịch bản K8 và phân luồng theo ma trận Z1–Z10',
+  title:'An ninh & vào ra', en:'Security & access', meta:() => 'Ca đêm · 23:47',
   body(){
     const R = S.rooftop, rt = R.hold;
     const log = [['18:02','Cư dân · 4B','Khuôn mặt','Sảnh thang B2 → tầng 4'],['18:05','Khách của 2C','QR mời','Sảnh T1 → tầng 2'],['18:07','30A-•••.12','Biển số','Barie vào hầm'],['18:31','NV nhà hàng','Khuôn mặt + ca','Cửa hậu cần B1'],['18:40','Không xác định','Thẻ','Cửa kỹ thuật Z10'],['19:15','Khách bar','Không định danh','Thang công cộng → tum']];
     const cell = v => '<span class="cell '+(v === '✕' ? 'x' : /^QR/.test(v) ? 'q' : v === 'G' ? 'g' : /^M/.test(v) ? 'm' : '')+'">'+v+'</span>';
     const mat = [['Cư dân','M','M','M*','T','G','✕'],['Khách cư dân','QR','QR','QR*','T','G','✕'],['Khách nhà hàng','T','G','✕','G','G','✕'],['BQL, kỹ thuật','M','M','M','M','M','M']];
-    return '<div class="g2e">'+secCard()+'<div class="col"><div class="card"><h3>Sức chứa theo khu</h3>' +
-      '<div style="margin-bottom:12px"><div class="row sm"><span class="grow">Rooftop</span><b>108 / 120</b><span class="chip cao">90%</span></div><div class="bar warn" style="margin-top:4px"><i style="width:90%"></i></div></div>' +
-      '<div><div class="row sm"><span class="grow">Nhà hàng B1</span><b>86 / 150</b><span class="chip ok">57%</span></div><div class="bar" style="margin-top:4px"><i style="width:57%"></i></div></div>' +
-      '<div class="warnbox" style="margin-top:12px">Rooftop ≥ 90%: <b>đã báo quầy bar</b>, '+(rt ? 'tạm dừng cho thang lên tum.' : 'thang lên tum đã được mở lại thủ công.')+'<div style="margin-top:8px"><button class="btn sm" data-a="rooftopHold">'+(rt ? 'Mở lại thang lên tum' : 'Tạm dừng thang lên tum')+'</button></div></div></div>' +
-      '<div class="card"><h3>Tham số vận hành<small>quyền là tham số, không phải code</small></h3><div class="row" style="flex-wrap:wrap"><span>Giờ mở rooftop</span><input type="time" data-bind="rooftop.from" value="'+R.from+'" style="border:1px solid var(--line);border-radius:6px;padding:5px"><span>đến</span><input type="time" data-bind="rooftop.to" value="'+(R.to === '24:00' ? '23:59' : R.to)+'" style="border:1px solid var(--line);border-radius:6px;padding:5px"><button class="btn primary sm" data-a="rooftopSave">Áp dụng</button></div><div class="mut xs" style="margin-top:6px">Đồng bộ xuống hệ vào ra và thang máy, có nhật ký thay đổi.</div></div></div></div>' +
-      '<div class="card" style="padding:6px 6px 10px"><h3 style="padding:10px 10px 0">Nhật ký vào ra<small>không hiện ảnh khuôn mặt · biển số che một phần</small></h3><table class="tbl"><thead><tr><th>Giờ</th><th>Người</th><th>Cách xác thực</th><th>Điểm vào</th></tr></thead><tbody>'+log.map(l => '<tr class="'+(l[1] === 'Không xác định' ? '' : '')+'"><td>'+l[0]+'</td><td>'+(l[1] === 'Không xác định' ? '<b>'+l[1]+'</b> <span class="chip tb">cần xem</span>' : l[1])+'</td><td>'+l[2]+'</td><td>'+l[3]+'</td></tr>').join('')+'</tbody></table></div>' +
-      '<div class="card"><h3>Ma trận quyền (rút gọn)<small>chỉnh trên phần mềm</small></h3><table class="tbl"><thead><tr><th></th><th>Z1 Sảnh</th><th>Z2 Hầm</th><th>Z3 Căn hộ</th><th>Z8 Nhà hàng</th><th>Z7 Rooftop</th><th>Z10 KT</th></tr></thead><tbody>'+mat.map(r => '<tr><td><b>'+r[0]+'</b></td>'+r.slice(1).map(v => '<td>'+cell(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table><p class="mut sm" style="margin-top:8px">M: khuôn mặt · QR: mã mời · G: trong giờ · T: tự do · *: chỉ tầng được phép · ✕: không được vào</p></div>';
+    const cap = (n, v, m) => { const p = Math.round(v / m * 100), hi = p >= 90; return '<div class="cap"><div class="row"><b class="grow">'+n+'</b><b class="'+(hi ? 'hi' : '')+'">'+p+'%</b></div><div class="bar '+(hi ? 'warn' : 'teal')+'"><i style="width:'+p+'%"></i></div><div class="mut xs">'+v+' / '+m+' người</div></div>'; };
+    return '<div class="an1">'+secCard()+
+      '<div class="card">'+mk(2)+'<h3>Nhật ký vào ra</h3><table class="tbl log"><thead><tr><th>Giờ</th><th>Người</th><th>Cách xác thực</th><th>Điểm vào</th><th></th></tr></thead><tbody>'+log.map(l => { const bad = l[1] === 'Không xác định'; return '<tr><td>'+l[0]+'</td><td class="b">'+l[1]+'</td><td class="mut">'+l[2]+'</td><td>'+l[3]+'</td><td class="okc '+(bad ? 'no' : '')+'" title="'+(bad ? 'Không hợp lệ · cần xem' : 'Hợp lệ')+'">'+ic(bad ? 'x' : 'check', 15, 2.6)+'</td></tr>'; }).join('')+'</tbody></table><p class="mut xs" style="margin-top:8px">Không hiện ảnh khuôn mặt · biển số che một phần</p></div></div>' +
+      '<div class="an2"><div class="card">'+mk(3)+'<h3>Ma trận quyền (rút gọn) · chỉnh trên phần mềm</h3><table class="tbl mat"><thead><tr><th></th><th>Z1 Sảnh</th><th>Z2 Hầm</th><th>Z3 Căn hộ</th><th>Z8 Nhà hàng</th><th>Z7 Rooftop</th><th>Z10 KT</th></tr></thead><tbody>'+mat.map(r => '<tr><td><b>'+r[0]+'</b></td>'+r.slice(1).map(v => '<td>'+cell(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table><p class="mut xs" style="margin-top:8px">M: khuôn mặt · QR: mã mời · G: trong giờ · T: tự do · *: chỉ tầng được phép · ✕: không được vào</p>' +
+      '<div class="param"><span>Giờ mở rooftop</span><input type="time" data-bind="rooftop.from" value="'+R.from+'"><span>đến</span><input type="time" data-bind="rooftop.to" value="'+(R.to === '24:00' ? '23:59' : R.to)+'"><button class="btn primary sm" data-a="rooftopSave">Áp dụng</button><span class="mut xs">Đồng bộ xuống vào ra và thang máy, có nhật ký</span></div></div>' +
+      '<div class="card">'+mk(4)+'<h3>Sức chứa theo khu</h3>'+cap('Rooftop', 108, 120)+cap('Nhà hàng B1', 86, 150) +
+      '<p class="capnote">Rooftop ≥ 90%: đã báo quầy bar, '+(rt ? 'tạm dừng cho thang lên tum' : 'thang lên tum đã được mở lại thủ công')+'</p><button class="lnk" data-a="rooftopHold">'+(rt ? 'Mở lại thang lên tum' : 'Tạm dừng thang lên tum')+'</button></div></div>';
   }
 };
 ACT.rooftopHold = () => { S.rooftop.hold = !S.rooftop.hold; render(); };
@@ -800,22 +960,26 @@ ACT.secVerify = () => { S.sec.stage = 'closed'; S.sec.owner = S.sec.owner || 'Tu
 ACT.secFalse = () => { S.sec.stage = 'false'; logEvt(S.k8.log, '23:51', S.sec.owner || 'Bảo vệ', 'báo giả → đánh dấu hiệu chỉnh vùng phát hiện CAM-B2-17'); render(); };
 
 /* ---------- Trợ lý AI ---------- */
-function shiftSummary(){
+function shiftSections(){
   const leak = S.valve === 'closed' ? 'Rò rỉ tầng 3 (đã đóng van 02:41)' : S.valve === 'rejected' ? 'Rò rỉ tầng 3 (BQL từ chối đóng van, đang xử lý thủ công)' : 'Rò rỉ tầng 3 (chưa xử lý)';
   const sec = { closed:'người ở khu kỹ thuật (đã xác minh: KT trực)', 'false':'người ở khu kỹ thuật (báo giả, đã đánh dấu hiệu chỉnh)', accepted:'người ở khu kỹ thuật (Tuấn đang xử lý)', detected:'người ở khu kỹ thuật (chưa ai nhận)', idle:'không có sự kiện an ninh' }[S.sec.stage];
-  return '<b>Tóm tắt ca đêm 19–20/10 (AI soạn)</b><table style="margin-top:8px"><tbody>' +
-    '<tr><th>3 sự kiện</th><td>'+leak+'; trạm sạc 03 mất kết nối; '+sec+'</td></tr>' +
-    '<tr><th>2 việc tồn</th><td>Phiếu #1043 vệ sinh lọc FAF-02; kiểm tra van một chiều bơm tăng áp 02 ('+(S.ticketMade ? 'phiếu #1047' : 'chưa có phiếu')+')</td></tr>' +
-    '<tr><th>Lưu ý ca ngày</th><td>Thợ sửa ống căn 3B cần QR vào khu kỹ thuật từ 08:30</td></tr>' +
-    '<tr><th>Số liệu</th><td>Điện đêm 412 kWh (dự báo 405); nước đêm bình thường trừ tầng 3</td></tr></tbody></table>';
+  return [
+    ['3 sự kiện', leak+'; trạm sạc 03 mất kết nối; '+sec],
+    ['2 việc tồn', 'Phiếu #1043 vệ sinh lọc FAF-02; kiểm tra van một chiều bơm tăng áp 02'+(S.ticketMade ? ' (phiếu #1047)' : '')],
+    ['Lưu ý ca ngày', 'Thợ sửa ống căn 3B cần QR vào khu kỹ thuật từ 08:30'],
+    ['Số liệu', 'Điện đêm 412 kWh (dự báo 405); nước đêm bình thường trừ tầng 3']
+  ];
+}
+function shiftSummary(){
+  return '<b>Tóm tắt ca đêm 19–20/10 (AI soạn)</b><table style="margin-top:8px"><tbody>'+shiftSections().map(r => '<tr><th>'+r[0]+'</th><td>'+r[1]+'</td></tr>').join('')+'</tbody></table>Xác nhận bàn giao ở khung bên phải.';
 }
 function answer(q){
-  const s = q.toLowerCase(), M = S.model;
+  const s = q.toLowerCase();
   if (/hóa đơn|thanh toán|tiền điện|nhiều nhất|căn nào/.test(s) && S.role === 'Bảo vệ')
     return { h:'Vai trò <b>Bảo vệ</b> không có quyền xem dữ liệu hóa đơn và tiêu thụ theo căn hộ. Mình có thể trả lời về cảnh báo an ninh, vào ra và tóm tắt ca.', src:'Phân quyền theo vai trò · không truy vấn dữ liệu' };
-  if (/bơm/.test(s)) return { h:'Có 1 bơm cần chú ý:<br><b>Bơm tăng áp 02 (B2)</b> khởi động 70 lần hôm qua, gấp 3 lần mức bình thường, nhiều khả năng do van một chiều. '+(S.ticketMade ? 'Đã có phiếu việc #1047.' : 'Đã có đề xuất bảo trì, chưa có phiếu việc.')+'<br>Các bơm còn lại hoạt động bình thường.', src:'BMS Azbil · BTA-02 RUN, START_COUNT · cập nhật 10:15' };
-  if (/điện|căn/.test(s)) return { h:'Ba căn dùng nhiều nhất tháng 10 (đến 19/10):<table><tr><th>Căn</th><th>kWh</th><th>So T9</th></tr><tr><td>5A</td><td>1.284</td><td>+4%</td></tr><tr><td>4B</td><td>1.190</td><td>−2%</td></tr><tr><td>3C</td><td>1.105</td><td>+11%</td></tr></table>Căn 3C tăng 11% chủ yếu từ 22:00–02:00. Xem chi tiết ở <a href="#/web/nang-luong">trang Năng lượng</a>.', src:'đồng hồ PM-CH-3C, PM-CH-4B, PM-CH-5A · cập nhật 10:15' };
-  if (/tóm tắt|ca đêm|giao ca/.test(s)) return { h:shiftSummary(), src:'Nhật ký cảnh báo, phiếu việc, historian · soạn lúc 06:00', shift:true };
+  if (/bơm/.test(s)) return { h:'<b>Có 1 bơm cần chú ý:</b><br><b>Bơm tăng áp 02 (B2)</b> khởi động 70 lần hôm qua, gấp 3 lần mức bình thường, nhiều khả năng do van một chiều. '+(S.ticketMade ? 'Đã có phiếu việc #1047.' : 'Đã có đề xuất bảo trì, chưa có phiếu việc.')+'<br>Các bơm còn lại hoạt động bình thường.', src:'BMS Azbil · BTA-02 RUN, START_COUNT · cập nhật 10:15' };
+  if (/điện|căn/.test(s)) return { h:'<b>Ba căn dùng nhiều nhất tháng 10 (đến 19/10):</b><table><tr><th>Căn</th><th>kWh</th><th>So T9</th></tr><tr><td><b>5A</b></td><td>1.284</td><td>+4%</td></tr><tr><td><b>4B</b></td><td>1.190</td><td>−2%</td></tr><tr><td><b>3C</b></td><td>1.105</td><td>+11%</td></tr></table>Căn 3C tăng 11% chủ yếu từ 22:00–02:00. Xem chi tiết ở <a href="#/web/nang-luong">trang Năng lượng</a>.', src:'đồng hồ PM-CH-3C, PM-CH-4B, PM-CH-5A · cập nhật 10:15' };
+  if (/tóm tắt|ca đêm|giao ca/.test(s)) return { h:shiftSummary(), src:'Nhật ký cảnh báo, phiếu việc, historian · soạn lúc 06:00' };
   if (/faf|chênh áp/.test(s)) return { h:'<b>Chênh áp lọc FAF-02 cao</b> nghĩa là lọc gió quạt cấp tầng mái đang bẩn, quạt phải làm việc nặng hơn. Mức chênh áp đã tăng 40% trong 3 tuần.<br>Xử lý: vệ sinh hoặc thay lọc (phiếu #1043, hạn 22/10); không cần dừng quạt.', src:'SOP-HVAC-07 · cảm biến DP-FAF-02 · cập nhật 11:12' };
   if (/cảnh báo/.test(s)) return { h:'Tuần này (14–20/10) có <b>19 cảnh báo</b>: 2 khẩn, 5 cao, 9 trung bình, 3 thông tin. 2 sự cố lặp lại: <b>bơm tăng áp 02</b> khởi động dày (4 lần) và <b>trạm sạc 03</b> mất kết nối (2 lần).', src:'Trung tâm cảnh báo · 14/10–20/10 · cập nhật 10:15' };
   if (/bảo trì|lịch/.test(s)) return { h:'Lịch bảo trì tuần tới:<table><tr><th>Ngày</th><th>Việc</th></tr><tr><td>22/10</td><td>Vệ sinh lọc FAF-02 (#1043)</td></tr><tr><td>22/10</td><td>Bảo trì thang máy số 2, 09:00–11:00</td></tr><tr><td>24/10</td><td>Chạy thử máy phát định kỳ</td></tr><tr><td>27/10</td><td>Kiểm tra van một chiều BTA-02 '+(S.ticketMade ? '(#1047)' : '(đề xuất, chưa có phiếu)')+'</td></tr></table>', src:'Lịch bảo trì, phiếu việc · cập nhật 10:15' };
@@ -827,22 +991,27 @@ function seedChat(){
   S.chat.push({r:'u',h:'Tháng này căn nào dùng điện nhiều nhất?'}); const a2 = answer('căn điện'); S.chat.push({r:'a',h:a2.h,src:a2.src});
 }
 PAGES['tro-ly'] = {
-  title:'Trợ lý AI', en:'AI assistant', meta:() => 'Mô hình: '+S.model+' · Chỉ đọc, không điều khiển thiết bị',
+  title:'Trợ lý AI', en:'AI assistant',
+  meta:() => 'Mô hình: <select class="msel" data-c="model" aria-label="Mô hình"><option '+(S.model === 'Claude' ? 'selected' : '')+'>Claude</option><option '+(S.model === 'Gemini' ? 'selected' : '')+'>Gemini</option></select> · Chỉ đọc',
   body(){
     seedChat();
-    const msgs = S.chat.map(m => m.r === 'u' ? '<div class="msg u">'+esc(m.h)+'</div>' : '<div class="msg a">'+m.h+(m.shift && !S.handover ? '<div style="margin-top:10px"><button class="btn primary sm" data-a="handover">Xác nhận bàn giao ca</button></div>' : '')+(m.shift && S.handover ? '<div class="chip ok" style="margin-top:10px">Đã bàn giao · '+S.role+' xác nhận · lưu nhật ký vận hành</div>' : '')+'<div class="src">Nguồn: '+m.src+' · mô hình '+S.model+'</div></div>').join('') +
+    const tbl = S.chat.findIndex(m => m.r === 'a' && m.h.indexOf('<table') > -1);
+    const msgs = S.chat.map((m, i) => m.r === 'u' ? '<div class="msg u">'+esc(m.h)+'</div>'
+      : '<div class="msg a">'+(i === tbl ? mk(2) : '')+'<span class="aic">'+ic('spark', 15)+'</span><div class="mb">'+m.h+'<div class="src">Nguồn: '+m.src+' · mô hình '+S.model+'</div></div></div>').join('') +
       (S.busy ? '<div class="msg a typing"><span></span><span></span><span></span></div>' : '');
-    return '<div class="card" style="max-width:860px;width:100%;margin:0 auto"><div class="row" style="margin-bottom:12px"><b style="color:var(--navy)">Hỏi bằng tiếng Việt, trả lời từ dữ liệu thật</b><span class="sp"></span><select data-c="model" style="border:1px solid var(--line);border-radius:8px;padding:5px 8px"><option '+(S.model === 'Claude' ? 'selected' : '')+'>Claude</option><option '+(S.model === 'Gemini' ? 'selected' : '')+'>Gemini</option></select><span class="chip neutral">Chỉ đọc</span></div>' +
+    return '<div class="tlgrid"><div class="card chatc">'+mk(1) +
       '<div class="chat" data-sk="chat" data-scrollend>'+msgs+'</div>' +
-      '<div class="sugg" style="margin:14px 0 10px"><button data-a="ask" data-q="Tóm tắt ca đêm">Tóm tắt ca đêm</button><button data-a="ask" data-q="Cảnh báo tuần này">Cảnh báo tuần này</button><button data-a="ask" data-q="Lịch bảo trì tuần tới">Lịch bảo trì tuần tới</button><button data-a="ask" data-q="Cảnh báo chênh áp lọc FAF-02 nghĩa là gì?">FAF-02 nghĩa là gì?</button></div>' +
-      '<div class="askbox"><input id="askin" placeholder="Hỏi về thiết bị, cảnh báo, điện nước…" data-enter="askInput" autocomplete="off"><button class="btn primary" data-a="askInput">Gửi</button></div></div>';
+      '<div class="sugg rel" style="margin:14px 0 10px">'+mk(3)+'<button data-a="ask" data-q="Tóm tắt ca đêm">Tóm tắt ca đêm</button><button data-a="ask" data-q="Cảnh báo tuần này">Cảnh báo tuần này</button><button data-a="ask" data-q="Lịch bảo trì tuần tới">Lịch bảo trì tuần tới</button></div>' +
+      '<div class="askbox"><input id="askin" placeholder="Hỏi về thiết bị, cảnh báo, điện nước…" data-enter="askInput" autocomplete="off"><button class="send" data-a="askInput" aria-label="Gửi">'+ic('send', 17)+'</button></div></div>' +
+      '<div class="card shiftc">'+mk(4)+'<h3>Tóm tắt ca đêm 19–20/10 (AI soạn)</h3>'+shiftSections().map(r => '<div class="ss"><b>'+r[0]+'</b><p>'+r[1]+'</p></div>').join('') +
+      (S.handover ? '<div class="chip ok" style="margin-top:auto">Đã bàn giao · '+S.role+' xác nhận · lưu nhật ký vận hành</div>' : '<button class="btn primary block" style="margin-top:auto" data-a="handover">Xác nhận bàn giao ca</button>') + '</div></div>';
   }
 };
 ACT.model = (d, el) => { S.model = el.value; render(); };
 function doAsk(q){
   if (!q.trim() || S.busy) return;
   S.chat.push({r:'u',h:q}); S.busy = true; render();
-  setTimeout(() => { const a = answer(q); S.chat.push({r:'a',h:a.h,src:a.src,shift:a.shift}); S.busy = false; render(); }, 750);
+  setTimeout(() => { const a = answer(q); S.chat.push({r:'a',h:a.h,src:a.src}); S.busy = false; render(); }, 750);
 }
 ACT.ask = d => doAsk(d.q);
 ACT.askInput = () => { const i = document.getElementById('askin'); doAsk(i ? i.value : ''); };

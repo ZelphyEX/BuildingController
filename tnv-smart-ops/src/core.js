@@ -54,7 +54,9 @@ const ICONS = {
   send:'<path d="M3 11l18-8-8 18-2-8z"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h0"/>',
-  play:'<path d="M7 4l13 8-13 8z"/>'
+  play:'<path d="M7 4l13 8-13 8z"/>',
+  bars:'<path d="M6 20v-6M12 20V5M18 20v-9"/>',
+  fan:'<circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 1-7 4-7s3 4-2 7M14 12c4 0 7 1 7 4s-4 3-7-2M12 14c0 4-1 7-4 7s-3-4 2-7M10 12c-4 0-7-1-7-4s4-3 7 2"/>'
 };
 function ic(n, s, sw){ return '<svg width="'+(s||20)+'" height="'+(s||20)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.8)+'" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[n]||'')+'</svg>'; }
 
@@ -66,7 +68,7 @@ function lvChip(l, full){ return '<span class="chip '+l+'">'+(full ? LV[l][1] : 
 /* ---------- Biểu đồ SVG ---------- */
 /* series: [{d:[...], c:'#..', dash:true, w:2, area:true}] ; null = đứt đoạn */
 function lineChart(o){
-  const W = o.w || 560, H = o.h || 220, pl = 40, pr = 12, pt = 10, pb = 26;
+  const W = o.w || 560, H = o.h || 220, pl = 40, pr = o.pr || 12, pt = 10, pb = 26;
   const n = Math.max.apply(null, o.series.map(s => s.d.length));
   const all = [].concat.apply([], o.series.map(s => s.d.filter(v => v != null)));
   let lo = o.min != null ? o.min : Math.floor(Math.min.apply(null, all) * 0.9);
@@ -96,13 +98,21 @@ function lineChart(o){
 /* bars: [{l, v, hi}] – nền xám, chỉ tô màu cột bất thường (nguyên tắc "xám trước, màu sau") */
 function barChart(o){
   const W = o.w || 520, H = o.h || 200, pl = 34, pb = 26, pt = 16;
-  const mx = o.max || Math.max.apply(null, o.data.map(d => d.v)) * 1.15;
+  const mx = o.max || Math.max.apply(null, o.data.map(d => d.vs ? Math.max.apply(null, d.vs) : d.v)) * 1.15;
   const bw = (W - pl - 8) / o.data.length;
   let s = '';
   for (let k = 0; k <= 2; k++){ const y = pt + (H - pt - pb) * (1 - k / 2); s += '<line x1="'+pl+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#e6ebf0"/><text x="'+(pl-5)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="#6B7785">'+(o.yfmt ? o.yfmt(mx*k/2) : Math.round(mx*k/2*10)/10)+'</text>'; }
   o.data.forEach((d, i) => {
+    if (d.vs){ // nhóm cột: o.colors[k] cho chuỗi k
+      const gw = bw * .72 / d.vs.length;
+      d.vs.forEach((v, k) => { const h = (H - pt - pb) * v / mx, x = pl + i * bw + bw * .14 + k * gw, y = H - pb - h;
+        s += '<rect x="'+x+'" y="'+y+'" width="'+(gw - 2)+'" height="'+h+'" rx="2" fill="'+o.colors[k]+'"/>';
+        if (o.labels && k === d.vs.length - 1) s += '<text x="'+(x+gw/2-1)+'" y="'+(y-4)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#1A2330">'+v+'</text>'; });
+      s += '<text x="'+(pl + i * bw + bw / 2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="11" fill="#6B7785">'+d.l+'</text>';
+      return;
+    }
     const h = (H - pt - pb) * d.v / mx, x = pl + i * bw + bw * .18, w = bw * .64, y = H - pb - h;
-    s += '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+(d.hi ? (o.hiColor || '#E8833A') : '#C5CED7')+'"/>';
+    s += '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+(d.hi ? (o.hiColor || '#E8833A') : (o.color || '#C5CED7'))+'"/>';
     s += '<text x="'+(x+w/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="11" fill="#6B7785">'+d.l+'</text>';
     if (d.hi || o.labels) s += '<text x="'+(x+w/2)+'" y="'+(y-4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#1A2330">'+(o.vfmt ? o.vfmt(d.v) : d.v)+'</text>';
   });
@@ -111,7 +121,7 @@ function barChart(o){
 }
 function hbars(rows, o){
   o = o || {}; const mx = o.max || Math.max.apply(null, rows.map(r => r.v));
-  return rows.map(r => '<div style="margin-bottom:10px"><div class="row sm" style="margin-bottom:3px"><span class="grow">'+r.l+'</span><b>'+(o.fmt ? o.fmt(r.v) : r.v)+'</b></div><div class="bar '+(r.warn ? 'warn' : '')+'"><i style="width:'+Math.min(100, r.v / mx * 100)+'%"></i></div></div>').join('');
+  return rows.map(r => '<div style="margin-bottom:10px"><div class="row sm" style="margin-bottom:3px"><span class="grow">'+r.l+'</span><b>'+(o.fmt ? o.fmt(r.v) : r.v)+'</b></div><div class="bar '+(r.warn ? 'warn' : '')+'"><i style="width:'+Math.min(100, r.v / mx * 100)+'%'+(o.color ? ';background:'+o.color : '')+'"></i></div></div>').join('');
 }
 /* QR minh họa (không phải mã thật): lưới 25x25 sinh từ hạt giống */
 function qrSvg(seed, size){
@@ -133,8 +143,8 @@ function personSvg(blur, w, h){
 
 /* ---------- Dữ liệu minh họa ---------- */
 const APTS = (function(){
-  const raw = [['2A',612,14,0],['2B',540,11,-3],['2C',735,16,38],['2D',498,9,1],['3A',702,13,2],['3B',655,21,6],['3C',1105,17,11],['3D',590,12,-1],
-    ['4A',820,15,3],['4B',1190,18,-2],['4C',640,10,0],['4D',710,14,4],['5A',1284,22,4],['5B',760,13,-4],['5C',905,16,5],['5D',580,11,-2]];
+  const raw = [['2A',940,14,0],['2B',540,11,-3],['2C',735,16,38],['2D',498,9,1],['3A',702,13,2],['3B',655,21,6],['3C',1105,17,11],['3D',590,12,-1],
+    ['4A',820,15,3],['4B',1190,18,-2],['4C',640,10,0],['4D',905,14,4],['5A',1284,22,4],['5B',760,13,-4],['5C',860,16,5],['5D',980,11,-2]];
   return raw.map(r => ({ id:r[0], kwh:r[1], m3:r[2], dv:r[3], e:Math.round(r[1]*2697.5/1000)*1000, w:r[2]*27500 }));
 })();
 const DAYS_F = (function(){ // dự báo 31 ngày (MWh), 20 ngày đầu cộng = 51,3
@@ -145,8 +155,8 @@ const DAYS_A = (function(){ // thực tế 20 ngày, cộng = 48,2
   const raw = DAYS_F.slice(0, 20).map((v, i) => v * (0.94 + 0.03 * Math.sin(i * 1.7)));
   const k = 48.2 / raw.reduce((a, b) => a + b, 0); return raw.map(v => +(v * k).toFixed(2));
 })();
-const HOUR_F = [118,112,110,108,110,124,158,196,224,238,242,246,252,248,240,236,232,238,262,288,282,248,196,148];
-const HOUR_A = [121,114,113,109,112,126,162,201,229,243,247]; // đến 10:00
+const HOUR_F = [36,33,32,44,80,94,101,100,95,121,112,64]; // mỗi 2 giờ, 00h–22h (kW)
+const HOUR_A = [38,34,33,45,82,96,104,99,92,118,110,62];
 
 function initState(){
   return {
