@@ -30,7 +30,7 @@ const ICONS = {
   shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
   spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
   file:'<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>',
-  cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+  cog:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
   qr:'<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h3v3h-3zM20 14v3M14 20h3M20 20h0"/>',
   door:'<path d="M5 21V4a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="12.5" cy="12" r=".8"/>',
   receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
@@ -54,7 +54,14 @@ const ICONS = {
   send:'<path d="M3 11l18-8-8 18-2-8z"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h0"/>',
-  play:'<path d="M7 4l13 8-13 8z"/>'
+  play:'<path d="M7 4l13 8-13 8z"/>',
+  bars:'<path d="M6 20v-6M12 20V5M18 20v-9"/>',
+  fan:'<circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 1-7 4-7s3 4-2 7M14 12c4 0 7 1 7 4s-4 3-7-2M12 14c0 4-1 7-4 7s-3-4 2-7M10 12c-4 0-7-1-7-4s4-3 7 2"/>',
+  userplus:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4.4 3.1-7 7-7s7 2.6 7 7M19 8v6M16 11h6"/>',
+  key:'<circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8L20 3M16 7l3 3M14 9l2 2"/>',
+  pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+  checkc:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
+  logout:'<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 8l-4 4 4 4M6 12h10"/>'
 };
 function ic(n, s, sw){ return '<svg width="'+(s||20)+'" height="'+(s||20)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.8)+'" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[n]||'')+'</svg>'; }
 
@@ -66,7 +73,7 @@ function lvChip(l, full){ return '<span class="chip '+l+'">'+(full ? LV[l][1] : 
 /* ---------- Biểu đồ SVG ---------- */
 /* series: [{d:[...], c:'#..', dash:true, w:2, area:true}] ; null = đứt đoạn */
 function lineChart(o){
-  const W = o.w || 560, H = o.h || 220, pl = 40, pr = 12, pt = 10, pb = 26;
+  const W = o.w || 560, H = o.h || 220, pl = 40, pr = o.pr || 12, pt = 10, pb = 26;
   const n = Math.max.apply(null, o.series.map(s => s.d.length));
   const all = [].concat.apply([], o.series.map(s => s.d.filter(v => v != null)));
   let lo = o.min != null ? o.min : Math.floor(Math.min.apply(null, all) * 0.9);
@@ -96,13 +103,21 @@ function lineChart(o){
 /* bars: [{l, v, hi}] – nền xám, chỉ tô màu cột bất thường (nguyên tắc "xám trước, màu sau") */
 function barChart(o){
   const W = o.w || 520, H = o.h || 200, pl = 34, pb = 26, pt = 16;
-  const mx = o.max || Math.max.apply(null, o.data.map(d => d.v)) * 1.15;
+  const mx = o.max || Math.max.apply(null, o.data.map(d => d.vs ? Math.max.apply(null, d.vs) : d.v)) * 1.15;
   const bw = (W - pl - 8) / o.data.length;
   let s = '';
   for (let k = 0; k <= 2; k++){ const y = pt + (H - pt - pb) * (1 - k / 2); s += '<line x1="'+pl+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#e6ebf0"/><text x="'+(pl-5)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="#6B7785">'+(o.yfmt ? o.yfmt(mx*k/2) : Math.round(mx*k/2*10)/10)+'</text>'; }
   o.data.forEach((d, i) => {
+    if (d.vs){ // nhóm cột: o.colors[k] cho chuỗi k
+      const gw = bw * .72 / d.vs.length;
+      d.vs.forEach((v, k) => { const h = (H - pt - pb) * v / mx, x = pl + i * bw + bw * .14 + k * gw, y = H - pb - h;
+        s += '<rect x="'+x+'" y="'+y+'" width="'+(gw - 2)+'" height="'+h+'" rx="2" fill="'+o.colors[k]+'"/>';
+        if (o.labels && k === d.vs.length - 1) s += '<text x="'+(x+gw/2-1)+'" y="'+(y-4)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#1A2330">'+v+'</text>'; });
+      s += '<text x="'+(pl + i * bw + bw / 2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="11" fill="#6B7785">'+d.l+'</text>';
+      return;
+    }
     const h = (H - pt - pb) * d.v / mx, x = pl + i * bw + bw * .18, w = bw * .64, y = H - pb - h;
-    s += '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+(d.hi ? (o.hiColor || '#E8833A') : '#C5CED7')+'"/>';
+    s += '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+(d.hi ? (o.hiColor || '#E8833A') : (o.color || '#C5CED7'))+'"/>';
     s += '<text x="'+(x+w/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="11" fill="#6B7785">'+d.l+'</text>';
     if (d.hi || o.labels) s += '<text x="'+(x+w/2)+'" y="'+(y-4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#1A2330">'+(o.vfmt ? o.vfmt(d.v) : d.v)+'</text>';
   });
@@ -111,7 +126,7 @@ function barChart(o){
 }
 function hbars(rows, o){
   o = o || {}; const mx = o.max || Math.max.apply(null, rows.map(r => r.v));
-  return rows.map(r => '<div style="margin-bottom:10px"><div class="row sm" style="margin-bottom:3px"><span class="grow">'+r.l+'</span><b>'+(o.fmt ? o.fmt(r.v) : r.v)+'</b></div><div class="bar '+(r.warn ? 'warn' : '')+'"><i style="width:'+Math.min(100, r.v / mx * 100)+'%"></i></div></div>').join('');
+  return rows.map(r => '<div style="margin-bottom:10px"><div class="row sm" style="margin-bottom:3px"><span class="grow">'+r.l+'</span><b>'+(o.fmt ? o.fmt(r.v) : r.v)+'</b></div><div class="bar '+(r.warn ? 'warn' : '')+'"><i style="width:'+Math.min(100, r.v / mx * 100)+'%'+(o.color ? ';background:'+o.color : '')+'"></i></div></div>').join('');
 }
 /* QR minh họa (không phải mã thật): lưới 25x25 sinh từ hạt giống */
 function qrSvg(seed, size){
@@ -133,8 +148,8 @@ function personSvg(blur, w, h){
 
 /* ---------- Dữ liệu minh họa ---------- */
 const APTS = (function(){
-  const raw = [['2A',612,14,0],['2B',540,11,-3],['2C',735,16,38],['2D',498,9,1],['3A',702,13,2],['3B',655,21,6],['3C',1105,17,11],['3D',590,12,-1],
-    ['4A',820,15,3],['4B',1190,18,-2],['4C',640,10,0],['4D',710,14,4],['5A',1284,22,4],['5B',760,13,-4],['5C',905,16,5],['5D',580,11,-2]];
+  const raw = [['2A',940,14,0],['2B',540,11,-3],['2C',735,16,38],['2D',498,9,1],['3A',702,13,2],['3B',655,21,6],['3C',1105,17,11],['3D',590,12,-1],
+    ['4A',820,15,3],['4B',1190,18,-2],['4C',640,10,0],['4D',905,14,4],['5A',1284,22,4],['5B',760,13,-4],['5C',860,16,5],['5D',980,11,-2]];
   return raw.map(r => ({ id:r[0], kwh:r[1], m3:r[2], dv:r[3], e:Math.round(r[1]*2697.5/1000)*1000, w:r[2]*27500 }));
 })();
 const DAYS_F = (function(){ // dự báo 31 ngày (MWh), 20 ngày đầu cộng = 51,3
@@ -145,8 +160,8 @@ const DAYS_A = (function(){ // thực tế 20 ngày, cộng = 48,2
   const raw = DAYS_F.slice(0, 20).map((v, i) => v * (0.94 + 0.03 * Math.sin(i * 1.7)));
   const k = 48.2 / raw.reduce((a, b) => a + b, 0); return raw.map(v => +(v * k).toFixed(2));
 })();
-const HOUR_F = [118,112,110,108,110,124,158,196,224,238,242,246,252,248,240,236,232,238,262,288,282,248,196,148];
-const HOUR_A = [121,114,113,109,112,126,162,201,229,243,247]; // đến 10:00
+const HOUR_F = [36,33,32,44,80,94,101,100,95,121,112,64]; // mỗi 2 giờ, 00h–22h (kW)
+const HOUR_A = [38,34,33,45,82,96,104,99,92,118,110,62];
 
 function initState(){
   return {
@@ -168,8 +183,9 @@ function initState(){
     rooftop:{ open:true, from:'17:00', to:'24:00', hold:true },
     model:'Claude', chat:[], busy:false, handover:false,
     /* App cư dân (slide 11-12) */
-    res:{ screen:'home', invite:null, push:null, sheet:null, paid:false, hist:[],
-          form:{ name:'Nguyễn Lan', phone:'0912 345 678', date:'Hôm nay, 20/10', slot:'15:00 – 18:00', car:true, plate:'30G-123.45' },
+    res:{ screen:'home', invite:null, push:null, sheet:null, paid:false, hist:[], err:null, billMonth:'T10',
+          form:{ name:'Nguyễn Lan', phone:'0912 345 678', day:'0', slot:'15:00 – 18:00', car:true, bike:false, plate:'30G-123.45' },
+          profile:{ name:'Minh', phone:'0987 654 321', email:'minh.4b@gmail.com' }, edit:null,
           face:{ consent:false, state:'idle' } },
     k2:{ reader:null, bell:null, log:[] },
     k8:{ log:[] },
