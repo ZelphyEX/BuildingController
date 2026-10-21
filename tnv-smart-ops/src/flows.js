@@ -29,7 +29,7 @@ VIEWS[''] = function(){
     '<li><a href="#/cudan/khuonmat">Đăng ký khuôn mặt</a> và <a href="#/design">hệ thống thiết kế</a>.</li></ol></div>' +
     '<p class="sub-foot">Tài liệu tham chiếu: Gimasys_Prototype_UXUI_TNV.pptx · Hồ sơ đề xuất giải pháp TNTM AI (dự thảo 0.1). Mọi tên, số liệu, mã thiết bị trong bản này là minh họa.</p></div>';
 };
-ACT.persona = d => { S.role = d.role; go(d.to); };
+ACT.persona = d => { S.role = d.role; S.ops.user = { 'Bảo vệ':'baove', 'Kỹ thuật':'kythuat', 'BQL':'bql' }[d.role] || S.ops.user; go(d.to); };
 
 /* ---------- K2 ---------- */
 function k2Reset(){
@@ -84,7 +84,7 @@ ACT.resBellOpen = () => { S.k2.bell = 'opened'; S.res.sheet = null; logEvt(S.k2.
 ACT.resBellNo = () => { S.k2.bell = 'rejected'; S.res.sheet = null; logEvt(S.k2.log, '15:06', 'Cư dân 4B', 'từ chối mở cửa'); render(); };
 
 /* ---------- K8 ---------- */
-function k8Reset(){ S.sec = { stage:'idle', owner:null, at:'23:47:12', secs:7.9, live:false, reveal:false, esc:false }; S.k8 = { log:[], init:true }; S.ops.screen = 'canh-bao'; S.ops.sheet = null; }
+function k8Reset(){ S.sec = { stage:'idle', owner:null, at:'23:47:12', secs:7.9, live:false, reveal:false, esc:false }; S.k8 = { log:[], init:true }; S.ops.screen = 'canh-bao'; S.ops.sheet = null; S.ops.user = 'baove'; }
 VIEWS.k8 = function(){
   if (!S.k8.init) k8Reset();
   const st = S.sec.stage, started = st !== 'idle', owned = st === 'accepted' || st === 'closed' || st === 'false', done = st === 'closed' || st === 'false';

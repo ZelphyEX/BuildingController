@@ -275,3 +275,16 @@ a{color:var(--teal)}
   .screen{border-radius:0}.notch{display:none}
 }
 .tbl th.tr{text-align:right}
+
+/* App vận hành: chữ thân tối thiểu 16px (nguyên tắc UX số 5); chú thích 14px, nhãn mức/tab 13px */
+.screen.ops .sm,.screen.ops .note,.screen.ops .warnbox{font-size:16px}
+.screen.ops .xs{font-size:14px}
+.screen.ops .chip{font-size:13px;padding:3px 10px}
+.screen.ops .btn.sm{font-size:14px;min-height:40px}
+.screen.ops .tabbar{height:74px}
+.screen.ops .tabbar button{font-size:13px}
+.screen.ops .tabbar .bdg{font-size:12px}
+.uchip{display:inline-flex;align-items:center;gap:4px;min-height:40px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:14px;font-weight:700;color:var(--ink2);white-space:nowrap}
+.urow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px;border-radius:14px;border:2px solid var(--line);background:#fff;margin-bottom:10px;min-height:60px}
+.urow.on{border-color:var(--teal);background:var(--tealbg)}
+.urow .av{width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}

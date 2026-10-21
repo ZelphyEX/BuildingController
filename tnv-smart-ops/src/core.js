@@ -152,7 +152,7 @@ function initState(){
   return {
     lang:'vi', role:'BQL', ux:false,
     /* Trung tâm cảnh báo (slide 6) */
-    alertFilter:'all', alertSel:1, valve:'open', valveLog:null,
+    alertFilter:'all', alertSel:1, valve:'open', valveLog:null, valveBy:null,
     alerts:[
       {id:1,lv:'khan',time:'02:31',loc:'T3 · 3B',desc:'Rò rỉ + lưu lượng liên tục 0,8 m³/h',st:'Chưa xác nhận'},
       {id:2,lv:'cao',time:'09:30',loc:'B2 · bơm',desc:'Bơm tăng áp 02 khởi động 3× bình thường',st:'KT Hùng'},
@@ -174,7 +174,7 @@ function initState(){
     k2:{ reader:null, bell:null, log:[] },
     k8:{ log:[] },
     /* App vận hành (slide 13) */
-    ops:{ screen:'canh-bao', sheet:null, sel:null, scanned:false, live:false,
+    ops:{ screen:'canh-bao', sheet:null, sel:null, selAlert:null, scanned:false, live:false, user:'baove',
           ai:{ st:'pending', deadline: Date.now() + 10*60*1000, reason:null },
           tickets:[
             {id:1043,lv:'tb',title:'Vệ sinh lọc FAF-02',loc:'Tầng mái',due:'hạn 22/10',st:'new'},

@@ -115,7 +115,7 @@ function alertDetail(a){
       lineChart({ series:[{d:fl,c:closed ? '#2E9E5B' : '#D64545',w:2.4,area:true},{d:fl.map(() => .057),c:'#8A96A3',dash:true,w:1.5}], w:430, h:150, min:0, max:1, yfmt:v => fmt(v,1), xl:i => { const m = 22*60 + i*30; return String(Math.floor(m/60)%24).padStart(2,'0')+':'+(m%60 ? '30' : '00'); }, xevery:2, label:'Lưu lượng đêm' }) +
       '<div class="leg"><span><i style="background:'+(closed ? '#2E9E5B' : '#D64545')+'"></i>Lưu lượng m³/h</span><span><i style="background:#8A96A3"></i>Mức nền ban đêm</span></div>' +
       (closed
-        ? '<div class="note" style="margin-top:12px;background:var(--green-t)"><b style="color:var(--green-d)">✓ Đã đóng van V-T3-02 lúc 02:41</b><br>Người duyệt: '+S.role+' · phản hồi van: ĐÓNG · lưu lượng về 0 · nhật ký lệnh #L-2031 (giá trị cũ MỞ → mới ĐÓNG)</div>'
+        ? '<div class="note" style="margin-top:12px;background:var(--green-t)"><b style="color:var(--green-d)">✓ Đã đóng van V-T3-02 lúc 02:41</b><br>Người duyệt: '+(S.valveBy || S.role)+' · phản hồi van: ĐÓNG · lưu lượng về 0 · nhật ký lệnh #L-2031 (giá trị cũ MỞ → mới ĐÓNG)</div>'
         : S.valve === 'rejected' ? '<div class="warnbox" style="margin-top:12px">Đề xuất đã bị từ chối. Cảnh báo vẫn mở, cần xử lý thủ công.</div>'
         : '<div class="note" style="margin-top:12px"><b style="color:var(--navy)">AI đề xuất:</b> Đóng van điện từ V-T3-02 (khu căn 3B).<br><b>Căn cứ:</b> cảm biến rò xác nhận; lưu lượng gấp 14 lần mức nền ban đêm trong 30 phút. Không ảnh hưởng nước chữa cháy.<div class="mut sm" style="margin-top:6px">Mức can thiệp: ghi có giới hạn · ưu tiên BACnet 12 · có nhật ký</div></div>') +
       (S.valve === 'open' && canAct ? '<div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="btn primary" data-a="valveOk">Phê duyệt đóng van</button><button class="btn" data-a="alertTicket" data-id="1">Tạo phiếu việc</button><button class="btn danger" data-a="valveNo">Từ chối</button></div>' : '') +
@@ -130,8 +130,9 @@ function alertDetail(a){
 ACT.alertFilter = d => { S.alertFilter = d.v; render(); };
 ACT.alertSelect = d => { S.alertSel = +d.id; render(); };
 ACT.alertAck = d => { const a = S.alerts.filter(x => x.id === +d.id)[0]; a.st = 'Đã xác nhận'; toast('Đã xác nhận · ghi nhật ký'); render(); };
-ACT.valveOk = () => { S.valve = 'closed'; S.alerts[0].st = 'Đã đóng van 02:41'; toast('Đã gửi lệnh đóng V-T3-02 · van phản hồi ĐÓNG'); render(); };
-ACT.valveNo = () => { S.valve = 'rejected'; S.alerts[0].st = 'BQL từ chối'; toast('Đã từ chối đề xuất · ghi nhật ký'); render(); };
+/* d.by === 'ops': thao tác từ app vận hành, người thực hiện là người dùng đang đăng nhập trên điện thoại */
+ACT.valveOk = d => { S.valve = 'closed'; S.valveBy = d.by === 'ops' ? opsWho() : S.role; S.alerts[0].st = 'Đã đóng van 02:41'; toast('Đã gửi lệnh đóng V-T3-02 · van phản hồi ĐÓNG'); render(); };
+ACT.valveNo = d => { S.valve = 'rejected'; S.valveBy = d.by === 'ops' ? opsWho() : S.role; S.alerts[0].st = (d.by === 'ops' ? opsUser().role : 'BQL') + ' từ chối'; toast('Đã từ chối đề xuất · ghi nhật ký'); render(); };
 function addTicket(tk){ if (!S.ops.tickets.some(x => x.id === tk.id)){ S.ops.tickets.unshift(tk); return true; } return false; }
 ACT.alertTicket = d => {
   const a = S.alerts.filter(x => x.id === +d.id)[0];
@@ -221,7 +222,7 @@ function secCard(compact){
     body = '<div class="row" style="margin-bottom:8px">'+lvChip('cao')+'<b style="color:var(--navy);font-size:15px">Có người ở khu kỹ thuật Z10 ngoài giờ</b></div>' +
       '<div class="mut sm" style="margin-bottom:10px">Không có lượt quét vào ra hợp lệ trong 10 phút trước · phát hiện sau '+fmt(q.secs,1)+' giây (mục tiêu ≤ 10 giây)</div>' + img +
       '<div class="row" style="margin-top:6px"><button class="btn ghost sm" data-a="secReveal">'+ic('eye',14)+' '+(q.reveal ? 'Làm mờ lại' : 'Xem ảnh gốc')+'</button><span class="mut xs">Ảnh làm mờ mặc định; mở xem được ghi nhật ký</span></div>' +
-      (st === 'accepted' ? '<div class="note" style="margin:10px 0"><b>'+q.owner+' (bảo vệ) đang xử lý</b> · nhận lúc 23:48</div>' : '') +
+      (st === 'accepted' ? '<div class="note" style="margin:10px 0"><b>'+q.owner+' ('+(q.ownerRole || 'Bảo vệ')+') đang xử lý</b> · nhận lúc 23:48</div>' : '') +
       (q.esc && st === 'detected' ? '<div class="warnbox" style="margin:10px 0">Không ai nhận sau 3 phút → <b>đã leo thang Trưởng BQL</b> (anh Dũng) qua app + SMS.</div>' : '') +
       '<div class="row" style="margin-top:12px;flex-wrap:wrap">'+(st === 'detected' ? '<button class="btn primary" data-a="secCall">Gọi bảo vệ</button>' : '')+'<button class="btn" data-a="secVerify">Đã xác minh</button><button class="btn ghost" data-a="secFalse">Báo giả</button></div>';
   } else if (st === 'closed'){
@@ -249,16 +250,20 @@ PAGES['an-ninh'] = {
 };
 ACT.rooftopHold = () => { S.rooftop.hold = !S.rooftop.hold; render(); };
 ACT.rooftopSave = () => { toast('Đã áp dụng giờ rooftop '+S.rooftop.from+'–'+S.rooftop.to+' · đồng bộ xuống vào ra/thang máy'); };
-ACT.secReveal = () => { if (S.role !== 'BQL' && S.role !== 'Bảo vệ'){ toast('Vai trò “'+S.role+'” không được xem ảnh gốc'); return; } S.sec.reveal = !S.sec.reveal; if (S.sec.reveal) logEvt(S.k8.log, S.sec.at.slice(0, 5), S.role, 'xem ảnh gốc (ghi nhật ký)'); render(); };
+ACT.secReveal = d => {
+  const ops = d.by === 'ops', role = ops ? opsUser().role : S.role;   // app vận hành xét quyền theo người đăng nhập trên điện thoại, không theo vai trò của web
+  if (!(ops ? opsUser().photo : (S.role === 'BQL' || S.role === 'Bảo vệ'))){ toast('Vai trò “'+role+'” không được xem ảnh gốc'); return; }
+  S.sec.reveal = !S.sec.reveal; if (S.sec.reveal) logEvt(S.k8.log, S.sec.at.slice(0, 5), ops ? opsWho() : S.role, 'xem ảnh gốc (ghi nhật ký)'); render();
+};
 ACT.secCall = () => { toast('Đã gọi bảo vệ Tuấn và KT Hùng'); logEvt(S.k8.log, '23:47', 'Nền tảng', 'gọi bảo vệ Tuấn, KT Hùng'); render(); };
-ACT.secAccept = () => { S.sec.stage = 'accepted'; S.sec.owner = 'Tuấn'; S.sec.esc = false; logEvt(S.k8.log, '23:48', 'Tuấn', 'nhận xử lý · các thiết bị khác thấy “Tuấn đang xử lý”'); render(); };
-ACT.secVerify = () => { S.sec.stage = 'closed'; S.sec.owner = S.sec.owner || 'Tuấn'; logEvt(S.k8.log, '23:52', S.sec.owner, 'xác minh: nhân viên KT trực → đóng sự kiện, đưa vào tóm tắt ca'); render(); };
-ACT.secFalse = () => { S.sec.stage = 'false'; logEvt(S.k8.log, '23:51', S.sec.owner || 'Bảo vệ', 'báo giả → đánh dấu hiệu chỉnh vùng phát hiện CAM-B2-17'); render(); };
+ACT.secAccept = () => { const me = opsUser(); S.sec.stage = 'accepted'; S.sec.owner = me.name; S.sec.ownerRole = me.role; S.sec.esc = false; logEvt(S.k8.log, '23:48', opsWho(), 'nhận xử lý · các thiết bị khác thấy “'+me.name+' đang xử lý”'); render(); };
+ACT.secVerify = d => { const by = d.by === 'ops' ? opsUser().name : (S.sec.owner || 'Tuấn'); S.sec.stage = 'closed'; S.sec.owner = S.sec.owner || by; logEvt(S.k8.log, '23:52', by, 'xác minh: nhân viên KT trực → đóng sự kiện, đưa vào tóm tắt ca'); render(); };
+ACT.secFalse = d => { const by = d.by === 'ops' ? opsUser().name : (S.sec.owner || 'Bảo vệ'); S.sec.stage = 'false'; logEvt(S.k8.log, '23:51', by, 'báo giả → đánh dấu hiệu chỉnh vùng phát hiện CAM-B2-17'); render(); };
 
 /* ---------- Trợ lý AI ---------- */
 function shiftSummary(){
   const leak = S.valve === 'closed' ? 'Rò rỉ tầng 3 (đã đóng van 02:41)' : S.valve === 'rejected' ? 'Rò rỉ tầng 3 (BQL từ chối đóng van, đang xử lý thủ công)' : 'Rò rỉ tầng 3 (chưa xử lý)';
-  const sec = { closed:'người ở khu kỹ thuật (đã xác minh: KT trực)', 'false':'người ở khu kỹ thuật (báo giả, đã đánh dấu hiệu chỉnh)', accepted:'người ở khu kỹ thuật (Tuấn đang xử lý)', detected:'người ở khu kỹ thuật (chưa ai nhận)', idle:'không có sự kiện an ninh' }[S.sec.stage];
+  const sec = { closed:'người ở khu kỹ thuật (đã xác minh: KT trực)', 'false':'người ở khu kỹ thuật (báo giả, đã đánh dấu hiệu chỉnh)', accepted:'người ở khu kỹ thuật ('+(S.sec.owner || 'Tuấn')+' đang xử lý)', detected:'người ở khu kỹ thuật (chưa ai nhận)', idle:'không có sự kiện an ninh' }[S.sec.stage];
   return '<b>Tóm tắt ca đêm 19–20/10 (AI soạn)</b><table style="margin-top:8px"><tbody>' +
     '<tr><th>3 sự kiện</th><td>'+leak+'; trạm sạc 03 mất kết nối; '+sec+'</td></tr>' +
     '<tr><th>2 việc tồn</th><td>Phiếu #1043 vệ sinh lọc FAF-02; kiểm tra van một chiều bơm tăng áp 02 ('+(S.ticketMade ? 'phiếu #1047' : 'chưa có phiếu')+')</td></tr>' +
