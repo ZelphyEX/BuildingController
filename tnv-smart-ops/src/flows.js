@@ -33,8 +33,8 @@ ACT.persona = d => { S.role = d.role; go(d.to); };
 
 /* ---------- K2 ---------- */
 function k2Reset(){
-  S.res.invite = null; S.res.screen = 'moi'; S.res.push = null; S.res.sheet = null;
-  S.res.form = { name:'Nguyễn Lan', phone:'0912 345 678', date:'Hôm nay, 20/10', slot:'15:00 – 18:00', car:true, plate:'30G-123.45' };
+  S.res.invite = null; S.res.screen = 'moi'; S.res.push = null; S.res.sheet = null; S.res.err = null;
+  S.res.form = { name:'Nguyễn Lan', phone:'0912 345 678', day:'0', slot:'15:00 – 18:00', car:true, bike:false, plate:'30G-123.45' };
   S.k2 = { reader:null, bell:null, log:[], init:true };
 }
 function stepBar(steps){
@@ -47,7 +47,7 @@ VIEWS.k2 = function(){
   const off = iv && (iv.expired || iv.cancelled);
   const steps = [['Cư dân tạo lời mời','App cư dân',!!iv],['Khách nhận QR','Zalo / SMS',!!(iv && iv.sent)],['Quét QR tại sảnh','Đầu đọc sảnh T1',!!(iv && iv.scanned)],['Cư dân nhận ảnh khách','App cư dân',!!(iv && iv.scanned)],['Thang chỉ mở tầng 4','Thang máy',!!(iv && iv.scanned)],['Mã tự hết hạn','Nền tảng',!!off]];
   const canScan = iv && iv.sent && !iv.scanned && !off;
-  const reader = k.reader === 'ok' ? '<div class="note" style="background:var(--green-t)"><b style="color:var(--green-d)">✓ Mời vào</b> · Nguyễn Lan · mở cửa sảnh T1, thang chỉ tới tầng 4'+(iv && iv.car ? ' / hầm B2' : '')+'</div>'
+  const reader = k.reader === 'ok' ? '<div class="note" style="background:var(--green-t)"><b style="color:var(--green-d)">✓ Mời vào</b> · Nguyễn Lan · mở cửa sảnh T1, thang chỉ tới tầng 4'+(iv && (iv.car || iv.bike) ? ' / hầm B2' : '')+'</div>'
     : k.reader === 'denied' ? '<div class="redbox"><b style="color:var(--red-d)">✕ QR đã hết hạn</b><br>Màn hình đầu đọc: “Vui lòng liên hệ lễ tân”. Cửa không mở.</div>'
     : k.bell === 'opened' ? '<div class="note" style="background:var(--green-t)"><b style="color:var(--green-d)">✓ Cư dân mở cửa từ xa</b> sau khi xem hình khách qua chuông IP.</div>'
     : k.bell === 'rejected' ? '<div class="warnbox">Cư dân từ chối mở cửa. Khách được hướng dẫn liên hệ lễ tân.</div>'
@@ -69,7 +69,7 @@ ACT.k2Reset = () => { k2Reset(); render(); };
 ACT.k2Scan = () => {
   const i = S.res.invite; i.scanned = true; i.at = '15:04'; S.k2.reader = 'ok'; S.k2.bell = null;
   logEvt(S.k2.log, '15:04', 'Đầu đọc sảnh T1', 'quét QR hợp lệ → mở cửa sảnh');
-  logEvt(S.k2.log, '15:04', 'Nền tảng', 'đẩy quyền tạm xuống thang máy: chỉ tầng 4'+(i.car ? ', hầm B2' : ''));
+  logEvt(S.k2.log, '15:04', 'Nền tảng', 'đẩy quyền tạm xuống thang máy: chỉ tầng 4'+(i.car || i.bike ? ', hầm B2' : ''));
   logEvt(S.k2.log, '15:04', 'Nền tảng', 'gửi thông báo + ảnh khách tới app căn 4B');
   S.res.sheet = null; S.res.screen = 'den'; S.res.push = { title:'Khách '+i.name+' đã đến', text:'Quét QR tại sảnh T1 lúc 15:04 · thang đã mở tới tầng 4', to:'den' };
   render();
