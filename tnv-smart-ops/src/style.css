@@ -345,7 +345,6 @@ a{color:var(--teal)}
   .screen{border-radius:0}.notch{display:none}
 }
 .tbl th.tr{text-align:right}
-<<<<<<< Updated upstream
 
 /* ===== Web vận hành: bám theo slide 5–10 (chỉ áp dụng trong .web) ===== */
 .rel{position:relative}
@@ -484,5 +483,3 @@ a{color:var(--teal)}
   .web .hdr{padding:10px 16px}
   .mk{right:-4px}
 }
-=======
->>>>>>> Stashed changes
