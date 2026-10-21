@@ -1,0 +1,1241 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TNV Smart Ops · Prototype</title>
+<meta name="theme-color" content="#12324A">
+<style>
+/* TNV Smart Ops – prototype. Token theo slide 4 (ISA-101 / ISA-18.2, WCAG AA) */
+:root{
+  --navy:#12324A;--teal:#1B7F79;--bg:#F5F7F9;--muted:#6B7785;--ink:#1A2330;--ink2:#3A4654;--mute2:#8A96A3;
+  --line:#D5DCE3;--tealbg:#E8F3F2;--white:#fff;
+  --red:#D64545;--orange:#E8833A;--yellow:#D9A21B;--blue:#3B82C4;--green:#2E9E5B;
+  --red-t:#FBE9E9;--orange-t:#FDEEE1;--yellow-t:#FBF3DC;--blue-t:#E6F0FA;--green-t:#E5F4EB;
+  --red-d:#A32727;--orange-d:#9A4A0B;--yellow-d:#6E5200;--blue-d:#1F5E99;--green-d:#1F7040;
+  --font:Arial,"Segoe UI",Helvetica,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.4;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit;font-size:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+svg{display:inline-block;vertical-align:middle}
+svg[width="100%"]{display:block}
+a{color:var(--teal)}
+.hide{display:none!important}
+.mut{color:var(--muted)}.b{font-weight:700}.sm{font-size:12px}.xs{font-size:11px}
+.row{display:flex;align-items:center;gap:8px}.col{display:flex;flex-direction:column;gap:8px}
+.grow{flex:1;min-width:0}.sp{flex:1}
+.tr{text-align:right}
+
+/* ===== Thanh demo trên cùng ===== */
+#topbar{position:fixed;top:0;left:0;right:0;height:44px;background:var(--ink);color:#fff;display:flex;align-items:center;gap:6px;padding:0 14px;z-index:1000;font-size:13px}
+#topbar .brand{font-weight:700;letter-spacing:.2px;margin-right:10px;white-space:nowrap}
+#topbar .brand span{color:#7fd3cc}
+#topbar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#topbar nav a{color:#c8d1da;text-decoration:none;padding:6px 11px;border-radius:6px;white-space:nowrap;cursor:pointer}
+#topbar nav a:hover{background:rgba(255,255,255,.08)}
+#topbar nav a.on{background:var(--teal);color:#fff}
+#topbar .tag{margin-left:auto;font-size:11px;color:#9fb0c0;white-space:nowrap}
+#topbar .rs{background:rgba(255,255,255,.1);color:#fff;border-radius:6px;padding:5px 10px;font-size:12px;white-space:nowrap}
+#topbar .rs:hover{background:rgba(255,255,255,.2)}
+#app{padding-top:44px;min-height:100%}
+
+/* ===== Thành phần chung ===== */
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px}
+.card h3{font-size:14px;color:var(--navy);margin-bottom:10px;font-weight:700}
+.card h3 small{font-weight:400;color:var(--muted);font-size:12px;margin-left:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:8px;font-weight:700;border:1.5px solid var(--teal);color:var(--teal);background:#fff;min-height:38px;white-space:nowrap}
+.btn:hover{background:var(--tealbg)}
+.btn.primary{background:var(--teal);color:#fff}.btn.primary:hover{background:#166c67}
+.btn.danger{border-color:var(--red);color:var(--red-d)}.btn.danger:hover{background:var(--red-t)}
+.btn.ghost{border-color:var(--line);color:var(--ink2);font-weight:600}.btn.ghost:hover{background:var(--bg)}
+.btn.block{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{padding:5px 11px;min-height:30px;font-size:12px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap;letter-spacing:.2px}
+.chip::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.chip.khan{background:var(--red);color:#fff}.chip.khan::before{background:#fff}
+.chip.cao{background:var(--orange-t);color:var(--orange-d)}.chip.cao::before{background:var(--orange)}
+.chip.tb{background:var(--yellow-t);color:var(--yellow-d)}.chip.tb::before{background:var(--yellow)}
+.chip.tin{background:var(--blue-t);color:var(--blue-d)}.chip.tin::before{background:var(--blue)}
+.chip.ok{background:var(--green-t);color:var(--green-d)}.chip.ok::before{background:var(--green)}
+.chip.neutral{background:var(--bg);color:var(--ink2);border:1px solid var(--line)}.chip.neutral::before{display:none}
+.chip.work{background:var(--tealbg);color:var(--teal)}.chip.work::before{display:none}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);padding:7px 10px;border-bottom:1px solid var(--line);font-weight:700}
+.tbl td{padding:9px 10px;border-bottom:1px solid #eef1f4;vertical-align:middle}
+.tbl tr.click{cursor:pointer}.tbl tr.click:hover td{background:#f8fafb}
+.tbl tr.sel td{background:var(--tealbg)}
+.tbl tr.k td:first-child{box-shadow:inset 3px 0 0 var(--red)}
+.pill-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.pill-tabs button{padding:6px 13px;border-radius:999px;border:1px solid var(--line);background:#fff;font-weight:600;color:var(--ink2);font-size:13px}
+.pill-tabs button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.pill-tabs button .n{opacity:.7;margin-left:4px}
+.bar{height:8px;border-radius:4px;background:#e6ebf0;overflow:hidden}.bar>i{display:block;height:100%;background:var(--mute2);border-radius:4px}
+.bar.warn>i{background:var(--orange)}.bar.teal>i{background:var(--teal)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:10px;font-size:14px;z-index:2000;max-width:92vw;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:tin .2s}
+@keyframes tin{from{opacity:0;transform:translate(-50%,10px)}}
+.note{background:var(--tealbg);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--ink2)}
+.warnbox{background:var(--orange-t);border:1px solid #f3cfae;border-radius:8px;padding:10px 12px;font-size:13px;color:var(--orange-d)}
+.redbox{background:var(--red-t);border:1px solid #f1c3c3;border-radius:10px;padding:14px}
+.kbd{font-family:Consolas,monospace;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+/* ===== Trang giới thiệu ===== */
+.land{max-width:1180px;margin:0 auto;padding:34px 24px 60px}
+.land h1{font-size:30px;color:var(--navy);line-height:1.2}
+.land .lead{color:var(--muted);margin-top:8px;font-size:16px;max-width:760px}
+.land h2{font-size:18px;color:var(--navy);margin:34px 0 12px}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cards2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:.15s}
+.pcard:hover{border-color:var(--teal);box-shadow:0 6px 18px rgba(18,50,74,.1);transform:translateY(-2px)}
+.pcard .ic{width:44px;height:44px;border-radius:12px;background:var(--tealbg);color:var(--teal);display:grid;place-items:center}
+.pcard h3{font-size:17px;color:var(--navy)}.pcard p{color:var(--muted);font-size:13px}
+.pcard ul{list-style:none;font-size:13px;color:var(--ink2);display:flex;flex-direction:column;gap:3px}
+.pcard ul li::before{content:"★ ";color:var(--teal)}
+.persona{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.persona .p{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer}
+.persona .p:hover{border-color:var(--teal)}
+.persona .p b{color:var(--navy)}.persona .p i{display:block;color:var(--ink2);margin:6px 0;font-style:italic}
+.persona .p span{font-size:12px;color:var(--teal);font-weight:700}
+.pcard.flow{flex-direction:row;align-items:center}
+.sub-foot{margin-top:30px;font-size:12px;color:var(--muted)}
+
+/* ===== Web shell ===== */
+.web{display:grid;grid-template-columns:224px 1fr;min-height:calc(100vh - 44px)}
+.side{background:var(--navy);color:#cfdbe6;display:flex;flex-direction:column;position:sticky;top:44px;height:calc(100vh - 44px)}
+.side .logo{padding:18px 18px 16px;color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;gap:10px}
+.side .logo i{width:30px;height:30px;border-radius:8px;background:var(--teal);display:grid;place-items:center;font-style:normal;font-size:13px}
+.side a{display:flex;align-items:center;gap:11px;padding:11px 18px;color:#cfdbe6;text-decoration:none;font-size:14px;cursor:pointer;position:relative}
+.side a:hover{background:rgba(255,255,255,.06)}
+.side a.on{background:rgba(255,255,255,.12);color:#fff;font-weight:700}
+.side a .bd{margin-left:auto;background:var(--red);color:#fff;font-size:11px;font-weight:700;border-radius:10px;padding:1px 7px}
+.side .ft{margin-top:auto;padding:14px 18px;font-size:11px;color:#8fa4b7;border-top:1px solid rgba(255,255,255,.1)}
+.main{min-width:0;display:flex;flex-direction:column}
+.hdr{background:#fff;border-bottom:1px solid var(--line);padding:12px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:44px;z-index:50}
+.hdr h1{font-size:20px;color:var(--navy)}
+.hdr .meta{color:var(--muted);font-size:13px}
+.hdr select,.seg button{border:1px solid var(--line);border-radius:8px;background:#fff;padding:6px 10px;font-size:13px}
+.seg{display:flex}.seg button{border-radius:0;font-weight:700;color:var(--muted)}.seg button:first-child{border-radius:8px 0 0 8px}.seg button:last-child{border-radius:0 8px 8px 0;border-left:0}
+.seg button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.hdr .role{display:flex;align-items:center;gap:8px}
+.hdr .av{width:32px;height:32px;border-radius:50%;background:var(--tealbg);color:var(--teal);display:grid;place-items:center;font-weight:700;font-size:12px}
+.page{padding:20px 24px 40px;display:flex;flex-direction:column;gap:16px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.g2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
+.g2e{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.kpi .l{font-size:12px;color:var(--muted)}.kpi .v{font-size:26px;font-weight:700;color:var(--ink);margin:3px 0}
+.kpi .d{font-size:12px;color:var(--green-d);font-weight:700}
+.kpi.warn .d{color:var(--orange-d)}
+.kpi .v small{font-size:13px;font-weight:400;color:var(--muted);margin-left:3px}
+.stat{background:var(--bg);border-radius:10px;padding:12px}
+.stat b{display:block;font-size:20px;color:var(--teal)}.stat span{font-size:12px;color:var(--ink2)}
+.uxdrawer{position:fixed;right:0;top:44px;bottom:0;width:340px;background:#fff;border-left:1px solid var(--line);box-shadow:-8px 0 24px rgba(0,0,0,.08);z-index:900;padding:20px;overflow:auto}
+.uxdrawer h3{color:var(--navy);margin-bottom:4px}
+.bp{display:flex;gap:12px;margin-top:16px}
+.bp .n{width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;display:grid;place-items:center;flex:none;font-size:13px}
+.bp b{display:block;color:var(--navy);margin-bottom:2px}.bp span{font-size:13px;color:var(--ink2)}
+.uxbtn{position:fixed;right:18px;bottom:18px;z-index:850;background:var(--navy);color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.dpane{display:flex;flex-direction:column;gap:12px}
+.leg{display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.leg i{display:inline-block;width:12px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.chat{display:flex;flex-direction:column;gap:14px;max-height:calc(100vh - 330px);overflow:auto;padding-right:4px}
+.msg{max-width:86%;padding:11px 14px;border-radius:12px;font-size:14px;line-height:1.5}
+.msg.u{align-self:flex-end;background:var(--navy);color:#fff;border-bottom-right-radius:4px}
+.msg.a{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg .src{margin-top:8px;font-size:11px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px}
+.msg table{border-collapse:collapse;margin:8px 0;font-size:13px}.msg th,.msg td{border:1px solid var(--line);padding:4px 12px;text-align:left}.msg th{background:var(--bg)}
+.sugg{display:flex;gap:8px;flex-wrap:wrap}
+.sugg button{padding:7px 14px;border-radius:999px;border:1px solid var(--teal);color:var(--teal);font-weight:600;background:#fff;font-size:13px}
+.sugg button:hover{background:var(--tealbg)}
+.askbox{display:flex;gap:8px}
+.askbox input{flex:1;border:1px solid var(--line);border-radius:10px;padding:11px 14px;background:#fff;outline:none}
+.askbox input:focus{border-color:var(--teal)}
+.typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--mute2);margin-right:3px;animation:bl 1s infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bl{50%{opacity:.2}}
+.cell{display:inline-block;min-width:30px;text-align:center;padding:2px 6px;border-radius:5px;font-weight:700;font-size:12px;background:var(--bg);color:var(--ink2)}
+.cell.x{color:var(--red-d);background:var(--red-t)}.cell.q{background:var(--blue-t);color:var(--blue-d)}.cell.g{background:var(--yellow-t);color:var(--yellow-d)}.cell.m{background:var(--tealbg);color:var(--teal)}
+.blur{filter:blur(7px)}
+.camimg{background:#2b3a48;border-radius:8px;height:150px;position:relative;overflow:hidden;display:grid;place-items:center}
+.camimg .ts{position:absolute;left:8px;top:6px;font-size:11px;color:#cfe0ee;font-family:Consolas,monospace}
+.camimg .box{position:absolute;border:2px solid var(--orange);border-radius:3px}
+.camimg .lbl{position:absolute;font-size:10px;background:var(--orange);color:#1a1a1a;font-weight:700;padding:0 4px;font-family:Consolas,monospace}
+.stepbar{display:flex;gap:0;align-items:stretch;flex-wrap:wrap}
+.step{flex:1;min-width:130px;background:#fff;border:1px solid var(--line);padding:10px 12px;position:relative;margin-right:-1px}
+.step:first-child{border-radius:10px 0 0 10px}.step:last-child{border-radius:0 10px 10px 0}
+.step b{display:block;font-size:13px;color:var(--ink2)}.step span{font-size:11px;color:var(--muted)}
+.step.done{background:var(--green-t)}.step.done b{color:var(--green-d)}
+.step.cur{background:var(--tealbg);border-color:var(--teal);z-index:1}.step.cur b{color:var(--teal)}
+.step .num{float:right;font-size:11px;font-weight:700;color:var(--mute2)}
+.step.done .num::after{content:"✓";color:var(--green)}
+.step.done .num{font-size:0}.step.done .num::after{font-size:14px}
+
+/* ===== Khung điện thoại ===== */
+.stage{display:grid;grid-template-columns:240px auto 330px;gap:34px;justify-content:center;padding:26px 20px 50px;align-items:start}
+.stage .list{display:flex;flex-direction:column;gap:6px;position:sticky;top:70px}
+.stage .list h2{font-size:16px;color:var(--navy);margin-bottom:4px}
+.stage .list p{color:var(--muted);font-size:12px;margin-bottom:8px}
+.stage .list button{text-align:left;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:600;font-size:13px;color:var(--ink2)}
+.stage .list button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.stage .list button small{display:block;font-weight:400;opacity:.75;font-size:11px;margin-top:1px}
+.stage .notes{position:sticky;top:70px}
+.phone{width:372px;height:780px;border-radius:46px;background:var(--ink);padding:11px;box-shadow:0 22px 50px rgba(18,50,74,.28);flex:none;position:relative}
+.screen{width:100%;height:100%;border-radius:36px;background:var(--bg);overflow:hidden;position:relative;display:flex;flex-direction:column;font-size:16px}
+.sbar{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:13px;font-weight:700;flex:none;color:var(--ink)}
+.sbar.dark{color:#fff}
+.notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:92px;height:22px;background:var(--ink);border-radius:14px;z-index:30}
+.scroll{flex:1;overflow-y:auto;padding:6px 16px 16px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.tabbar{flex:none;height:68px;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 6px 10px}
+.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--muted);font-weight:600;position:relative}
+.tabbar button.on{color:var(--teal)}
+.tabbar .bdg{position:absolute;top:0;left:56%;background:var(--red);color:#fff;border-radius:10px;font-size:10px;padding:1px 6px}
+.ah{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ah h2{font-size:20px;color:var(--navy)}
+.ah .back{width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--line);display:grid;place-items:center;flex:none}
+.acard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.hello{background:var(--navy);color:#fff;border-radius:16px;padding:16px;margin-bottom:12px}
+.hello h2{font-size:20px}.hello p{font-size:14px;color:#b9c8d6;margin-top:2px}
+.qa{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.qa button{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--ink2);min-height:84px}
+.qa button .i{width:38px;height:38px;border-radius:11px;background:var(--bg);color:var(--navy);display:grid;place-items:center}
+.qa button.pri{background:var(--teal);border-color:var(--teal);color:#fff}
+.qa button.pri .i{background:rgba(255,255,255,.2);color:#fff}
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.fld input,.fld select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:12px;background:#fff;font-size:16px;outline:none}
+.row2 .fld select{font-size:14px;padding:12px 6px}
+.fld input:focus,.fld select:focus{border-color:var(--teal)}
+.sw{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.tg{width:48px;height:28px;border-radius:14px;background:#cfd6dd;position:relative;flex:none;transition:.15s}
+.tg::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.tg.on{background:var(--teal)}.tg.on::after{left:23px}
+.abtn{width:100%;min-height:52px;border-radius:14px;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px;border:2px solid var(--teal);color:var(--teal);background:#fff}
+.abtn.primary{background:var(--teal);color:#fff}
+.abtn.danger{border-color:var(--red);color:var(--red-d)}
+.abtn.ghost{border-color:var(--line);color:var(--ink2)}
+.abtn:disabled{opacity:.4}
+.abtn+.abtn{margin-top:10px}
+.qrbox{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;text-align:center}
+.qrbox svg{margin:10px auto}
+.qrbox.off svg{opacity:.18}
+.row2{display:flex;gap:10px}.row2>*{flex:1}
+.lrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #eef1f4}
+.lrow:last-child{border:0}
+.lrow .i{width:36px;height:36px;border-radius:10px;background:var(--bg);display:grid;place-items:center;color:var(--navy);flex:none}
+.push{position:absolute;top:40px;left:10px;right:10px;background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:16px;padding:12px 14px;z-index:40;box-shadow:0 10px 28px rgba(0,0,0,.2);animation:drop .3s;cursor:pointer;font-size:14px}
+.push b{display:block;color:var(--navy);margin-bottom:2px}
+@keyframes drop{from{transform:translateY(-70px);opacity:0}}
+.sheet{position:absolute;inset:0;background:rgba(18,35,48,.5);z-index:35;display:flex;align-items:flex-end}
+.sheet>div{background:#fff;border-radius:22px 22px 0 0;padding:20px 18px 22px;width:100%;max-height:88%;overflow:auto}
+.sheet h3{font-size:18px;color:var(--navy);margin-bottom:10px}
+.bars6{display:flex;align-items:flex-end;gap:8px;height:90px;margin-top:6px}
+.bars6 div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;font-size:11px;color:var(--muted);height:100%}
+.bars6 i{display:block;width:100%;background:#cdd5dc;border-radius:5px 5px 0 0}
+.bars6 div.cur i{background:var(--teal)}
+.consent{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;font-size:15px}
+.consent .box{width:26px;height:26px;border:2px solid var(--mute2);border-radius:7px;flex:none;display:grid;place-items:center;color:#fff}
+.consent.on{border-color:var(--teal)}.consent.on .box{background:var(--teal);border-color:var(--teal)}
+.face{width:170px;height:210px;border:3px dashed var(--teal);border-radius:50%;margin:10px auto;display:grid;place-items:center;background:#eef5f5;position:relative;overflow:hidden}
+.face::after{content:"";position:absolute;left:0;right:0;height:3px;background:var(--teal);opacity:.7;animation:scan 1.6s infinite alternate}
+@keyframes scan{from{top:8%}to{top:92%}}
+.elev{display:flex;flex-direction:column-reverse;gap:4px;width:64px}
+.elev div{height:30px;border-radius:6px;background:#e6ebf0;color:var(--muted);display:grid;place-items:center;font-weight:700;font-size:13px}
+.elev div.on{background:var(--teal);color:#fff}
+.sitepanel{display:flex;flex-direction:column;gap:12px}
+.sitepanel .card h3{margin-bottom:6px}
+.zalo{background:#e8f1ff;border-radius:10px;padding:10px;font-size:13px}
+.logline{font-family:Consolas,monospace;font-size:12px;color:var(--ink2);padding:3px 0;border-bottom:1px dashed #e4e9ee}
+.logline b{color:var(--navy)}
+.flowwrap{padding:18px 20px 40px;max-width:1500px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.flowgrid{display:grid;grid-template-columns:372px 1fr;gap:26px;align-items:start;justify-content:center}
+.flowgrid.k8{grid-template-columns:1fr 372px}
+.swatch{height:64px;border-radius:10px;margin-bottom:6px}
+.sw4{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.sw4 .s b{display:block;font-size:13px}.sw4 .s span{font-size:12px;color:var(--muted)}
+
+/* ===== Màn hình nhỏ: app chiếm toàn màn ===== */
+.mnav{display:none}
+@media (max-width:980px){
+  .mnav{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);scrollbar-width:none}
+  .mnav a{padding:6px 12px;border-radius:999px;border:1px solid var(--line);white-space:nowrap;text-decoration:none;color:var(--ink2);font-weight:600;font-size:13px}
+  .mnav a.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .hdr{position:static;flex-wrap:wrap;padding:12px 16px}.page{padding:16px}
+  #topbar nav{flex:1;min-width:0}
+  .g2,.g2e{grid-template-columns:1fr!important}
+  .web{grid-template-columns:1fr}.side{display:none}
+  .g5{grid-template-columns:repeat(2,1fr)}.g2,.g2e,.g3,.cards3,.persona,.cards2{grid-template-columns:1fr}
+  .stage{grid-template-columns:1fr;justify-items:center}.stage .list,.stage .notes{position:static;width:100%;max-width:372px}
+  .flowgrid,.flowgrid.k8{grid-template-columns:1fr}
+  .uxdrawer{width:100%}
+}
+@media (max-width:520px){
+  #topbar .tag,#topbar .rs .lbl{display:none}
+  #topbar .brand{font-size:12px;margin-right:4px}
+  .stage{padding:0}.stage .list,.stage .notes{display:none}
+  .phone{width:100%;height:calc(100vh - 44px);height:calc(100dvh - 44px);border-radius:0;padding:0;box-shadow:none}
+  .screen{border-radius:0}.notch{display:none}
+}
+.tbl th.tr{text-align:right}
+
+</style></head>
+<body><div id="root"></div>
+<script>
+/* ===== TNV Smart Ops – lõi: trạng thái, tiện ích, biểu đồ, router ===== */
+'use strict';
+
+/* ---------- Tiện ích ---------- */
+const VIEWS = {};      // route -> function(sub) => html
+const ACT = {};        // data-a -> handler
+let S = null;          // trạng thái dùng chung giữa web, app cư dân, app vận hành
+
+function t(vi, en){ return (S.lang === 'en' && en != null) ? en : vi; }
+function fmt(n, d){ // 1234.5 -> 1.234,5
+  const s = (d == null ? String(n) : Number(n).toFixed(d)).split('.');
+  s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return s.join(',');
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function toast(msg){
+  let el = document.getElementById('toast'); if (el) el.remove();
+  el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; el.textContent = msg;
+  document.body.appendChild(el); setTimeout(() => el.remove(), 2600);
+}
+function getPath(o, p){ return p.split('.').reduce((a, k) => a == null ? a : a[k], o); }
+function setPath(o, p, v){ const ks = p.split('.'); const l = ks.pop(); ks.reduce((a, k) => a[k], o)[l] = v; }
+
+/* ---------- Biểu tượng (stroke 24x24) ---------- */
+const ICONS = {
+  home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21a2 2 0 0 0 4 0"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>',
+  shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
+  file:'<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>',
+  cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+  qr:'<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h3v3h-3zM20 14v3M14 20h3M20 20h0"/>',
+  door:'<path d="M5 21V4a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="12.5" cy="12" r=".8"/>',
+  receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+  msg:'<path d="M4 5h16v11H9l-5 4z"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  car:'<path d="M5 16V11l2-5h10l2 5v5M3 16h18v3H3zM7 13h0M17 13h0"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.6 3-6 7-6s7 2.4 7 6M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2.4.6 4 2.4 4 6"/>',
+  check:'<path d="M4 12l5 5L20 6"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  camera:'<path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="4"/>',
+  phone:'<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>',
+  x:'<path d="M5 5l14 14M19 5L5 19"/>',
+  building:'<rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/>',
+  clip:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12h6M9 16h4"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h1M3 12h1M3 18h1"/>',
+  scan:'<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16"/>',
+  drop:'<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
+  eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  send:'<path d="M3 11l18-8-8 18-2-8z"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h0"/>',
+  play:'<path d="M7 4l13 8-13 8z"/>'
+};
+function ic(n, s, sw){ return '<svg width="'+(s||20)+'" height="'+(s||20)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.8)+'" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[n]||'')+'</svg>'; }
+
+function shortDesc(a){ return ({1:'Rò rỉ nước tầng 3 – nhánh căn 3B'})[a.id] || a.desc; }
+/* ---------- Chip mức cảnh báo (luôn có chữ, không chỉ màu) ---------- */
+const LV = { khan:['KHẨN','Khẩn'], cao:['CAO','Cao'], tb:['TB','Trung bình'], tin:['TIN','Thông tin'] };
+function lvChip(l, full){ return '<span class="chip '+l+'">'+(full ? LV[l][1] : LV[l][0])+'</span>'; }
+
+/* ---------- Biểu đồ SVG ---------- */
+/* series: [{d:[...], c:'#..', dash:true, w:2, area:true}] ; null = đứt đoạn */
+function lineChart(o){
+  const W = o.w || 560, H = o.h || 220, pl = 40, pr = 12, pt = 10, pb = 26;
+  const n = Math.max.apply(null, o.series.map(s => s.d.length));
+  const all = [].concat.apply([], o.series.map(s => s.d.filter(v => v != null)));
+  let lo = o.min != null ? o.min : Math.floor(Math.min.apply(null, all) * 0.9);
+  let hi = o.max != null ? o.max : Math.ceil(Math.max.apply(null, all) * 1.08);
+  const X = i => pl + (W - pl - pr) * (n === 1 ? 0 : i / (n - 1));
+  const Y = v => pt + (H - pt - pb) * (1 - (v - lo) / (hi - lo));
+  let g = '';
+  for (let k = 0; k <= 3; k++){
+    const v = lo + (hi - lo) * k / 3, y = Y(v);
+    g += '<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y+'" y2="'+y+'" stroke="#e6ebf0"/><text x="'+(pl-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="#6B7785">'+(o.yfmt ? o.yfmt(v) : Math.round(v*10)/10)+'</text>';
+  }
+  const step = o.xevery || Math.ceil(n / 8);
+  for (let i = 0; i < n; i += step){
+    g += '<text x="'+X(i)+'" y="'+(H-8)+'" text-anchor="middle" font-size="11" fill="#6B7785">'+(o.xl ? o.xl(i) : i+1)+'</text>';
+  }
+  let body = '';
+  o.series.forEach(s => {
+    let d = '', started = false, first = null, last = null;
+    s.d.forEach((v, i) => { if (v == null){ started = false; return; } d += (started ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1) + ' '; started = true; if (first == null) first = i; last = i; });
+    if (s.area) body += '<path d="'+d+' L'+X(last)+' '+Y(lo)+' L'+X(first)+' '+Y(lo)+'Z" fill="'+s.c+'" opacity=".10"/>';
+    body += '<path d="'+d+'" fill="none" stroke="'+s.c+'" stroke-width="'+(s.w||2.2)+'" '+(s.dash ? 'stroke-dasharray="5 4"' : '')+' stroke-linejoin="round" stroke-linecap="round"/>';
+    if (s.dots) s.d.forEach((v, i) => { if (v != null && s.dots.indexOf(i) > -1) body += '<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="4.5" fill="#fff" stroke="'+s.c+'" stroke-width="2.4"/>'; });
+  });
+  if (o.vline != null) body += '<line x1="'+X(o.vline)+'" x2="'+X(o.vline)+'" y1="'+pt+'" y2="'+(H-pb)+'" stroke="#8A96A3" stroke-dasharray="2 3"/><text x="'+(X(o.vline)+4)+'" y="'+(pt+10)+'" font-size="10" fill="#6B7785">'+(o.vlabel||'')+'</text>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-height:'+H+'px" role="img" aria-label="'+esc(o.label||'biểu đồ')+'">'+g+body+'</svg>';
+}
+/* bars: [{l, v, hi}] – nền xám, chỉ tô màu cột bất thường (nguyên tắc "xám trước, màu sau") */
+function barChart(o){
+  const W = o.w || 520, H = o.h || 200, pl = 34, pb = 26, pt = 16;
+  const mx = o.max || Math.max.apply(null, o.data.map(d => d.v)) * 1.15;
+  const bw = (W - pl - 8) / o.data.length;
+  let s = '';
+  for (let k = 0; k <= 2; k++){ const y = pt + (H - pt - pb) * (1 - k / 2); s += '<line x1="'+pl+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#e6ebf0"/><text x="'+(pl-5)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="#6B7785">'+(o.yfmt ? o.yfmt(mx*k/2) : Math.round(mx*k/2*10)/10)+'</text>'; }
+  o.data.forEach((d, i) => {
+    const h = (H - pt - pb) * d.v / mx, x = pl + i * bw + bw * .18, w = bw * .64, y = H - pb - h;
+    s += '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="3" fill="'+(d.hi ? (o.hiColor || '#E8833A') : '#C5CED7')+'"/>';
+    s += '<text x="'+(x+w/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="11" fill="#6B7785">'+d.l+'</text>';
+    if (d.hi || o.labels) s += '<text x="'+(x+w/2)+'" y="'+(y-4)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#1A2330">'+(o.vfmt ? o.vfmt(d.v) : d.v)+'</text>';
+  });
+  if (o.base != null){ const y = H - pb - (H - pt - pb) * o.base / mx; s += '<line x1="'+pl+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#1B7F79" stroke-dasharray="5 4"/><text x="'+(pl+4)+'" y="'+(y-4)+'" text-anchor="start" font-size="10" fill="#1B7F79">'+(o.baseLabel||'mức nền')+'</text>'; }
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="max-height:'+H+'px" role="img" aria-label="'+esc(o.label||'biểu đồ cột')+'">'+s+'</svg>';
+}
+function hbars(rows, o){
+  o = o || {}; const mx = o.max || Math.max.apply(null, rows.map(r => r.v));
+  return rows.map(r => '<div style="margin-bottom:10px"><div class="row sm" style="margin-bottom:3px"><span class="grow">'+r.l+'</span><b>'+(o.fmt ? o.fmt(r.v) : r.v)+'</b></div><div class="bar '+(r.warn ? 'warn' : '')+'"><i style="width:'+Math.min(100, r.v / mx * 100)+'%"></i></div></div>').join('');
+}
+/* QR minh họa (không phải mã thật): lưới 25x25 sinh từ hạt giống */
+function qrSvg(seed, size){
+  const N = 25; let h = 2166136261; for (let i = 0; i < seed.length; i++){ h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
+  const rnd = () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h >>> 0) % 1000) / 1000; };
+  const fin = (x, y) => (x < 8 && y < 8) || (x > N - 9 && y < 8) || (x < 8 && y > N - 9);
+  let r = '';
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++){
+    if (fin(x, y)) continue;
+    if (rnd() > .52) r += '<rect x="'+x+'" y="'+y+'" width="1" height="1"/>';
+  }
+  const f = (ox, oy) => '<rect x="'+ox+'" y="'+oy+'" width="7" height="7"/><rect x="'+(ox+1)+'" y="'+(oy+1)+'" width="5" height="5" fill="#fff"/><rect x="'+(ox+2)+'" y="'+(oy+2)+'" width="3" height="3"/>';
+  return '<svg width="'+size+'" height="'+size+'" viewBox="-1 -1 '+(N+2)+' '+(N+2)+'" fill="#12324A" shape-rendering="crispEdges" role="img" aria-label="Mã QR minh họa"><rect x="-1" y="-1" width="'+(N+2)+'" height="'+(N+2)+'" fill="#fff"/>'+r+f(0,0)+f(N-7,0)+f(0,N-7)+'</svg>';
+}
+/* Hình người mờ (ảnh khuôn mặt làm mờ mặc định) */
+function personSvg(blur, w, h){
+  return '<svg width="'+(w||80)+'" height="'+(h||100)+'" viewBox="0 0 80 100" class="'+(blur ? 'blur' : '')+'"><circle cx="40" cy="30" r="17" fill="#9fb2c3"/><path d="M8 100c0-24 14-38 32-38s32 14 32 38z" fill="#7f95a9"/></svg>';
+}
+
+/* ---------- Dữ liệu minh họa ---------- */
+const APTS = (function(){
+  const raw = [['2A',612,14,0],['2B',540,11,-3],['2C',735,16,38],['2D',498,9,1],['3A',702,13,2],['3B',655,21,6],['3C',1105,17,11],['3D',590,12,-1],
+    ['4A',820,15,3],['4B',1190,18,-2],['4C',640,10,0],['4D',710,14,4],['5A',1284,22,4],['5B',760,13,-4],['5C',905,16,5],['5D',580,11,-2]];
+  return raw.map(r => ({ id:r[0], kwh:r[1], m3:r[2], dv:r[3], e:Math.round(r[1]*2697.5/1000)*1000, w:r[2]*27500 }));
+})();
+const DAYS_F = (function(){ // dự báo 31 ngày (MWh), 20 ngày đầu cộng = 51,3
+  const raw = []; for (let d = 0; d < 31; d++){ const wk = (d + 3) % 7; raw.push(2.45 + (wk >= 5 ? .22 : 0) + .1 * Math.sin(d / 2.3)); }
+  const k = 51.3 / raw.slice(0, 20).reduce((a, b) => a + b, 0); return raw.map(v => +(v * k).toFixed(2));
+})();
+const DAYS_A = (function(){ // thực tế 20 ngày, cộng = 48,2
+  const raw = DAYS_F.slice(0, 20).map((v, i) => v * (0.94 + 0.03 * Math.sin(i * 1.7)));
+  const k = 48.2 / raw.reduce((a, b) => a + b, 0); return raw.map(v => +(v * k).toFixed(2));
+})();
+const HOUR_F = [118,112,110,108,110,124,158,196,224,238,242,246,252,248,240,236,232,238,262,288,282,248,196,148];
+const HOUR_A = [121,114,113,109,112,126,162,201,229,243,247]; // đến 10:00
+
+function initState(){
+  return {
+    lang:'vi', role:'BQL', ux:false,
+    /* Trung tâm cảnh báo (slide 6) */
+    alertFilter:'all', alertSel:1, valve:'open', valveLog:null,
+    alerts:[
+      {id:1,lv:'khan',time:'02:31',loc:'T3 · 3B',desc:'Rò rỉ + lưu lượng liên tục 0,8 m³/h',st:'Chưa xác nhận'},
+      {id:2,lv:'cao',time:'09:30',loc:'B2 · bơm',desc:'Bơm tăng áp 02 khởi động 3× bình thường',st:'KT Hùng'},
+      {id:3,lv:'cao',time:'10:05',loc:'B2 · sạc',desc:'Trạm sạc 03 mất kết nối',st:'Đã xác nhận'},
+      {id:4,lv:'tb',time:'11:12',loc:'Mái',desc:'Chênh áp lọc FAF-02 cao',st:'Phiếu #1043'},
+      {id:5,lv:'tb',time:'14:20',loc:'B1',desc:'CO2 nhà hàng 1.150 ppm',st:'Tự hết'},
+      {id:6,lv:'tb',time:'17:45',loc:'T1',desc:'Đèn sảnh bật ngoài lịch',st:'Đã xác nhận'},
+      {id:7,lv:'tin',time:'18:00',loc:'Tum',desc:'Rooftop mở cửa, đổi quyền thang',st:'Tự động'}
+    ],
+    energyTab:'dien',
+    devSel:'BTA-02', ticketMade:false,
+    sec:{ stage:'detected', owner:null, at:'23:47:12', secs:8.4, live:false, reveal:false, esc:false },
+    rooftop:{ open:true, from:'17:00', to:'24:00', hold:true },
+    model:'Claude', chat:[], busy:false, handover:false,
+    /* App cư dân (slide 11-12) */
+    res:{ screen:'home', invite:null, push:null, sheet:null, paid:false, hist:[],
+          form:{ name:'Nguyễn Lan', phone:'0912 345 678', date:'Hôm nay, 20/10', slot:'15:00 – 18:00', car:true, plate:'30G-123.45' },
+          face:{ consent:false, state:'idle' } },
+    k2:{ reader:null, bell:null, log:[] },
+    k8:{ log:[] },
+    /* App vận hành (slide 13) */
+    ops:{ screen:'canh-bao', sheet:null, sel:null, scanned:false, live:false,
+          ai:{ st:'pending', deadline: Date.now() + 10*60*1000, reason:null },
+          tickets:[
+            {id:1043,lv:'tb',title:'Vệ sinh lọc FAF-02',loc:'Tầng mái',due:'hạn 22/10',st:'new'},
+            {id:1039,lv:'tb',title:'Thay pin đồng hồ nước T5',loc:'Hành lang T5',due:'đang làm',st:'doing'},
+            {id:1031,lv:'tin',title:'Kiểm tra trạm sạc 03',loc:'Hầm B2',due:'chờ nhà thầu',st:'wait'}
+          ] }
+  };
+}
+
+/* ---------- Nhật ký sự kiện nền tảng ---------- */
+function logEvt(list, tm, who, msg){ list.push({ tm:tm, who:who, msg:msg }); }
+function logHtml(list){ return list.length ? list.slice().reverse().map(l => '<div class="logline">'+l.tm+' · <b>'+esc(l.who)+'</b> '+esc(l.msg)+'</div>').join('') : '<div class="mut sm">Chưa có sự kiện.</div>'; }
+
+/* ---------- Router + render ---------- */
+const TABS = [['','Trang chủ'],['web','Web vận hành'],['cudan','App cư dân'],['vanhanh','App vận hành'],['k2','Luồng K2 · Khách'],['k8','Luồng K8 · Người lạ'],['design','Hệ thống thiết kế']];
+function route(){ const p = (location.hash || '#/').replace(/^#\/?/, '').split('/'); return { v:p[0] || '', sub:p[1] || '' }; }
+function go(h){ if (location.hash === '#/' + h) render(); else location.hash = '#/' + h; }
+
+function topbar(r){
+  return '<header id="topbar"><div class="brand">TNV <span>Smart Ops</span> · Prototype</div><nav>' +
+    TABS.map(x => '<a class="'+(r.v === x[0] ? 'on' : '')+'" href="#/'+x[0]+'">'+x[1]+'</a>').join('') +
+    '</nav><span class="tag">Dữ liệu minh họa · Gimasys · 20/10/2026</span><button class="rs" data-a="reset" title="Đưa toàn bộ dữ liệu về trạng thái ban đầu">↺<span class="lbl"> Làm mới demo</span></button></header>';
+}
+function render(){
+  const r = route(), root = document.getElementById('root');
+  const keep = {}; root.querySelectorAll('[data-sk]').forEach(e => keep[e.dataset.sk] = e.scrollTop);
+  const wy = window.scrollY;
+  const fn = VIEWS[r.v] || VIEWS[''];
+  root.innerHTML = topbar(r) + '<div id="app">' + fn(r.sub) + '</div>';
+  root.querySelectorAll('[data-sk]').forEach(e => { if (keep[e.dataset.sk] != null) e.scrollTop = keep[e.dataset.sk]; });
+  window.scrollTo(0, wy);
+  root.querySelectorAll('[data-scrollend]').forEach(e => e.scrollTop = e.scrollHeight);
+  document.title = 'TNV Smart Ops · Prototype';
+}
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-a]'); if (!el) return;
+  const f = ACT[el.dataset.a]; if (f){ e.preventDefault(); f(el.dataset, el, e); }
+});
+document.addEventListener('change', e => {
+  const el = e.target.closest('[data-c]'); if (el && ACT[el.dataset.c]) ACT[el.dataset.c](el.dataset, el, e);
+});
+document.addEventListener('input', e => {
+  const el = e.target.closest('[data-bind]'); if (el) setPath(S, el.dataset.bind, el.type === 'checkbox' ? el.checked : el.value);
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter'){ const el = e.target.closest('[data-enter]'); if (el && ACT[el.dataset.enter]){ e.preventDefault(); ACT[el.dataset.enter](el.dataset, el, e); } }
+});
+window.addEventListener('hashchange', () => { S.ux = false; render(); });
+ACT.reset = () => { S = initState(); render(); toast('Đã đưa dữ liệu demo về ban đầu'); };
+ACT.go = d => go(d.to);
+ACT.ux = () => { S.ux = !S.ux; render(); };
+ACT.lang = d => { S.lang = d.v; render(); };
+
+/* Đếm ngược (duyệt lệnh AI hết hạn sau 10 phút) */
+setInterval(() => {
+  document.querySelectorAll('[data-cd]').forEach(el => {
+    const ms = +el.dataset.cd - Date.now();
+    if (ms <= 0){ if (S.ops.ai.st === 'pending'){ S.ops.ai.st = 'expired'; render(); } return; }
+    const m = Math.floor(ms / 60000), s = Math.floor(ms / 1000) % 60;
+    el.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  });
+}, 1000);
+
+/* Khung điện thoại dùng chung */
+function phone(inner, o){
+  o = o || {};
+  return '<div class="phone"><div class="notch"></div><div class="screen">' +
+    '<div class="sbar"><span>9:41</span><span>5G ▮▮▮</span></div>' + inner + '</div></div>';
+}
+function uxDrawer(title, items){
+  if (!S.ux) return '<button class="uxbtn" data-a="ux">💡 Ghi chú UX</button>';
+  return '<aside class="uxdrawer"><div class="row"><h3 class="grow">Best practice áp dụng</h3><button class="btn ghost sm" data-a="ux">Đóng ✕</button></div><div class="mut sm">'+esc(title)+'</div>' +
+    items.map((x, i) => '<div class="bp"><div class="n">'+(i+1)+'</div><div><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div></div>').join('') + '</aside><button class="uxbtn hide"></button>';
+}
+function notesCard(items){
+  return '<div class="card"><h3>Best practice áp dụng</h3>' + items.map((x, i) => '<div class="bp" style="margin-top:'+(i ? 14 : 0)+'px"><div class="n">'+(i+1)+'</div><div><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div></div>').join('') + '</div>';
+}
+
+window.addEventListener('DOMContentLoaded', () => { S = initState(); render(); });
+
+/* ===== Web vận hành + dashboard (slide 5–10) ===== */
+const NAV = [
+  ['tong-quan','Tổng quan','Overview','home'],['canh-bao','Cảnh báo','Alerts','bell'],['nang-luong','Điện & nước','Energy & water','bolt'],
+  ['thiet-bi','Thiết bị','Equipment','wrench'],['an-ninh','An ninh & vào ra','Security & access','shield'],['tro-ly','Trợ lý AI','AI assistant','spark'],
+  ['bao-cao','Báo cáo','Reports','file'],['cau-hinh','Cấu hình','Settings','cog']
+];
+const ROLES = {
+  'CĐT':['tong-quan','canh-bao','nang-luong','bao-cao'],
+  'BQL':NAV.map(n => n[0]),
+  'Bảo vệ':['canh-bao','an-ninh','tro-ly'],
+  'Kỹ thuật':['canh-bao','nang-luong','thiet-bi','tro-ly']
+};
+const ROLE_HOME = { 'CĐT':'tong-quan','BQL':'tong-quan','Bảo vệ':'an-ninh','Kỹ thuật':'thiet-bi' };
+const NOTES = {
+  'tong-quan':[['Năm chỉ số đầu trang','Trả lời “tòa nhà có ổn không” trong 5 giây, trước khi đọc chi tiết'],['Luôn có ngữ cảnh','Số liệu đặt cạnh dự báo AI hoặc kỳ trước; con số đứng một mình không nói lên điều gì'],['Chỉ hiện việc cần quyết','CĐT chỉ thấy cảnh báo Khẩn/Cao; bấm vào để xem chi tiết'],['Định lượng giá trị AI','Tiết kiệm nước, điện, sự cố tránh được: cơ sở đánh giá hiệu quả đầu tư']],
+  'canh-bao':[['Nền xám, màu cho bất thường','Theo ISA-101: dòng khẩn nổi bật ngay giữa danh sách bình thường'],['4 mức ưu tiên, gom trùng','Theo ISA-18.2: một sự cố không sinh hàng chục cảnh báo rời'],['AI phải giải thích','Đề xuất kèm dữ liệu căn cứ và biểu đồ, người trực hiểu vì sao trước khi bấm'],['Một chạm, có nhật ký','Duyệt, từ chối hoặc tạo phiếu việc không phải gõ lại; mọi lệnh được ghi vết']],
+  'nang-luong':[['Dự báo làm đường chuẩn','Đường xám là mức AI kỳ vọng; khoảng cách với thực tế mới là thông tin'],['Bất thường nói bằng lời','“Chạy ngoài giờ”, “tăng 38%” dễ hiểu hơn một biểu đồ cần tự đọc'],['Tô màu một cột duy nhất','Tầng 3 nổi bật giữa nền xám: thấy ngay chỗ rò lúc ban đêm'],['Khoanh vùng thất thoát','Lệch tổng – nhánh vượt ngưỡng thì gợi ý kiểm tra đoạn ống']],
+  'thiet-bi':[['Sơ đồ xám, điểm bất thường có màu','Kỹ thuật thấy ngay vị trí cần đến, không phải đọc danh sách'],['Điểm sức khỏe kèm lý do','Mỗi con số có câu giải thích; AI không là “hộp đen”'],['Xu hướng hơn giá trị tức thời','Số lần khởi động tăng dần trong 7 ngày là dấu hiệu sớm của hỏng van'],['Đề xuất có hệ quả','Nói rõ việc cần làm, thời hạn và rủi ro nếu bỏ qua; một chạm tạo phiếu việc']],
+  'an-ninh':[['Cảnh báo kèm hình, đối chiếu chéo','Camera AI so với nhật ký vào ra để giảm báo giả; mục tiêu ≤ 10 giây'],['Riêng tư mặc định','Nhật ký không hiện ảnh khuôn mặt; biển số che một phần; khách vãng lai không định danh'],['Quyền là tham số, không phải code','BQL đổi giờ mở rooftop, quyền cư dân ngay trên bảng'],['Sức chứa theo PCCC','Gần đầy thì báo quầy và khóa thang lên tầng tum tự động']],
+  'tro-ly':[['Câu trả lời có nguồn','Mỗi câu trả lời ghi điểm dữ liệu và thời điểm; không có dữ liệu thì nói không biết'],['Trả lời bằng bảng khi cần','Số liệu so sánh trình bày như bảng nhỏ, kèm liên kết sang trang chi tiết'],['Gợi ý câu hỏi','Giúp người mới biết trợ lý làm được gì; phân quyền theo vai trò'],['Tóm tắt ca thay sổ giao ca','AI soạn, người trực xác nhận; lưu làm nhật ký vận hành']]
+};
+
+function alertCounts(){
+  const a = S.alerts, c = { all:a.length }; ['khan','cao','tb','tin'].forEach(k => c[k] = a.filter(x => x.lv === k).length); return c;
+}
+function visibleAlerts(){ return S.role === 'CĐT' ? S.alerts.filter(a => a.lv === 'khan' || a.lv === 'cao') : S.alerts; }
+
+function webShell(sub, title, meta, body){
+  const allowed = ROLES[S.role], c = alertCounts();
+  const nav = NAV.filter(n => allowed.indexOf(n[0]) > -1).map(n =>
+    '<a class="'+(n[0] === sub ? 'on' : '')+'" href="#/web/'+n[0]+'">'+ic(n[3], 18)+'<span>'+t(n[1], n[2])+'</span>'+(n[0] === 'canh-bao' ? '<span class="bd">'+c.all+'</span>' : '')+'</a>').join('');
+  return '<div class="web"><aside class="side"><div class="logo"><i>TNV</i>Smart Ops</div>'+nav+
+    '<div class="ft">Claude · Gemini qua cổng AI Gimasys</div></aside><div class="main">' +
+    '<div class="hdr"><h1>'+title+'</h1><span class="meta">'+(meta || '')+'</span><span class="sp"></span>' +
+    '<div class="seg"><button class="'+(S.lang === 'vi' ? 'on' : '')+'" data-a="lang" data-v="vi">VI</button><button class="'+(S.lang === 'en' ? 'on' : '')+'" data-a="lang" data-v="en">EN</button></div>' +
+    '<div class="role"><div class="av">'+esc(S.role.slice(0, 3))+'</div><select data-c="role" aria-label="Vai trò">'+Object.keys(ROLES).map(r => '<option '+(r === S.role ? 'selected' : '')+'>'+r+'</option>').join('')+'</select></div></div>' +
+    '<div class="mnav">'+NAV.filter(n => allowed.indexOf(n[0]) > -1).map(n => '<a class="'+(n[0] === sub ? 'on' : '')+'" href="#/web/'+n[0]+'">'+t(n[1], n[2])+'</a>').join('')+'</div><div class="page">'+body+'</div></div></div>' + uxDrawer(title, NOTES[sub] || []);
+}
+ACT.role = (d, el) => { S.role = el.value; const a = ROLES[S.role]; const r = route(); if (r.v === 'web' && a.indexOf(r.sub) < 0) go('web/' + ROLE_HOME[S.role]); else render(); };
+
+VIEWS.web = function(sub){
+  const allowed = ROLES[S.role];
+  if (!sub) sub = ROLE_HOME[S.role];
+  const nm = NAV.filter(n => n[0] === sub)[0];
+  if (!nm) sub = 'tong-quan';
+  if (allowed.indexOf(sub) < 0){
+    return webShell(sub, 'Không có quyền truy cập', '', '<div class="card" style="max-width:560px"><h3>Vai trò “'+S.role+'” không xem được mục này</h3><p class="mut">Phân quyền theo vai trò dùng chung cho web, app cư dân và app vận hành. Đổi vai trò ở góc phải trên để xem nội dung tương ứng.</p><p style="margin-top:12px"><a class="btn primary" href="#/web/'+ROLE_HOME[S.role]+'">Về trang của vai trò này</a></p></div>');
+  }
+  const P = PAGES[sub];
+  return webShell(sub, t(P.title, P.en), P.meta ? P.meta() : '', P.body());
+};
+
+/* ---------- Tổng quan CĐT ---------- */
+const PAGES = {};
+PAGES['tong-quan'] = {
+  title:'Tổng quan tòa nhà', en:'Building overview', meta:() => 'Tháng 10/2026 · cập nhật 10:15',
+  body(){
+    const c = alertCounts(), list = visibleAlerts().filter(a => a.lv !== 'tin' && (S.role === 'CĐT' ? true : a.lv !== 'tb' || a.id === 4)).slice(0, 4);
+    const kpi = (l, v, d, w, u) => '<div class="kpi '+(w ? 'warn' : '')+'"><div class="l">'+l+'</div><div class="v">'+v+(u ? '<small>'+u+'</small>' : '')+'</div><div class="d">'+d+'</div></div>';
+    const open = S.alerts.length;
+    return '<div class="g5">' +
+      kpi(t('Điện năng tháng','Electricity (month)'), '48,2', '▼ 6% '+t('so dự báo','vs forecast'), 0, 'MWh') +
+      kpi(t('Nước tháng','Water (month)'), '1.240', '▼ 3% '+t('so T9','vs Sep'), 0, 'm³') +
+      kpi(t('Chi phí vận hành','Operating cost'), '312', '▼ 4% '+t('so kế hoạch','vs plan'), 0, 'tr đ') +
+      kpi(t('Cảnh báo đang mở','Open alerts'), open, c.khan+' '+t('khẩn','urgent')+' · '+c.cao+' '+t('cao','high'), 1) +
+      kpi(t('Thiết bị sẵn sàng','Equipment ready'), '98,6%', '2 '+t('thiết bị cần kiểm tra','need checking'), 0) + '</div>' +
+      '<div class="g2"><div class="card"><h3>'+t('Điện năng theo ngày: thực tế và dự báo AI (MWh)','Daily electricity: actual vs AI forecast (MWh)')+'</h3>' +
+      lineChart({ series:[{d:DAYS_F,c:'#8A96A3',dash:true,w:2},{d:DAYS_A,c:'#1B7F79',w:2.6,area:true}], min:1.5, max:3.1, yfmt:v => fmt(v,1), xl:i => (i+1), xevery:3, vline:19, vlabel:'hôm nay', label:'Điện năng theo ngày' }) +
+      '<div class="leg" style="margin-top:6px"><span><i style="background:#1B7F79"></i>'+t('Thực tế','Actual')+'</span><span><i style="background:#8A96A3"></i>'+t('Dự báo AI','AI forecast')+'</span></div></div>' +
+      '<div class="card"><h3>'+t('Cảnh báo cần quyết định','Alerts needing a decision')+'</h3><div class="col" style="gap:0">' +
+      list.map(a => '<div class="lrow" style="cursor:pointer" data-a="alertOpen" data-id="'+a.id+'">'+lvChip(a.lv)+'<span class="grow">'+shortDesc(a)+'</span><span class="mut sm">'+a.time+'</span></div>').join('') +
+      '</div><p style="margin-top:10px"><a class="btn sm" href="#/web/canh-bao">Mở Trung tâm cảnh báo →</a></p></div></div>' +
+      '<div class="g3"><div class="card"><h3>'+t('Điện theo khu vực (MWh)','Electricity by area (MWh)')+'</h3>' +
+      hbars([{l:'Căn hộ tầng 2–5',v:17.4},{l:'Nhà hàng B1',v:8.9},{l:'Rooftop bar',v:6.2},{l:'Hầm & thông gió',v:5.6},{l:'Khu thương mại',v:5.3},{l:'Thang máy & bơm',v:4.8}], {fmt:v => fmt(v,1)}) + '</div>' +
+      '<div class="card"><h3>'+t('Khách đang có mặt','Current occupancy')+'</h3>' +
+      [['Nhà hàng B1',86,150],['Rooftop',108,120],['Sảnh T1',12,60]].map(r => '<div style="margin-bottom:12px"><div class="row sm"><span class="grow">'+r[0]+'</span><b>'+r[1]+' / '+r[2]+'</b>'+(r[1]/r[2] >= .9 ? '<span class="chip cao">'+Math.round(r[1]/r[2]*100)+'%</span>' : '')+'</div><div class="bar '+(r[1]/r[2] >= .9 ? 'warn' : '')+'" style="margin-top:4px"><i style="width:'+(r[1]/r[2]*100)+'%"></i></div></div>').join('') + '</div>' +
+      '<div class="card"><h3>'+t('Hiệu quả AI tháng này','AI impact this month')+'</h3><div class="col"><div class="stat"><b>−22% '+t('nước tưới','irrigation water')+'</b><span>so lịch tưới cố định</span></div><div class="stat"><b>−310 kWh '+t('quạt hầm','garage fans')+'</b><span>chạy theo CO và lượt xe</span></div><div class="stat"><b>1 '+t('rò rỉ phát hiện sớm','leak caught early')+'</b><span>ước tính tránh mất 3,5 m³</span></div></div></div></div>';
+  }
+};
+ACT.alertOpen = d => { S.alertSel = +d.id; go('web/canh-bao'); };
+
+/* ---------- Trung tâm cảnh báo ---------- */
+const AI_DETAIL = {
+  2:{ t:'Bơm tăng áp BTA-02 khởi động dày', s:'Hầm B2 · trạm bơm · 09:30', ai:'Bơm khởi động 70 lần hôm qua, gấp 3 lần mức nền. Nhiều khả năng van một chiều không kín. Đã có đề xuất bảo trì ở trang Thiết bị.', btn:['Mở trang thiết bị','go','web/thiet-bi'] },
+  3:{ t:'Trạm sạc xe điện 03 mất kết nối', s:'Hầm B2 · EV-03 · 10:05', ai:'Mất tín hiệu OCPP từ 10:05; hai trạm còn lại bình thường. Nên kiểm tra nguồn và đường mạng tại tủ sạc B2. Chưa ảnh hưởng an toàn.', btn:['Tạo phiếu việc','ticket',1031] },
+  4:{ t:'Chênh áp lọc FAF-02 cao', s:'Tầng mái · quạt cấp FAF-02 · 11:12', ai:'Chênh áp lọc tăng 40% trong 3 tuần, lọc bẩn. Đã tạo phiếu #1043 (hạn 22/10).', btn:null },
+  5:{ t:'CO2 nhà hàng B1 cao', s:'Nhà hàng B1 · cảm biến CO2 · 14:20', ai:'Đông khách (86 người). Quạt thông gió tự tăng tần số theo kịch bản K3, CO2 về dưới 800 ppm sau 18 phút. Tự hết, không cần xử lý.', btn:null },
+  6:{ t:'Đèn sảnh bật ngoài lịch', s:'Sảnh T1 · lịch chiếu sáng · 17:45', ai:'Đèn bật lúc 17:45, sớm 15 phút so với lịch. Trùng với sự kiện đã đặt tại nhà hàng. Đã xác nhận.', btn:null },
+  7:{ t:'Rooftop mở cửa, đổi quyền thang', s:'Tầng tum · lịch hoạt động · 18:00', ai:'Theo tham số “giờ mở rooftop 17:00–24:00”, hệ thống tự cho phép thang lên tầng tum. Thông tin, không cần xử lý.', btn:null }
+};
+function flowSeries(){ // lưu lượng 22:00–04:00 (m³/h) mỗi 30 phút
+  const base = .057, hrs = []; for (let i = 0; i < 13; i++){ hrs.push(i < 8 ? base + (i % 3) * .004 : .8); }
+  hrs[8] = .08; for (let i = 9; i < 13; i++) hrs[i] = .8;
+  if (S.valve === 'closed') for (let i = 10; i < 13; i++) hrs[i] = .0; // sau 02:41
+  return hrs;
+}
+PAGES['canh-bao'] = {
+  title:'Trung tâm cảnh báo', en:'Alert center', meta:() => 'Ca đêm · Bảo vệ: Tuấn · KT: Hùng',
+  body(){
+    const c = alertCounts(), vis = visibleAlerts();
+    const list = S.alertFilter === 'all' ? vis : vis.filter(a => a.lv === S.alertFilter);
+    const sel = S.alerts.filter(a => a.id === S.alertSel)[0] || list[0];
+    const tabs = [['all','Tất cả'],['khan','Khẩn'],['cao','Cao'],['tb','TB'],['tin','Tin']].map(x => '<button class="'+(S.alertFilter === x[0] ? 'on' : '')+'" data-a="alertFilter" data-v="'+x[0]+'">'+x[1]+'<span class="n">'+(S.role === 'CĐT' && (x[0] === 'tb' || x[0] === 'tin') ? 0 : c[x[0]])+'</span></button>').join('');
+    const rows = list.map(a => '<tr class="click '+(a.lv === 'khan' ? 'k' : '')+' '+(a.id === sel.id ? 'sel' : '')+'" data-a="alertSelect" data-id="'+a.id+'"><td>'+lvChip(a.lv)+'</td><td>'+a.time+'</td><td>'+a.loc+'</td><td>'+a.desc+'</td><td class="'+(a.st === 'Chưa xác nhận' ? 'b' : 'mut')+'">'+a.st+'</td></tr>').join('');
+    return '<div class="pill-tabs">'+tabs+'</div><div class="g2" style="grid-template-columns:1.35fr 1fr;align-items:start"><div class="card" style="padding:6px 6px 10px"><table class="tbl"><thead><tr><th>Mức</th><th>Giờ</th><th>Vị trí</th><th>Mô tả</th><th>Trạng thái</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+alertDetail(sel)+'</div>';
+  }
+};
+function alertDetail(a){
+  const canAct = S.role === 'BQL' || S.role === 'Kỹ thuật';
+  if (a.id === 1){
+    const closed = S.valve === 'closed';
+    const fl = flowSeries();
+    return '<div class="card" style="border-color:'+(closed ? 'var(--line)' : 'var(--red)')+';background:'+(closed ? '#fff' : '#fffafa')+'"><div class="row">'+lvChip('khan')+'<b style="color:var(--navy);font-size:16px">Rò rỉ nước · Tầng 3, nhánh căn 3B</b></div>' +
+      '<div class="mut sm" style="margin:4px 0 10px">Đồng hồ FM-T3-02 · cảm biến rò LS-T3-02 · 02:31</div>' +
+      lineChart({ series:[{d:fl,c:closed ? '#2E9E5B' : '#D64545',w:2.4,area:true},{d:fl.map(() => .057),c:'#8A96A3',dash:true,w:1.5}], w:430, h:150, min:0, max:1, yfmt:v => fmt(v,1), xl:i => { const m = 22*60 + i*30; return String(Math.floor(m/60)%24).padStart(2,'0')+':'+(m%60 ? '30' : '00'); }, xevery:2, label:'Lưu lượng đêm' }) +
+      '<div class="leg"><span><i style="background:'+(closed ? '#2E9E5B' : '#D64545')+'"></i>Lưu lượng m³/h</span><span><i style="background:#8A96A3"></i>Mức nền ban đêm</span></div>' +
+      (closed
+        ? '<div class="note" style="margin-top:12px;background:var(--green-t)"><b style="color:var(--green-d)">✓ Đã đóng van V-T3-02 lúc 02:41</b><br>Người duyệt: '+S.role+' · phản hồi van: ĐÓNG · lưu lượng về 0 · nhật ký lệnh #L-2031 (giá trị cũ MỞ → mới ĐÓNG)</div>'
+        : S.valve === 'rejected' ? '<div class="warnbox" style="margin-top:12px">Đề xuất đã bị từ chối. Cảnh báo vẫn mở, cần xử lý thủ công.</div>'
+        : '<div class="note" style="margin-top:12px"><b style="color:var(--navy)">AI đề xuất:</b> Đóng van điện từ V-T3-02 (khu căn 3B).<br><b>Căn cứ:</b> cảm biến rò xác nhận; lưu lượng gấp 14 lần mức nền ban đêm trong 30 phút. Không ảnh hưởng nước chữa cháy.<div class="mut sm" style="margin-top:6px">Mức can thiệp: ghi có giới hạn · ưu tiên BACnet 12 · có nhật ký</div></div>') +
+      (S.valve === 'open' && canAct ? '<div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="btn primary" data-a="valveOk">Phê duyệt đóng van</button><button class="btn" data-a="alertTicket" data-id="1">Tạo phiếu việc</button><button class="btn danger" data-a="valveNo">Từ chối</button></div>' : '') +
+      (S.valve === 'open' && !canAct ? '<div class="mut sm" style="margin-top:12px">Vai trò “'+S.role+'” chỉ xem. Duyệt lệnh dành cho BQL / Kỹ thuật.</div>' : '') +
+      '<div class="mut sm" style="margin-top:10px">Đã gửi tới: app BQL, KT trực'+(S.alerts[0].st.indexOf('Phiếu') === 0 ? ' · '+S.alerts[0].st : '')+'</div></div>';
+  }
+  const d = AI_DETAIL[a.id];
+  return '<div class="card"><div class="row">'+lvChip(a.lv)+'<b style="color:var(--navy);font-size:16px">'+d.t+'</b></div><div class="mut sm" style="margin:4px 0 10px">'+d.s+'</div><div class="note"><b style="color:var(--navy)">AI giải thích:</b> '+d.ai+'</div>' +
+    '<div class="row" style="margin-top:12px;flex-wrap:wrap">'+(d.btn && canAct ? (d.btn[1] === 'go' ? '<button class="btn primary" data-a="go" data-to="'+d.btn[2]+'">'+d.btn[0]+'</button>' : '<button class="btn primary" data-a="alertTicket" data-id="'+a.id+'">'+d.btn[0]+'</button>') : '')+
+    (a.st === 'Chưa xác nhận' || a.st === 'KT Hùng' ? '<button class="btn" data-a="alertAck" data-id="'+a.id+'">Xác nhận đã xem</button>' : '')+'</div></div>';
+}
+ACT.alertFilter = d => { S.alertFilter = d.v; render(); };
+ACT.alertSelect = d => { S.alertSel = +d.id; render(); };
+ACT.alertAck = d => { const a = S.alerts.filter(x => x.id === +d.id)[0]; a.st = 'Đã xác nhận'; toast('Đã xác nhận · ghi nhật ký'); render(); };
+ACT.valveOk = () => { S.valve = 'closed'; S.alerts[0].st = 'Đã đóng van 02:41'; toast('Đã gửi lệnh đóng V-T3-02 · van phản hồi ĐÓNG'); render(); };
+ACT.valveNo = () => { S.valve = 'rejected'; S.alerts[0].st = 'BQL từ chối'; toast('Đã từ chối đề xuất · ghi nhật ký'); render(); };
+function addTicket(tk){ if (!S.ops.tickets.some(x => x.id === tk.id)){ S.ops.tickets.unshift(tk); return true; } return false; }
+ACT.alertTicket = d => {
+  const a = S.alerts.filter(x => x.id === +d.id)[0];
+  if (a.id === 1){ addTicket({id:1044,lv:'khan',title:'Rò rỉ nước nhánh căn 3B',loc:'Tầng 3',due:'ngay',st:'new'}); a.st = 'Phiếu #1044'; toast('Đã tạo phiếu #1044 · gửi app vận hành của KT Hùng'); }
+  else { toast('Đã gắn phiếu #1031 đang có · hiển thị trong app vận hành'); }
+  render();
+};
+
+/* ---------- Năng lượng & nước ---------- */
+PAGES['nang-luong'] = {
+  title:'Năng lượng & nước', en:'Energy & water', meta:() => 'Hôm nay 20/10/2026 · 47 đồng hồ điện, 28 đồng hồ nước qua BMS Azbil',
+  body(){
+    const tabs = [['dien','Điện'],['nuoc','Nước'],['hoadon','Hóa đơn'],['xanh','Công trình xanh']].map(x => '<button class="'+(S.energyTab === x[0] ? 'on' : '')+'" data-a="enTab" data-v="'+x[0]+'">'+x[1]+'</button>').join('');
+    let b = '';
+    if (S.energyTab === 'dien'){
+      const top = APTS.slice().sort((a, b) => b.kwh - a.kwh).slice(0, 5);
+      b = '<div class="g2"><div class="card"><h3>Phụ tải hôm nay theo giờ (kW): thực tế và dự báo</h3>' +
+        lineChart({ series:[{d:HOUR_F,c:'#8A96A3',dash:true,w:2},{d:HOUR_A,c:'#1B7F79',w:2.6,area:true}], min:80, max:300, xl:i => String(i).padStart(2,'0')+'h', xevery:3, vline:10, vlabel:'10:00', label:'Phụ tải theo giờ' }) +
+        '<div class="leg" style="margin-top:6px"><span><i style="background:#1B7F79"></i>Thực tế</span><span><i style="background:#8A96A3"></i>Dự báo AI</span></div></div>' +
+        '<div class="card"><h3>Căn hộ dùng điện nhiều nhất (kWh)</h3>'+hbars(top.map(x => ({l:'Căn '+x.id,v:x.kwh})), {fmt:v => fmt(v)})+'</div></div>' +
+        '<div class="card"><h3>Tiêu thụ bất thường (AI)</h3><div class="g3">' +
+        [['TĐ-SPA chạy 02:00–05:00','4,2 kWh (nền 0,6) · chạy ngoài lịch hoạt động','Cao'],['Lộ đèn hầm B1-04','Bật ngoài lịch 3 đêm liên tiếp','TB'],['Căn 2C tăng 38%','So cùng kỳ, đã báo cư dân','TB']].map(r => '<div class="stat" style="background:#fff;border:1px solid var(--line)"><div class="row">'+lvChip(r[2] === 'Cao' ? 'cao' : 'tb')+'</div><b style="color:var(--ink);font-size:15px;margin-top:6px">'+r[0]+'</b><span>'+r[1]+'</span></div>').join('') + '</div></div>';
+    } else if (S.energyTab === 'nuoc'){
+      const fl = [['B2',.05],['B1',.08],['T1',.06],['T2',.09],['T3',.8],['T4',.07],['T5',.08],['Mái',.03]];
+      b = '<div class="g2"><div class="card"><h3>Lưu lượng ban đêm 1–4h (m³/h)</h3>'+barChart({data:fl.map(x => ({l:x[0],v:x[1],hi:x[0] === 'T3'})), h:210, max:1, yfmt:v => fmt(v,1), vfmt:v => fmt(v,1), hiColor:'#D64545', label:'Lưu lượng ban đêm theo tầng'})+'<p class="mut sm" style="margin-top:6px">Tầng 3 nổi bật giữa nền xám: lưu lượng liên tục 0,8 m³/h trong khi mức nền khoảng 0,06.</p></div>' +
+        '<div class="card"><h3>Cân bằng tổng – nhánh</h3><div class="col" style="gap:12px"><div class="row"><span class="grow mut">Đồng hồ tổng</span><b style="font-size:20px">41,2 m³</b></div><div class="row"><span class="grow mut">Tổng nhánh</span><b style="font-size:20px">38,9 m³</b></div><div class="row"><span class="grow mut">Lệch</span><span class="chip cao">5,6% ▲ vượt ngưỡng 5%</span></div><div class="warnbox">Gợi ý: kiểm tra đoạn ống nhánh tầng 3 (khu căn 3B), trùng vị trí cảnh báo rò rỉ lúc 02:31.</div></div></div></div>' +
+        '<div class="g3"><div class="kpi"><div class="l">Nước tháng</div><div class="v">1.240<small>m³</small></div><div class="d">▼ 3% so T9</div></div><div class="kpi"><div class="l">Đồng hồ nước đang online</div><div class="v">28 / 28</div><div class="d">Báo pin: 1 đồng hồ T5 (phiếu #1039)</div></div><div class="kpi"><div class="l">Nước tưới (AI)</div><div class="v">−22%<small>so lịch cố định</small></div><div class="d">Độ ẩm bồn ≥ ngưỡng 94% thời gian</div></div></div>';
+    } else if (S.energyTab === 'hoadon'){
+      b = '<div class="card" style="padding:6px 6px 10px"><h3 style="padding:10px 10px 0">Hóa đơn điện, nước theo căn hộ · tháng 10/2026 (tạm tính đến 19/10)</h3><table class="tbl"><thead><tr><th>Căn</th><th class="tr">Điện (kWh)</th><th class="tr">Tiền điện (đ)</th><th class="tr">Nước (m³)</th><th class="tr">Tiền nước (đ)</th><th class="tr">So T9</th></tr></thead><tbody>' +
+        APTS.map(a => '<tr><td><b>'+a.id+'</b></td><td class="tr">'+fmt(a.kwh)+'</td><td class="tr">'+fmt(a.e)+'</td><td class="tr">'+a.m3+'</td><td class="tr">'+fmt(a.w)+'</td><td class="tr">'+(Math.abs(a.dv) >= 10 ? '<span class="chip tb">'+(a.dv > 0 ? '+' : '')+a.dv+'%</span>' : '<span class="mut">'+(a.dv > 0 ? '+' : '')+a.dv+'%</span>')+'</td></tr>').join('') +
+        '</tbody></table><p class="mut sm" style="padding:8px 10px">Số liệu hóa đơn khớp chỉ số đồng hồ 100% (KPI nghiệm thu). Bảng giá cấu hình được (bậc thang sinh hoạt, kinh doanh). Hóa đơn chính thức cần đồng hồ được kiểm định.</p></div>';
+    } else {
+      b = '<div class="g3">' +
+        [['Cường độ năng lượng (EUI)','112 kWh/m²/năm','▼ 8% so mục tiêu thiết kế'],['Tiết kiệm nước tưới','−22%','so lịch tưới cố định'],['Chiếu sáng theo lịch','94%','đèn tuân thủ lịch hoạt động']].map(r => '<div class="kpi"><div class="l">'+r[0]+'</div><div class="v" style="font-size:22px">'+r[1]+'</div><div class="d">'+r[2]+'</div></div>').join('') +
+        '</div><div class="card"><h3>Mẫu báo cáo công trình xanh</h3><p class="mut">CĐT chọn chứng chỉ (LEED / LOTUS / EDGE); Gimasys lập mẫu báo cáo từ dữ liệu điện, nước, CO2, thời tiết. Màn hình này là bản minh họa cho giai đoạn 3.</p></div>';
+    }
+    return '<div class="pill-tabs">'+tabs+'</div>'+b;
+  }
+};
+ACT.enTab = d => { S.energyTab = d.v; render(); };
+
+/* ---------- Thiết bị & bảo trì dự đoán ---------- */
+const DEVS = {
+  'SH-01':{x:448,y:72,n:'Bơm sinh hoạt 01'},'SH-02':{x:493,y:72,n:'Bơm sinh hoạt 02'},'BTA-01':{x:538,y:72,n:'Bơm tăng áp 01'},'BTA-02':{x:583,y:72,n:'Bơm tăng áp 02',bad:'cao'},
+  'MF':{x:467,y:192,n:'Máy phát'},'MBA':{x:572,y:192,n:'Trạm biến áp'},
+  'QH-01':{x:60,y:62,n:'Quạt hầm 01'},'QH-02':{x:340,y:62,n:'Quạt hầm 02'},'CO':{x:200,y:190,n:'Cảm biến CO'},
+  'EV-01':{x:60,y:292,n:'Sạc xe điện 01'},'EV-02':{x:105,y:292,n:'Sạc xe điện 02'},'EV-03':{x:150,y:292,n:'Sạc xe điện 03',bad:'cao'},'TĐ':{x:350,y:292,n:'Tủ điện B2'}
+};
+function floorMap(){
+  const rm = (x, y, w, h, l) => '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="8" fill="#EEF1F4" stroke="#D5DCE3"/><text x="'+(x+8)+'" y="'+(y+18)+'" font-size="11" font-weight="700" fill="#6B7785">'+l+'</text>';
+  let s = rm(20,20,380,320,'Hầm xe B2')+rm(420,20,200,110,'Trạm bơm')+rm(420,140,95,90,'Máy phát')+rm(525,140,95,90,'Trạm biến áp')+rm(420,240,95,100,'Phòng bảo vệ')+rm(525,240,95,100,'Rack trung tâm')+
+    '<text x="30" y="262" font-size="11" font-weight="700" fill="#6B7785">Sạc xe điện (EV)</text>';
+  Object.keys(DEVS).forEach(k => {
+    const d = DEVS[k], bad = !!d.bad, sel = S.devSel === k;
+    s += '<g data-a="devSel" data-id="'+k+'" style="cursor:pointer" role="button" aria-label="'+d.n+(bad ? ' – cần chú ý' : '')+'">' +
+      (bad ? '<circle cx="'+d.x+'" cy="'+d.y+'" r="21" fill="#E8833A" opacity=".18"/>' : '') +
+      '<circle cx="'+d.x+'" cy="'+d.y+'" r="14" fill="'+(bad ? '#E8833A' : '#fff')+'" stroke="'+(sel ? '#1B7F79' : (bad ? '#E8833A' : '#A9B4BF'))+'" stroke-width="'+(sel ? 3.5 : 2)+'"/>' +
+      '<text x="'+d.x+'" y="'+(d.y+4)+'" text-anchor="middle" font-size="12" font-weight="700" fill="'+(bad ? '#1A2330' : '#6B7785')+'">'+(bad ? '!' : '•')+'</text>' +
+      '<text x="'+d.x+'" y="'+(d.y+30)+'" text-anchor="middle" font-size="11" font-weight="'+(bad ? 700 : 400)+'" fill="'+(bad ? '#9A4A0B' : '#6B7785')+'">'+k+'</text></g>';
+  });
+  return '<svg viewBox="0 0 640 360" width="100%" role="img" aria-label="Sơ đồ hầm B2">'+s+'</svg>';
+}
+PAGES['thiet-bi'] = {
+  title:'Thiết bị & bảo trì', en:'Equipment & maintenance', meta:() => 'Tầng: Hầm B2 · trạng thái, giờ chạy, số lần khởi động, dòng điện, biến tần',
+  body(){
+    const health = [['Bơm tăng áp BTA-02',61,'cao','Khởi động 3× mức nền; kiểm tra van một chiều'],['Quạt cấp FAF-02',74,'tb','Chênh áp lọc tăng 40% trong 3 tuần'],['Bơm sinh hoạt SH-01',92,'ok','Bình thường · 2.140 giờ chạy'],['Bơm sinh hoạt SH-02',88,'ok','Bình thường · luân phiên tối nay'],['Máy phát MF',95,'ok','Lần chạy thử gần nhất 14/10']];
+    const d = DEVS[S.devSel];
+    return '<div class="g2"><div class="card"><h3>Sơ đồ hầm B2<small>chỉ thiết bị bất thường có màu · bấm vào thiết bị để xem</small></h3>'+floorMap()+
+      '<div class="leg" style="margin-top:6px"><span><i style="background:#E8833A;height:8px;width:8px;border-radius:50%"></i>Cần chú ý (kèm dấu “!”)</span><span><i style="background:#A9B4BF;height:8px;width:8px;border-radius:50%"></i>Bình thường</span></div>' +
+      '<div class="note" style="margin-top:10px"><b>'+S.devSel+' · '+d.n+'</b> — '+(d.bad ? (S.devSel === 'BTA-02' ? 'Điểm sức khỏe 61/100, khởi động 70 lần/ngày.' : 'Mất kết nối OCPP từ 10:05.') : 'Hoạt động bình thường.')+'</div></div>' +
+      '<div class="card"><h3>Chỉ số sức khỏe thiết bị (0–100)</h3>'+health.map(h => '<div style="margin-bottom:13px"><div class="row sm"><b class="grow">'+h[0]+'</b>'+(h[2] === 'ok' ? '' : lvChip(h[2]))+'<b style="font-size:16px;width:30px;text-align:right">'+h[1]+'</b></div><div class="bar '+(h[2] === 'cao' ? 'warn' : '')+'" style="margin:4px 0"><i style="width:'+h[1]+'%;'+(h[2] === 'tb' ? 'background:#D9A21B' : '')+'"></i></div><div class="mut sm">'+h[3]+'</div></div>').join('')+'</div></div>' +
+      '<div class="g2e"><div class="card"><h3>Lần khởi động/ngày · BTA-02 · 7 ngày gần nhất</h3>'+barChart({data:[22,24,23,35,48,61,70].map((v, i) => ({l:['T2','T3','T4','T5','T6','T7','CN'][i],v:v,hi:i === 6})), h:200, base:23, baseLabel:'mức nền 23', yfmt:v => Math.round(v), labels:true, label:'Số lần khởi động bơm'})+'<p class="mut sm">Xu hướng tăng dần trong 7 ngày là dấu hiệu sớm của hỏng van một chiều.</p></div>' +
+      '<div class="card"><h3>Đề xuất bảo trì</h3><div class="note" style="margin-bottom:10px"><b style="color:var(--navy)">Kiểm tra van một chiều bơm tăng áp 02 trong 7 ngày</b></div><div class="warnbox">Nếu bỏ qua: bơm chạy liên tục, nguy cơ cháy động cơ.</div>' +
+      (S.ticketMade ? '<div class="note" style="margin-top:12px;background:var(--green-t)"><b style="color:var(--green-d)">✓ Đã tạo phiếu #1047</b> · hạn 27/10 · giao KT Hùng. Mở <a href="#/vanhanh/viec">app vận hành → Việc của tôi</a> để xem.</div>' : '<p style="margin-top:12px"><button class="btn primary" data-a="mkTicket">Tạo phiếu việc</button></p>') + '</div></div>';
+  }
+};
+ACT.devSel = d => { S.devSel = d.id; render(); };
+ACT.mkTicket = () => { S.ticketMade = true; addTicket({id:1047,lv:'cao',title:'Kiểm tra van một chiều BTA-02',loc:'Trạm bơm B2',due:'hạn 27/10',st:'new'}); toast('Đã tạo phiếu #1047 · giao KT Hùng'); render(); };
+
+/* ---------- An ninh & vào ra ---------- */
+function secCard(compact){
+  const q = S.sec, st = q.stage, canSee = S.role === 'BQL' || S.role === 'Bảo vệ';
+  if (st === 'idle') return '<div class="card"><h3>Sự kiện camera AI</h3><div class="mut">Chưa có sự kiện. Camera AI đang giám sát 83 camera; mọi sự kiện sẽ được đối chiếu với nhật ký vào ra.</div></div>';
+  const img = '<div class="camimg"><span class="ts">CAM-B2-17 · 20/10 '+q.at+'</span><div style="margin-top:14px">'+personSvg(!q.reveal, 70, 90)+'</div><span class="box" style="left:41%;top:26%;width:20%;height:62%"></span><span class="lbl" style="left:41%;top:20%">NGƯỜI · 0,94</span></div>';
+  let body = '';
+  if (st === 'detected' || st === 'accepted'){
+    body = '<div class="row" style="margin-bottom:8px">'+lvChip('cao')+'<b style="color:var(--navy);font-size:15px">Có người ở khu kỹ thuật Z10 ngoài giờ</b></div>' +
+      '<div class="mut sm" style="margin-bottom:10px">Không có lượt quét vào ra hợp lệ trong 10 phút trước · phát hiện sau '+fmt(q.secs,1)+' giây (mục tiêu ≤ 10 giây)</div>' + img +
+      '<div class="row" style="margin-top:6px"><button class="btn ghost sm" data-a="secReveal">'+ic('eye',14)+' '+(q.reveal ? 'Làm mờ lại' : 'Xem ảnh gốc')+'</button><span class="mut xs">Ảnh làm mờ mặc định; mở xem được ghi nhật ký</span></div>' +
+      (st === 'accepted' ? '<div class="note" style="margin:10px 0"><b>'+q.owner+' (bảo vệ) đang xử lý</b> · nhận lúc 23:48</div>' : '') +
+      (q.esc && st === 'detected' ? '<div class="warnbox" style="margin:10px 0">Không ai nhận sau 3 phút → <b>đã leo thang Trưởng BQL</b> (anh Dũng) qua app + SMS.</div>' : '') +
+      '<div class="row" style="margin-top:12px;flex-wrap:wrap">'+(st === 'detected' ? '<button class="btn primary" data-a="secCall">Gọi bảo vệ</button>' : '')+'<button class="btn" data-a="secVerify">Đã xác minh</button><button class="btn ghost" data-a="secFalse">Báo giả</button></div>';
+  } else if (st === 'closed'){
+    body = '<div class="row" style="margin-bottom:8px"><span class="chip ok">ĐÃ ĐÓNG</span><b style="color:var(--navy)">Khu kỹ thuật Z10 · 23:47</b></div><div class="note" style="background:var(--green-t)">Đã xác minh: nhân viên kỹ thuật trực (Hùng) · đóng lúc 23:52 · '+(q.owner || 'Tuấn')+' xử lý. Sự kiện đã đưa vào <a href="#/web/tro-ly">tóm tắt ca</a>.</div>';
+  } else {
+    body = '<div class="row" style="margin-bottom:8px"><span class="chip neutral">BÁO GIẢ</span><b style="color:var(--navy)">Khu kỹ thuật Z10 · 23:47</b></div><div class="note">Đã đánh dấu báo giả để hiệu chỉnh vùng phát hiện camera CAM-B2-17. Không tạo cảnh báo mới.</div>';
+  }
+  return '<div class="card" style="'+(st === 'detected' || st === 'accepted' ? 'border-color:var(--orange)' : '')+'"><h3>Sự kiện camera AI</h3>'+body+'</div>';
+}
+PAGES['an-ninh'] = {
+  title:'An ninh & vào ra', en:'Security & access', meta:() => 'Ca đêm · 23:47 · Kịch bản K8 và phân luồng theo ma trận Z1–Z10',
+  body(){
+    const R = S.rooftop, rt = R.hold;
+    const log = [['18:02','Cư dân · 4B','Khuôn mặt','Sảnh thang B2 → tầng 4'],['18:05','Khách của 2C','QR mời','Sảnh T1 → tầng 2'],['18:07','30A-•••.12','Biển số','Barie vào hầm'],['18:31','NV nhà hàng','Khuôn mặt + ca','Cửa hậu cần B1'],['18:40','Không xác định','Thẻ','Cửa kỹ thuật Z10'],['19:15','Khách bar','Không định danh','Thang công cộng → tum']];
+    const cell = v => '<span class="cell '+(v === '✕' ? 'x' : /^QR/.test(v) ? 'q' : v === 'G' ? 'g' : /^M/.test(v) ? 'm' : '')+'">'+v+'</span>';
+    const mat = [['Cư dân','M','M','M*','T','G','✕'],['Khách cư dân','QR','QR','QR*','T','G','✕'],['Khách nhà hàng','T','G','✕','G','G','✕'],['BQL, kỹ thuật','M','M','M','M','M','M']];
+    return '<div class="g2e">'+secCard()+'<div class="col"><div class="card"><h3>Sức chứa theo khu</h3>' +
+      '<div style="margin-bottom:12px"><div class="row sm"><span class="grow">Rooftop</span><b>108 / 120</b><span class="chip cao">90%</span></div><div class="bar warn" style="margin-top:4px"><i style="width:90%"></i></div></div>' +
+      '<div><div class="row sm"><span class="grow">Nhà hàng B1</span><b>86 / 150</b><span class="chip ok">57%</span></div><div class="bar" style="margin-top:4px"><i style="width:57%"></i></div></div>' +
+      '<div class="warnbox" style="margin-top:12px">Rooftop ≥ 90%: <b>đã báo quầy bar</b>, '+(rt ? 'tạm dừng cho thang lên tum.' : 'thang lên tum đã được mở lại thủ công.')+'<div style="margin-top:8px"><button class="btn sm" data-a="rooftopHold">'+(rt ? 'Mở lại thang lên tum' : 'Tạm dừng thang lên tum')+'</button></div></div></div>' +
+      '<div class="card"><h3>Tham số vận hành<small>quyền là tham số, không phải code</small></h3><div class="row" style="flex-wrap:wrap"><span>Giờ mở rooftop</span><input type="time" data-bind="rooftop.from" value="'+R.from+'" style="border:1px solid var(--line);border-radius:6px;padding:5px"><span>đến</span><input type="time" data-bind="rooftop.to" value="'+(R.to === '24:00' ? '23:59' : R.to)+'" style="border:1px solid var(--line);border-radius:6px;padding:5px"><button class="btn primary sm" data-a="rooftopSave">Áp dụng</button></div><div class="mut xs" style="margin-top:6px">Đồng bộ xuống hệ vào ra và thang máy, có nhật ký thay đổi.</div></div></div></div>' +
+      '<div class="card" style="padding:6px 6px 10px"><h3 style="padding:10px 10px 0">Nhật ký vào ra<small>không hiện ảnh khuôn mặt · biển số che một phần</small></h3><table class="tbl"><thead><tr><th>Giờ</th><th>Người</th><th>Cách xác thực</th><th>Điểm vào</th></tr></thead><tbody>'+log.map(l => '<tr class="'+(l[1] === 'Không xác định' ? '' : '')+'"><td>'+l[0]+'</td><td>'+(l[1] === 'Không xác định' ? '<b>'+l[1]+'</b> <span class="chip tb">cần xem</span>' : l[1])+'</td><td>'+l[2]+'</td><td>'+l[3]+'</td></tr>').join('')+'</tbody></table></div>' +
+      '<div class="card"><h3>Ma trận quyền (rút gọn)<small>chỉnh trên phần mềm</small></h3><table class="tbl"><thead><tr><th></th><th>Z1 Sảnh</th><th>Z2 Hầm</th><th>Z3 Căn hộ</th><th>Z8 Nhà hàng</th><th>Z7 Rooftop</th><th>Z10 KT</th></tr></thead><tbody>'+mat.map(r => '<tr><td><b>'+r[0]+'</b></td>'+r.slice(1).map(v => '<td>'+cell(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table><p class="mut sm" style="margin-top:8px">M: khuôn mặt · QR: mã mời · G: trong giờ · T: tự do · *: chỉ tầng được phép · ✕: không được vào</p></div>';
+  }
+};
+ACT.rooftopHold = () => { S.rooftop.hold = !S.rooftop.hold; render(); };
+ACT.rooftopSave = () => { toast('Đã áp dụng giờ rooftop '+S.rooftop.from+'–'+S.rooftop.to+' · đồng bộ xuống vào ra/thang máy'); };
+ACT.secReveal = () => { if (S.role !== 'BQL' && S.role !== 'Bảo vệ'){ toast('Vai trò “'+S.role+'” không được xem ảnh gốc'); return; } S.sec.reveal = !S.sec.reveal; if (S.sec.reveal) logEvt(S.k8.log, S.sec.at.slice(0, 5), S.role, 'xem ảnh gốc (ghi nhật ký)'); render(); };
+ACT.secCall = () => { toast('Đã gọi bảo vệ Tuấn và KT Hùng'); logEvt(S.k8.log, '23:47', 'Nền tảng', 'gọi bảo vệ Tuấn, KT Hùng'); render(); };
+ACT.secAccept = () => { S.sec.stage = 'accepted'; S.sec.owner = 'Tuấn'; S.sec.esc = false; logEvt(S.k8.log, '23:48', 'Tuấn', 'nhận xử lý · các thiết bị khác thấy “Tuấn đang xử lý”'); render(); };
+ACT.secVerify = () => { S.sec.stage = 'closed'; S.sec.owner = S.sec.owner || 'Tuấn'; logEvt(S.k8.log, '23:52', S.sec.owner, 'xác minh: nhân viên KT trực → đóng sự kiện, đưa vào tóm tắt ca'); render(); };
+ACT.secFalse = () => { S.sec.stage = 'false'; logEvt(S.k8.log, '23:51', S.sec.owner || 'Bảo vệ', 'báo giả → đánh dấu hiệu chỉnh vùng phát hiện CAM-B2-17'); render(); };
+
+/* ---------- Trợ lý AI ---------- */
+function shiftSummary(){
+  const leak = S.valve === 'closed' ? 'Rò rỉ tầng 3 (đã đóng van 02:41)' : S.valve === 'rejected' ? 'Rò rỉ tầng 3 (BQL từ chối đóng van, đang xử lý thủ công)' : 'Rò rỉ tầng 3 (chưa xử lý)';
+  const sec = { closed:'người ở khu kỹ thuật (đã xác minh: KT trực)', 'false':'người ở khu kỹ thuật (báo giả, đã đánh dấu hiệu chỉnh)', accepted:'người ở khu kỹ thuật (Tuấn đang xử lý)', detected:'người ở khu kỹ thuật (chưa ai nhận)', idle:'không có sự kiện an ninh' }[S.sec.stage];
+  return '<b>Tóm tắt ca đêm 19–20/10 (AI soạn)</b><table style="margin-top:8px"><tbody>' +
+    '<tr><th>3 sự kiện</th><td>'+leak+'; trạm sạc 03 mất kết nối; '+sec+'</td></tr>' +
+    '<tr><th>2 việc tồn</th><td>Phiếu #1043 vệ sinh lọc FAF-02; kiểm tra van một chiều bơm tăng áp 02 ('+(S.ticketMade ? 'phiếu #1047' : 'chưa có phiếu')+')</td></tr>' +
+    '<tr><th>Lưu ý ca ngày</th><td>Thợ sửa ống căn 3B cần QR vào khu kỹ thuật từ 08:30</td></tr>' +
+    '<tr><th>Số liệu</th><td>Điện đêm 412 kWh (dự báo 405); nước đêm bình thường trừ tầng 3</td></tr></tbody></table>';
+}
+function answer(q){
+  const s = q.toLowerCase(), M = S.model;
+  if (/hóa đơn|thanh toán|tiền điện|nhiều nhất|căn nào/.test(s) && S.role === 'Bảo vệ')
+    return { h:'Vai trò <b>Bảo vệ</b> không có quyền xem dữ liệu hóa đơn và tiêu thụ theo căn hộ. Mình có thể trả lời về cảnh báo an ninh, vào ra và tóm tắt ca.', src:'Phân quyền theo vai trò · không truy vấn dữ liệu' };
+  if (/bơm/.test(s)) return { h:'Có 1 bơm cần chú ý:<br><b>Bơm tăng áp 02 (B2)</b> khởi động 70 lần hôm qua, gấp 3 lần mức bình thường, nhiều khả năng do van một chiều. '+(S.ticketMade ? 'Đã có phiếu việc #1047.' : 'Đã có đề xuất bảo trì, chưa có phiếu việc.')+'<br>Các bơm còn lại hoạt động bình thường.', src:'BMS Azbil · BTA-02 RUN, START_COUNT · cập nhật 10:15' };
+  if (/điện|căn/.test(s)) return { h:'Ba căn dùng nhiều nhất tháng 10 (đến 19/10):<table><tr><th>Căn</th><th>kWh</th><th>So T9</th></tr><tr><td>5A</td><td>1.284</td><td>+4%</td></tr><tr><td>4B</td><td>1.190</td><td>−2%</td></tr><tr><td>3C</td><td>1.105</td><td>+11%</td></tr></table>Căn 3C tăng 11% chủ yếu từ 22:00–02:00. Xem chi tiết ở <a href="#/web/nang-luong">trang Năng lượng</a>.', src:'đồng hồ PM-CH-3C, PM-CH-4B, PM-CH-5A · cập nhật 10:15' };
+  if (/tóm tắt|ca đêm|giao ca/.test(s)) return { h:shiftSummary(), src:'Nhật ký cảnh báo, phiếu việc, historian · soạn lúc 06:00', shift:true };
+  if (/faf|chênh áp/.test(s)) return { h:'<b>Chênh áp lọc FAF-02 cao</b> nghĩa là lọc gió quạt cấp tầng mái đang bẩn, quạt phải làm việc nặng hơn. Mức chênh áp đã tăng 40% trong 3 tuần.<br>Xử lý: vệ sinh hoặc thay lọc (phiếu #1043, hạn 22/10); không cần dừng quạt.', src:'SOP-HVAC-07 · cảm biến DP-FAF-02 · cập nhật 11:12' };
+  if (/cảnh báo/.test(s)) return { h:'Tuần này (14–20/10) có <b>19 cảnh báo</b>: 2 khẩn, 5 cao, 9 trung bình, 3 thông tin. 2 sự cố lặp lại: <b>bơm tăng áp 02</b> khởi động dày (4 lần) và <b>trạm sạc 03</b> mất kết nối (2 lần).', src:'Trung tâm cảnh báo · 14/10–20/10 · cập nhật 10:15' };
+  if (/bảo trì|lịch/.test(s)) return { h:'Lịch bảo trì tuần tới:<table><tr><th>Ngày</th><th>Việc</th></tr><tr><td>22/10</td><td>Vệ sinh lọc FAF-02 (#1043)</td></tr><tr><td>22/10</td><td>Bảo trì thang máy số 2, 09:00–11:00</td></tr><tr><td>24/10</td><td>Chạy thử máy phát định kỳ</td></tr><tr><td>27/10</td><td>Kiểm tra van một chiều BTA-02 '+(S.ticketMade ? '(#1047)' : '(đề xuất, chưa có phiếu)')+'</td></tr></table>', src:'Lịch bảo trì, phiếu việc · cập nhật 10:15' };
+  return { h:'Mình chưa có dữ liệu để trả lời câu này một cách chắc chắn, nên không đoán. Bạn có thể hỏi về thiết bị, cảnh báo, điện nước hoặc tóm tắt ca.', src:'Không tìm thấy điểm dữ liệu phù hợp' };
+}
+function seedChat(){
+  if (S.chat.length) return;
+  S.chat.push({r:'u',h:'Bơm nào đang có vấn đề?'}); const a1 = answer('bơm'); S.chat.push({r:'a',h:a1.h,src:a1.src});
+  S.chat.push({r:'u',h:'Tháng này căn nào dùng điện nhiều nhất?'}); const a2 = answer('căn điện'); S.chat.push({r:'a',h:a2.h,src:a2.src});
+}
+PAGES['tro-ly'] = {
+  title:'Trợ lý AI', en:'AI assistant', meta:() => 'Mô hình: '+S.model+' · Chỉ đọc, không điều khiển thiết bị',
+  body(){
+    seedChat();
+    const msgs = S.chat.map(m => m.r === 'u' ? '<div class="msg u">'+esc(m.h)+'</div>' : '<div class="msg a">'+m.h+(m.shift && !S.handover ? '<div style="margin-top:10px"><button class="btn primary sm" data-a="handover">Xác nhận bàn giao ca</button></div>' : '')+(m.shift && S.handover ? '<div class="chip ok" style="margin-top:10px">Đã bàn giao · '+S.role+' xác nhận · lưu nhật ký vận hành</div>' : '')+'<div class="src">Nguồn: '+m.src+' · mô hình '+S.model+'</div></div>').join('') +
+      (S.busy ? '<div class="msg a typing"><span></span><span></span><span></span></div>' : '');
+    return '<div class="card" style="max-width:860px;width:100%;margin:0 auto"><div class="row" style="margin-bottom:12px"><b style="color:var(--navy)">Hỏi bằng tiếng Việt, trả lời từ dữ liệu thật</b><span class="sp"></span><select data-c="model" style="border:1px solid var(--line);border-radius:8px;padding:5px 8px"><option '+(S.model === 'Claude' ? 'selected' : '')+'>Claude</option><option '+(S.model === 'Gemini' ? 'selected' : '')+'>Gemini</option></select><span class="chip neutral">Chỉ đọc</span></div>' +
+      '<div class="chat" data-sk="chat" data-scrollend>'+msgs+'</div>' +
+      '<div class="sugg" style="margin:14px 0 10px"><button data-a="ask" data-q="Tóm tắt ca đêm">Tóm tắt ca đêm</button><button data-a="ask" data-q="Cảnh báo tuần này">Cảnh báo tuần này</button><button data-a="ask" data-q="Lịch bảo trì tuần tới">Lịch bảo trì tuần tới</button><button data-a="ask" data-q="Cảnh báo chênh áp lọc FAF-02 nghĩa là gì?">FAF-02 nghĩa là gì?</button></div>' +
+      '<div class="askbox"><input id="askin" placeholder="Hỏi về thiết bị, cảnh báo, điện nước…" data-enter="askInput" autocomplete="off"><button class="btn primary" data-a="askInput">Gửi</button></div></div>';
+  }
+};
+ACT.model = (d, el) => { S.model = el.value; render(); };
+function doAsk(q){
+  if (!q.trim() || S.busy) return;
+  S.chat.push({r:'u',h:q}); S.busy = true; render();
+  setTimeout(() => { const a = answer(q); S.chat.push({r:'a',h:a.h,src:a.src,shift:a.shift}); S.busy = false; render(); }, 750);
+}
+ACT.ask = d => doAsk(d.q);
+ACT.askInput = () => { const i = document.getElementById('askin'); doAsk(i ? i.value : ''); };
+ACT.handover = () => { S.handover = true; toast('Đã xác nhận bàn giao ca · lưu nhật ký vận hành'); render(); };
+
+/* ---------- Báo cáo, Cấu hình (ngoài phạm vi prototype này) ---------- */
+function later(title, items){
+  return '<div class="card" style="max-width:640px"><span class="chip neutral">Giai đoạn prototype tương tác (Figma)</span><h3 style="margin-top:12px;font-size:16px">'+title+'</h3><ul style="margin:8px 0 0 18px;color:var(--ink2);line-height:1.8">'+items.map(i => '<li>'+i+'</li>').join('')+'</ul><p class="mut sm" style="margin-top:12px">Mục này không nằm trong bộ màn hình ★ của bản prototype (slide 3), sẽ bổ sung sau khi chốt phạm vi với CĐT.</p></div>';
+}
+PAGES['bao-cao'] = { title:'Báo cáo', en:'Reports', body:() => later('Báo cáo tháng do AI soạn sẵn để BQL chỉnh', ['Năng lượng, nước, chi phí vận hành, so sánh kỳ','Lượng khách nhà hàng, rooftop; tình trạng thiết bị','Báo cáo công trình xanh theo chứng chỉ CĐT chọn']) };
+PAGES['cau-hinh'] = { title:'Cấu hình', en:'Settings', body:() => later('Cấu hình, phân quyền, tham số', ['Ma trận phân quyền Z1–Z10, nhóm người, giờ hoạt động','Danh sách trắng điểm ghi lệnh, dải giá trị, chế độ “chỉ đề xuất / tự động có xác nhận”','Bảng giá điện nước, ngưỡng cảnh báo, ma trận ưu tiên']) };
+
+/* ===== App cư dân (slide 11–12) ===== */
+const RES_SCREENS = [
+  ['home','Trang chủ','Home','Việc hay dùng nhất ở trên cùng'],
+  ['moi','Mời khách','Invite a guest','Kịch bản K2 · bước 1'],
+  ['qr','Mã QR đã tạo','QR created','Gửi Zalo / SMS, tự hết hạn'],
+  ['den','Thông báo khách đến','Guest arrived','Ảnh tại sảnh, thang đã mở đúng tầng'],
+  ['hoadon','Hóa đơn tháng','Monthly bill','Điện, nước, sạc xe, phí dịch vụ'],
+  ['khuonmat','Đăng ký khuôn mặt','Face enrolment','Đồng ý riêng, có lựa chọn thay thế']
+];
+const RES_NOTES = [
+  ['Việc hay dùng nhất ở trên cùng','Mời khách là thao tác chính, nằm trong vùng ngón cái và có màu nhấn'],
+  ['Nói rõ khách được đi đâu','Cư dân thấy phạm vi quyền trước khi gửi; mặc định chỉ tầng nhà mình'],
+  ['Gửi qua kênh khách đang dùng','Zalo, SMS; mã có hạn giờ, tự hủy, hủy thủ công được'],
+  ['Xác nhận kết quả, không chỉ sự kiện','Cư dân biết khách đã vào và thang đã mở đúng tầng; có nút báo sai'],
+  ['Hóa đơn minh bạch','Tách điện, nước, sạc xe, phí; so sánh 6 tháng để tự kiểm tra'],
+  ['Đồng ý thật sự','Ô đồng ý không đánh sẵn; lựa chọn thay thế có trọng lượng ngang nhau']
+];
+const BILL6 = [['T5',3900000],['T6',4100000],['T7',4800000],['T8',4900000],['T9',4520000],['T10',4385000]];
+
+function resEnsure(screen){
+  const r = S.res;
+  if (screen === 'den' && !(r.invite && r.invite.scanned)){
+    r.invite = { id:'INV-0420', name:'Nguyễn Lan', phone:'0912 345 678', slot:'15:00 – 18:00', car:true, plate:'30G-123.45', sent:'Zalo', scanned:true, at:'15:04', expired:false, cancelled:false };
+  }
+  if (screen === 'qr' && !r.invite){
+    r.invite = { id:'INV-0420', name:r.form.name || 'Nguyễn Lan', phone:r.form.phone, slot:r.form.slot, car:r.form.car, plate:r.form.plate, sent:null, scanned:false, at:null, expired:false, cancelled:false };
+  }
+}
+function resNav(screen){
+  if (route().v === 'cudan') go('cudan/' + screen); else { resEnsure(screen); S.res.screen = screen; render(); }
+}
+function scopeText(car){ return t('Khách chỉ đi được sảnh T1, '+(car ? 'hầm B2 và ' : '')+'tầng 4', 'Guest can only access Lobby T1, '+(car ? 'garage B2 and ' : '')+'floor 4'); }
+function resTab(){ const s = S.res.screen; return ['moi','qr','den','khach'].indexOf(s) > -1 ? 'khach' : s === 'hoadon' ? 'hoadon' : (s === 'taikhoan' || s === 'khuonmat') ? 'tk' : 'home'; }
+function statusChip(i){
+  if (i.cancelled) return '<span class="chip neutral">'+t('Đã hủy','Cancelled')+'</span>';
+  if (i.expired) return '<span class="chip neutral">'+t('Đã hết hạn','Expired')+'</span>';
+  if (i.scanned) return '<span class="chip ok">'+t('Đã đến '+i.at,'Arrived '+i.at)+'</span>';
+  return '<span class="chip work">'+(i.sent ? t('Chờ khách quét','Waiting for scan') : t('Chưa gửi','Not sent'))+'</span>';
+}
+
+function resBody(){
+  const r = S.res, s = r.screen, f = r.form, iv = r.invite;
+  const head = (title, back) => '<div class="ah">'+(back ? '<button class="back" data-a="resNav" data-s="'+back+'" aria-label="Quay lại">'+ic('back', 18)+'</button>' : '')+'<h2>'+title+'</h2></div>';
+  if (s === 'home'){
+    const arrived = iv && iv.scanned && !iv.expired && !iv.cancelled;
+    const qa = [['moi','qr',t('Mời khách','Invite'),1],['door','door',t('Mở cửa sảnh','Open lobby')],['hoadon','receipt',t('Hóa đơn','Bills')],['later','msg',t('Phản ánh','Requests')],['later','cal',t('Đặt dịch vụ','Services')],['later','car',t('Bãi xe','Parking')]];
+    return '<div class="scroll" data-sk="res"><div class="hello"><h2>'+t('Chào anh Minh','Hello, Minh')+'</h2><p>'+t('Căn 4B · Tô Ngọc Vân','Unit 4B · To Ngoc Van')+'</p></div>' +
+      (arrived ? '<div class="acard" style="background:var(--green-t);border-color:#bfe3cc" data-a="resNav" data-s="den"><div class="row"><span class="b" style="color:var(--green-d)">'+ic('check', 20)+' '+t('Khách '+iv.name+' đã đến','Guest '+iv.name+' has arrived')+'</span><span class="sp"></span>›</div></div>' : '') +
+      '<div class="qa">'+qa.map(x => '<button class="'+(x[3] ? 'pri' : '')+'" data-a="'+(x[0] === 'door' ? 'resDoor' : x[0] === 'later' ? 'resLater' : 'resNav')+'" data-s="'+x[0]+'"><span class="i">'+ic(x[1], 22)+'</span>'+x[2]+'</button>').join('')+'</div>' +
+      '<div class="acard"><div class="b" style="color:var(--navy);margin-bottom:4px">'+t('BQL · Thông báo','Management · Notice')+'</div><div>'+t('Bảo trì thang máy số 2 ngày 22/10, 09:00–11:00','Elevator no. 2 maintenance on 22/10, 09:00–11:00')+'</div></div>' +
+      '<div class="acard"><div class="mut sm">'+t('Điện tháng này','Electricity this month')+'</div><div class="row"><b style="font-size:26px">1.190 kWh</b><span class="chip ok" style="margin-left:auto">▼ 2% '+t('so tháng trước','vs last month')+'</span></div>' +
+      '<div class="bars6">'+[1180,1215,1260,1230,1214,1190].map((v, i) => '<div class="'+(i === 5 ? 'cur' : '')+'"><i style="height:'+((v-1000)/3.2)+'%"></i>T'+(i+5)+'</div>').join('')+'</div></div></div>';
+  }
+  if (s === 'khach'){
+    const past = '<div class="lrow"><div class="i">'+ic('user', 18)+'</div><div class="grow"><b>Trần Thị Hà</b><div class="mut sm">'+t('Hôm qua · 19:00 – 21:00','Yesterday · 19:00 – 21:00')+'</div></div><span class="chip neutral">'+t('Đã hết hạn','Expired')+'</span></div>';
+    return '<div class="scroll" data-sk="res">'+head(t('Khách','Guests'))+'<button class="abtn primary" data-a="resNav" data-s="moi">'+ic('plus', 20)+' '+t('Mời khách mới','Invite a guest')+'</button><div class="acard" style="margin-top:14px"><div class="mut sm" style="margin-bottom:4px">'+t('Hôm nay','Today')+'</div>' +
+      (iv ? '<div class="lrow" data-a="resNav" data-s="'+(iv.scanned ? 'den' : 'qr')+'" style="cursor:pointer"><div class="i">'+ic('user', 18)+'</div><div class="grow"><b>'+esc(iv.name)+'</b><div class="mut sm">'+iv.slot+'</div></div>'+statusChip(iv)+'</div>' : '<div class="mut" style="padding:8px 0">'+t('Chưa có lời mời nào hôm nay.','No invitations today.')+'</div>') +
+      '</div><div class="acard"><div class="mut sm" style="margin-bottom:4px">'+t('Trước đó','Earlier')+'</div>'+past+'</div></div>';
+  }
+  if (s === 'moi'){
+    return '<div class="scroll" data-sk="res">'+head(t('Mời khách','Invite a guest'), 'home') +
+      '<div class="fld"><label>'+t('Tên khách','Guest name')+'</label><input data-bind="res.form.name" value="'+esc(f.name)+'" placeholder="Nguyễn Văn A" autocomplete="off"></div>' +
+      '<div class="fld"><label>'+t('Số điện thoại','Phone number')+'</label><input data-bind="res.form.phone" value="'+esc(f.phone)+'" inputmode="tel" autocomplete="off"></div>' +
+      '<div class="row2"><div class="fld"><label>'+t('Ngày','Date')+'</label><select data-bind="res.form.date">'+['Hôm nay, 20/10','Ngày mai, 21/10'].map(o => '<option '+(o === f.date ? 'selected' : '')+'>'+o+'</option>').join('')+'</select></div>' +
+      '<div class="fld"><label>'+t('Khung giờ','Time slot')+'</label><select data-bind="res.form.slot">'+['15:00 – 18:00','18:00 – 21:00','08:00 – 12:00'].map(o => '<option '+(o === f.slot ? 'selected' : '')+'>'+o+'</option>').join('')+'</select></div></div>' +
+      '<div class="acard"><div class="sw"><span class="b">'+t('Khách đi ô tô','Guest arrives by car')+'</span><div class="tg '+(f.car ? 'on' : '')+'" data-a="carToggle" role="switch" aria-checked="'+f.car+'" tabindex="0"></div></div>' +
+      (f.car ? '<div class="fld" style="margin:10px 0 0"><label>'+t('Biển số','Plate')+'</label><input data-bind="res.form.plate" value="'+esc(f.plate)+'" autocomplete="off"></div>' : '')+'</div>' +
+      '<div class="note" style="margin-bottom:14px;font-size:14px">'+ic('shield', 16)+' '+scopeText(f.car)+'</div>' +
+      '<button class="abtn primary" data-a="resCreate">'+ic('qr', 22)+' '+t('Tạo mã QR','Create QR code')+'</button></div>';
+  }
+  if (s === 'qr'){
+    const off = iv && (iv.cancelled || iv.expired);
+    return '<div class="scroll" data-sk="res">'+head(t('Mã mời khách','Guest pass'), 'khach') +
+      '<div class="qrbox '+(off ? 'off' : '')+'"><b style="font-size:19px;color:var(--navy)">'+esc(iv.name)+'</b><div class="mut">'+t('Hiệu lực '+iv.slot+' hôm nay','Valid '+iv.slot+' today')+'</div>'+qrSvg(iv.id + iv.name + iv.slot, 200)+
+      '<div class="b" style="color:var(--navy)">'+(iv.car ? t('Sảnh T1 · Hầm B2 · Tầng 4','Lobby T1 · Garage B2 · Floor 4') : t('Sảnh T1 · Tầng 4','Lobby T1 · Floor 4'))+'</div><div class="mut sm" style="margin-top:4px">'+(iv.cancelled ? t('Lời mời đã hủy','Invitation cancelled') : iv.expired ? t('Mã đã hết hạn và bị hủy','Pass expired and revoked') : t('Tự hết hạn và hủy sau khung giờ','Auto-expires after the time slot'))+'</div></div>' +
+      '<div style="margin-top:12px">'+(iv.sent ? '<div class="note" style="margin-bottom:10px">'+ic('check', 16)+' '+t('Đã gửi qua '+iv.sent,'Sent via '+iv.sent)+'</div>' : '') +
+      '<button class="abtn primary" data-a="resSend" data-v="Zalo" '+(off ? 'disabled' : '')+'>'+ic('send', 20)+' '+t('Gửi qua Zalo','Send via Zalo')+'</button><button class="abtn" data-a="resSend" data-v="SMS" '+(off ? 'disabled' : '')+'>'+t('Gửi SMS','Send SMS')+'</button><button class="abtn danger" data-a="resSheet" data-v="cancel" '+(off ? 'disabled' : '')+'>'+t('Hủy lời mời','Cancel invitation')+'</button></div></div>';
+  }
+  if (s === 'den'){
+    return '<div class="scroll" data-sk="res">'+head(t('Khách đến','Guest arrived'), 'khach') +
+      '<div class="acard"><div class="mut sm" style="margin-bottom:8px">'+t('Ảnh tại sảnh T1 · chỉ lưu 7 ngày','Photo at Lobby T1 · kept 7 days')+'</div><div class="camimg" style="height:170px"><span class="ts">SẢNH T1 · '+iv.at+':08</span>'+personSvg(false, 90, 115)+'</div></div>' +
+      '<div class="acard"><div class="b" style="font-size:19px;color:var(--navy)">'+t('Khách '+esc(iv.name)+' đã đến','Guest '+esc(iv.name)+' has arrived')+'</div><div class="lrow"><div class="i" style="background:var(--green-t);color:var(--green-d)">'+ic('check', 18)+'</div><div>'+t('Quét QR tại sảnh T1 lúc '+iv.at,'Scanned QR at Lobby T1 at '+iv.at)+'</div></div><div class="lrow"><div class="i" style="background:var(--green-t);color:var(--green-d)">'+ic('check', 18)+'</div><div>'+t('Thang máy đã được mở tới tầng 4','Elevator released to floor 4')+'</div></div></div>' +
+      '<button class="abtn primary" data-a="resCall">'+ic('phone', 20)+' '+t('Gọi video với khách','Video call the guest')+'</button><button class="abtn danger" data-a="resSheet" data-v="notmine">'+t('Không phải khách của tôi','Not my guest')+'</button></div>';
+  }
+  if (s === 'hoadon'){
+    const rows = [['bolt',t('Điện','Electricity'),'1.190 kWh','3.210.000'],['drop',t('Nước','Water'),'18 m³','495.000'],['car',t('Sạc xe điện','EV charging'),'62 kWh','220.000'],['receipt',t('Phí dịch vụ','Service fee'),'','460.000']];
+    return '<div class="scroll" data-sk="res">'+head(t('Hóa đơn tháng 10','October bill'), 'home') +
+      '<div class="hello"><p>'+t('Tổng cần thanh toán','Total due')+'</p><h2 style="font-size:32px;margin-top:4px">4.385.000 đ</h2>'+(r.paid ? '<span class="chip ok" style="margin-top:8px">'+t('Đã thanh toán','Paid')+'</span>' : '<p style="margin-top:6px">'+t('Hạn thanh toán 25/10','Due 25/10')+'</p>')+'</div>' +
+      '<div class="acard" style="padding:4px 14px">'+rows.map(x => '<div class="lrow"><div class="i">'+ic(x[0], 18)+'</div><div class="grow"><b>'+x[1]+'</b>'+(x[2] ? '<div class="mut sm">'+x[2]+'</div>' : '')+'</div><b>'+x[3]+'</b></div>').join('')+'</div>' +
+      '<div class="acard"><div class="mut sm">'+t('So sánh 6 tháng (triệu đồng)','6-month comparison (million VND)')+'</div><div class="bars6">'+BILL6.map((b, i) => '<div class="'+(i === 5 ? 'cur' : '')+'"><i style="height:'+((b[1]-3000000)/20000)+'%"></i>'+b[0]+'</div>').join('')+'</div></div>' +
+      '<button class="abtn primary" data-a="resSheet" data-v="pay" '+(r.paid ? 'disabled' : '')+'>'+t('Thanh toán','Pay now')+'</button></div>';
+  }
+  if (s === 'khuonmat'){
+    const fc = r.face;
+    if (fc.state === 'scanning') return '<div class="scroll">'+head(t('Chụp ảnh khuôn mặt','Face capture'), '')+'<div class="face">'+personSvg(false, 90, 110)+'</div><p class="tr" style="text-align:center;color:var(--muted)">'+t('Giữ nguyên khuôn mặt trong khung…','Hold still inside the frame…')+'</p></div>';
+    if (fc.state === 'done') return '<div class="scroll">'+head(t('Khuôn mặt','Face ID'), 'taikhoan')+'<div class="acard" style="text-align:center"><div class="i" style="width:64px;height:64px;border-radius:50%;background:var(--green-t);color:var(--green-d);display:grid;place-items:center;margin:0 auto 10px">'+ic('check', 32)+'</div><b style="font-size:19px">'+t('Đã đăng ký khuôn mặt','Face registered')+'</b><p class="mut" style="margin-top:6px">'+t('Dùng để mở cửa và thang máy. Ảnh chỉ lưu tại tòa nhà, tự xóa khi kết thúc hợp đồng.','Used for doors and elevators. Stored on-site only; deleted when your lease ends.')+'</p></div><button class="abtn danger" data-a="faceDelete">'+t('Xóa dữ liệu khuôn mặt của tôi','Delete my face data')+'</button></div>';
+    return '<div class="scroll" data-sk="res">'+head(t('Đăng ký khuôn mặt','Face enrolment'), 'taikhoan') +
+      '<div class="acard"><div class="b" style="font-size:19px;color:var(--navy);margin-bottom:8px">'+ic('lock', 22)+' '+t('Vào cửa bằng khuôn mặt','Enter with your face')+'</div>' +
+      [t('Ảnh khuôn mặt chỉ lưu tại tòa nhà','Face image is stored in the building only'),t('Dùng để mở cửa và thang máy','Used to open doors and elevators'),t('Xóa được bất cứ lúc nào','Delete it any time'),t('Tự xóa khi kết thúc hợp đồng','Auto-deleted when your lease ends')].map(x => '<div class="row" style="margin:7px 0;align-items:flex-start"><span style="color:var(--teal);flex:none">'+ic('check', 18)+'</span><span>'+x+'</span></div>').join('')+'</div>' +
+      '<div class="consent '+(fc.consent ? 'on' : '')+'" data-a="faceConsent" role="checkbox" aria-checked="'+fc.consent+'" tabindex="0"><div class="box">'+(fc.consent ? ic('check', 18, 3) : '')+'</div><span>'+t('Tôi đồng ý cho tòa nhà xử lý ảnh khuôn mặt của tôi cho mục đích trên','I agree to the building processing my face image for the purposes above')+'</span></div>' +
+      '<div style="margin-top:14px"><button class="abtn primary" data-a="faceStart" '+(fc.consent ? '' : 'disabled')+'>'+t('Đồng ý và chụp ảnh','Agree and take photo')+'</button><button class="abtn" data-a="faceAlt">'+t('Dùng thẻ hoặc QR thay thế','Use card or QR instead')+'</button></div>' +
+      '<p style="text-align:center;margin-top:12px"><a href="#" data-a="resSheet" data-v="policy" style="color:var(--teal);font-weight:700">'+t('Chính sách dữ liệu cá nhân','Personal data policy')+'</a></p></div>';
+  }
+  /* tài khoản */
+  return '<div class="scroll" data-sk="res">'+head(t('Tài khoản','Account')) +
+    '<div class="acard"><div class="row"><div class="lrow" style="border:0;padding:0"><div class="i" style="width:52px;height:52px;border-radius:50%">'+ic('user', 26)+'</div><div><b style="font-size:18px">Minh</b><div class="mut">'+t('Căn 4B · Tô Ngọc Vân','Unit 4B · To Ngoc Van')+'</div></div></div></div></div>' +
+    '<div class="acard"><div class="lrow" data-a="resNav" data-s="khuonmat" style="cursor:pointer"><div class="i">'+ic('lock', 18)+'</div><div class="grow"><b>'+t('Đăng ký khuôn mặt','Face enrolment')+'</b><div class="mut sm">'+(S.res.face.state === 'done' ? t('Đã đăng ký','Registered') : t('Chưa đăng ký','Not registered'))+'</div></div>›</div>' +
+    '<div class="lrow" data-a="resSheet" data-v="policy" style="cursor:pointer"><div class="i">'+ic('shield', 18)+'</div><div class="grow"><b>'+t('Chính sách dữ liệu cá nhân','Personal data policy')+'</b></div>›</div>' +
+    '<div class="lrow"><div class="i">'+ic('info', 18)+'</div><div class="grow"><b>'+t('Ngôn ngữ','Language')+'</b></div><div class="seg"><button class="'+(S.lang === 'vi' ? 'on' : '')+'" data-a="lang" data-v="vi">VI</button><button class="'+(S.lang === 'en' ? 'on' : '')+'" data-a="lang" data-v="en">EN</button></div></div></div></div>';
+}
+function resSheet(){
+  const k = S.res.sheet; if (!k) return '';
+  const wrap = h => '<div class="sheet" data-a="resSheetClose" data-bg="1"><div>'+h+'</div></div>';
+  if (k === 'door') return wrap('<h3>'+t('Mở cửa sảnh T1?','Open Lobby T1 door?')+'</h3><p class="mut" style="margin-bottom:14px">'+t('Cửa mở trong 5 giây và được ghi nhật ký.','The door opens for 5 seconds and is logged.')+'</p><button class="abtn primary" data-a="resDoorOk">'+t('Mở cửa','Open')+'</button><button class="abtn ghost" data-a="resSheetClose">'+t('Hủy','Cancel')+'</button>');
+  if (k === 'cancel') return wrap('<h3>'+t('Hủy lời mời?','Cancel this invitation?')+'</h3><p class="mut" style="margin-bottom:14px">'+t('Mã QR sẽ bị thu hồi ngay, khách không còn vào được.','The QR code is revoked immediately.')+'</p><button class="abtn danger" data-a="resCancelOk">'+t('Hủy lời mời','Cancel invitation')+'</button><button class="abtn ghost" data-a="resSheetClose">'+t('Giữ lại','Keep')+'</button>');
+  if (k === 'notmine') return wrap('<h3>'+t('Báo đây không phải khách của bạn?','Not your guest?')+'</h3><p class="mut" style="margin-bottom:14px">'+t('Bảo vệ sẽ được báo ngay và quyền tạm của mã này bị thu hồi.','Security is alerted and the pass is revoked.')+'</p><button class="abtn danger" data-a="resNotMineOk">'+t('Báo bảo vệ','Alert security')+'</button><button class="abtn ghost" data-a="resSheetClose">'+t('Quay lại','Back')+'</button>');
+  if (k === 'bell') return wrap('<h3>'+t('Chuông cửa sảnh T1','Lobby T1 doorbell')+'</h3><div class="camimg" style="height:150px;margin-bottom:12px"><span class="ts">SẢNH T1 · 15:06</span>'+personSvg(false, 70, 90)+'</div><p class="mut" style="margin-bottom:14px">'+t('Có người bấm chuông, không có lời mời. Bạn có muốn mở cửa từ xa?','Someone rang the bell without an invitation. Open the door remotely?')+'</p><button class="abtn primary" data-a="resBellOpen">'+t('Mở cửa từ xa','Open remotely')+'</button><button class="abtn ghost" data-a="resBellNo">'+t('Từ chối','Decline')+'</button>');
+  if (k === 'pay') return wrap('<h3>'+t('Thanh toán 4.385.000 đ','Pay 4,385,000 VND')+'</h3>'+['Ví điện tử (MoMo, ZaloPay)','Thẻ ngân hàng nội địa','Chuyển khoản QR'].map(x => '<button class="abtn ghost" data-a="resPayOk">'+x+'</button>').join('')+'<p class="mut sm" style="margin-top:12px">'+t('Phương thức thanh toán sẽ chốt theo quyết định của CĐT.','Payment methods follow the owner’s final decision.')+'</p>');
+  if (k === 'policy') return wrap('<h3>'+t('Chính sách dữ liệu cá nhân','Personal data policy')+'</h3><div style="font-size:15px;line-height:1.55" class="col"><div>• '+t('Ảnh khuôn mặt là dữ liệu sinh trắc học, chỉ lưu tại tòa nhà, không gửi tới dịch vụ AI đám mây.','Face images are biometric data, stored on-site only and never sent to cloud AI.')+'</div><div>• '+t('Bạn có thể xem và xóa dữ liệu bất cứ lúc nào trong Tài khoản.','You can view and delete your data any time under Account.')+'</div><div>• '+t('Khách vãng lai không bị định danh; đếm người không lưu khuôn mặt.','Walk-in visitors are not identified; people-counting stores no faces.')+'</div></div><button class="abtn primary" style="margin-top:16px" data-a="resSheetClose">'+t('Đã hiểu','Got it')+'</button>');
+  return '';
+}
+function resPhone(){
+  const r = S.res, tb = resTab();
+  const tabs = [['home','home',t('Trang chủ','Home')],['khach','users',t('Khách','Guests')],['hoadon','receipt',t('Hóa đơn','Bills')],['taikhoan','user',t('Tài khoản','Account')]];
+  const keyOf = { home:'home', khach:'khach', hoadon:'hoadon', tk:'taikhoan' }[tb];
+  return '<div class="phone"><div class="notch"></div><div class="screen"><div class="sbar"><span>9:41</span><span>5G ▮▮▮</span></div>' + resBody() +
+    '<nav class="tabbar">'+tabs.map(x => '<button class="'+(x[0] === keyOf ? 'on' : '')+'" data-a="resNav" data-s="'+x[0]+'">'+ic(x[1], 22)+x[2]+'</button>').join('')+'</nav>' +
+    (r.push ? '<div class="push" data-a="resPush"><b>'+esc(r.push.title)+'</b>'+esc(r.push.text)+'</div>' : '') + resSheet() + '</div></div>';
+}
+VIEWS.cudan = function(sub){
+  if (sub){ resEnsure(sub); S.res.screen = sub; }
+  const cur = S.res.screen;
+  const list = RES_SCREENS.map(x => '<button class="'+(cur === x[0] ? 'on' : '')+'" data-a="resNav" data-s="'+x[0]+'">'+t(x[1], x[2])+'<small>'+x[3]+'</small></button>').join('');
+  return '<div class="stage"><div class="list"><h2>App cư dân</h2><p>iOS, Android · song ngữ Việt – Anh · Kịch bản K2 · Persona: cư dân căn 4B</p>'+list+
+    '<div class="seg" style="margin-top:10px"><button class="'+(S.lang === 'vi' ? 'on' : '')+'" data-a="lang" data-v="vi">Tiếng Việt</button><button class="'+(S.lang === 'en' ? 'on' : '')+'" data-a="lang" data-v="en">English</button></div></div>' +
+    resPhone() + '<div class="notes">'+notesCard(RES_NOTES.slice(cur === 'home' || cur === 'moi' || cur === 'qr' ? 0 : 3, cur === 'home' || cur === 'moi' || cur === 'qr' ? 3 : 6))+'<p class="mut sm" style="margin-top:10px">Mở link này trên điện thoại để dùng toàn màn hình.</p></div></div>';
+};
+ACT.resNav = d => { S.res.push = null; S.res.sheet = null; resNav(d.s); };
+ACT.resLater = () => toast(t('Tính năng thuộc giai đoạn sau, ngoài phạm vi prototype này','Planned for a later phase, outside this prototype'));
+ACT.resDoor = () => { S.res.sheet = 'door'; render(); };
+ACT.resDoorOk = () => { S.res.sheet = null; toast(t('Đã mở cửa sảnh T1 · ghi nhật ký','Lobby T1 door opened · logged')); render(); };
+ACT.resSheet = d => { S.res.sheet = d.v; render(); };
+ACT.resSheetClose = (d, el, e) => { if (el.dataset.bg && e.target !== el) return; S.res.sheet = null; render(); };
+ACT.carToggle = () => { S.res.form.car = !S.res.form.car; render(); };
+ACT.resCreate = () => {
+  const f = S.res.form; if (!f.name.trim()){ toast(t('Nhập tên khách để tạo mã','Enter the guest name')); return; }
+  S.res.invite = { id:'INV-0420', name:f.name.trim(), phone:f.phone, slot:f.slot, car:f.car, plate:f.plate, sent:null, scanned:false, at:null, expired:false, cancelled:false };
+  logEvt(S.k2.log, '14:57', 'App cư dân', 'tạo lời mời cho '+f.name.trim()+' ('+f.slot+')');
+  resNav('qr');
+};
+ACT.resSend = d => {
+  const i = S.res.invite; i.sent = d.v; logEvt(S.k2.log, '14:58', 'Nền tảng', 'gửi mã QR qua '+d.v+' tới '+i.phone);
+  toast(t('Đã gửi mã qua '+d.v,'Sent via '+d.v)); render();
+};
+ACT.resCancelOk = () => { const i = S.res.invite; i.cancelled = true; S.res.sheet = null; logEvt(S.k2.log, '15:01', 'Nền tảng', 'thu hồi mã QR '+i.id+' (cư dân hủy)'); toast(t('Đã hủy lời mời','Invitation cancelled')); render(); };
+ACT.resCall = () => toast(t('Đang gọi video tới khách tại sảnh T1…','Calling the guest at Lobby T1…'));
+ACT.resNotMineOk = () => { const i = S.res.invite; i.cancelled = true; S.res.sheet = null; logEvt(S.k2.log, '15:05', 'Nền tảng', 'cư dân báo “không phải khách” → báo bảo vệ, thu hồi quyền tạm'); toast(t('Đã báo bảo vệ','Security alerted')); resNav('khach'); };
+ACT.resPayOk = () => { S.res.paid = true; S.res.sheet = null; toast(t('Thanh toán thành công','Payment successful')); render(); };
+ACT.resPush = () => { S.res.push = null; resNav('den'); };
+ACT.faceConsent = () => { S.res.face.consent = !S.res.face.consent; render(); };
+ACT.faceAlt = () => toast(t('Đã chọn thẻ/QR thay thế · không lưu ảnh khuôn mặt','Card/QR chosen · no face image stored'));
+ACT.faceStart = () => { S.res.face.state = 'scanning'; render(); setTimeout(() => { S.res.face.state = 'done'; render(); }, 2200); };
+ACT.faceDelete = () => { S.res.face = { consent:false, state:'idle' }; toast(t('Đã xóa dữ liệu khuôn mặt','Face data deleted')); render(); };
+
+/* ===== App vận hành (slide 13) ===== */
+const OPS_SCREENS = [['canh-bao','Cảnh báo kèm hình','Kịch bản K8 · bảo vệ Tuấn'],['duyet','Duyệt lệnh AI','Có căn cứ, giới hạn, hết hạn 10 phút'],['viec','Phiếu công việc','Việc của tôi · quét QR thiết bị']];
+const OPS_NOTES = [
+  ['Một người nhận, mọi người biết','Nút “Tôi nhận xử lý” tránh hai người cùng đi hoặc không ai đi'],
+  ['Duyệt có thời hạn và giới hạn','Đề xuất hết hạn nếu không duyệt; dải giá trị và thiết bị bị loại trừ hiển thị rõ'],
+  ['QR thiết bị nối hiện trường với dữ liệu','Kỹ thuật quét mã trên bơm, quạt để xem lịch sử, không phải tìm trên máy tính']
+];
+const LVORD = { khan:0, cao:1, tb:2, tin:3 };
+
+function opsNav(screen){ S.ops.sheet = null; if (route().v === 'vanhanh') go('vanhanh/' + screen); else { S.ops.screen = screen; render(); } }
+function oHead(title, sub){ return '<div class="ah" style="margin-bottom:10px"><div class="grow"><h2>'+title+'</h2>'+(sub ? '<div class="mut sm">'+sub+'</div>' : '')+'</div><span class="chip neutral">Tuấn · Bảo vệ · Ca đêm</span></div>'; }
+
+function opsAlertScreen(){
+  const q = S.sec, st = q.stage;
+  let card = '';
+  if (st === 'idle'){
+    card = '<div class="acard" style="text-align:center;padding:26px 14px"><div style="color:var(--green);display:grid;place-items:center;margin-bottom:8px">'+ic('check', 36)+'</div><b>Không có cảnh báo an ninh đang mở</b><div class="mut sm" style="margin-top:4px">Camera AI đang giám sát. Cảnh báo mới sẽ hiện ở đây kèm hình.</div></div>';
+  } else if (st === 'detected' || st === 'accepted'){
+    card = '<div class="acard" style="border:2px solid var(--orange)"><div class="row" style="margin-bottom:6px">'+lvChip('cao')+'<b style="color:var(--navy)">Khu kỹ thuật Z10 · 23:47</b></div>' +
+      '<div class="b" style="font-size:17px;line-height:1.35">Có người ngoài giờ, không có lượt quét hợp lệ</div>' +
+      '<div class="camimg" style="margin-top:10px;height:130px"><span class="ts">CAM-B2-17 · '+q.at+'</span><div style="margin-top:12px">'+personSvg(!q.reveal, 60, 80)+'</div><span class="box" style="left:42%;top:24%;width:19%;height:64%"></span></div>' +
+      '<div class="row" style="margin-top:6px"><span class="mut sm grow">Camera CAM-B2-17 · cạnh tủ rack trung tâm</span><button class="btn ghost sm" data-a="secReveal">'+ic('eye', 14)+' '+(q.reveal ? 'Làm mờ' : 'Xem ảnh')+'</button></div>' +
+      (st === 'detected'
+        ? '<div style="margin-top:12px"><button class="abtn primary" data-a="secAccept">Tôi nhận xử lý</button><div class="row2" style="margin-top:10px"><button class="abtn" style="margin:0" data-a="opsLive">Xem trực tiếp</button><button class="abtn ghost" style="margin:0" data-a="secFalse">Báo giả</button></div></div>'
+        : '<div class="note" style="margin-top:12px;font-size:15px"><b>Tuấn đã nhận xử lý</b> lúc 23:48. Hùng (KT) và Trưởng BQL thấy trạng thái này.</div><div style="margin-top:10px"><button class="abtn primary" data-a="secVerify">Đã xác minh, đóng sự kiện</button><div class="row2" style="margin-top:10px"><button class="abtn" style="margin:0" data-a="opsLive">Xem trực tiếp</button><button class="abtn ghost" style="margin:0" data-a="secFalse">Báo giả</button></div></div>') +
+      '<div class="mut sm" style="margin-top:10px">'+(st === 'accepted' ? 'Đã gửi: Tuấn (bảo vệ), Hùng (KT) · Tuấn đã nhận' : q.esc ? 'Không ai nhận sau 3 phút → <b>đã leo thang Trưởng BQL (anh Dũng)</b>' : 'Đã gửi: Tuấn (bảo vệ), Hùng (KT) · chưa ai nhận')+'</div></div>';
+  } else if (st === 'closed'){
+    card = '<div class="acard" style="background:var(--green-t);border-color:#bfe3cc"><div class="row"><span class="chip ok">ĐÃ ĐÓNG</span><b>Khu kỹ thuật Z10 · 23:47</b></div><p style="margin-top:8px">Đã xác minh: nhân viên kỹ thuật trực. Sự kiện được đưa vào tóm tắt ca.</p></div>';
+  } else {
+    card = '<div class="acard"><div class="row"><span class="chip neutral">BÁO GIẢ</span><b>Khu kỹ thuật Z10 · 23:47</b></div><p style="margin-top:8px">Đã đánh dấu để hiệu chỉnh vùng phát hiện của CAM-B2-17.</p></div>';
+  }
+  const others = S.alerts.slice(0, 3).map(a => '<div class="lrow">'+lvChip(a.lv)+'<div class="grow" style="font-size:15px">'+shortDesc(a)+'<div class="mut xs">'+a.loc+' · '+a.time+'</div></div></div>').join('');
+  return '<div class="scroll" data-sk="ops">'+oHead('Cảnh báo','Màn hình ưu tiên một tay')+card+'<div class="acard"><div class="mut sm" style="margin-bottom:2px">Cảnh báo khác trong ca</div>'+others+'</div></div>';
+}
+function opsAiScreen(){
+  const a = S.ops.ai;
+  const st = a.st === 'pending' && Date.now() > a.deadline ? 'expired' : a.st;
+  const hist = S.valve === 'closed' ? '<div class="lrow"><div class="i" style="background:var(--green-t);color:var(--green-d)">'+ic('check', 18)+'</div><div class="grow" style="font-size:15px"><b>Đóng van V-T3-02</b><div class="mut xs">02:41 · BQL duyệt trên web</div></div></div>' : '';
+  let card = '';
+  if (st === 'pending'){
+    card = '<div class="acard" style="border:2px solid var(--teal)"><div class="mut sm">AI đề xuất · thông gió hầm</div><div class="b" style="font-size:18px;color:var(--navy);margin:4px 0 10px;line-height:1.35">Bật quạt thông gió thường hầm B2 ở 40 Hz từ 06:45</div>' +
+      '<div class="b sm" style="margin-bottom:4px">Căn cứ</div>'+['CO hiện tại 18 ppm (ngưỡng 50)','Thứ Ba thường có 22 xe ra từ 07:00–07:30','Ước tính giữ CO dưới 35 ppm'].map(x => '<div class="row" style="align-items:flex-start;margin:4px 0;font-size:15px"><span style="color:var(--teal)">'+ic('check', 16)+'</span>'+x+'</div>').join('') +
+      '<div class="note" style="margin-top:10px;font-size:14px"><b>Ghi có giới hạn · 20–50 Hz</b><br>Không áp dụng cho quạt sự cố SEAF/FAP</div>' +
+      '<div class="row2" style="margin-top:12px"><button class="abtn primary" style="margin:0" data-a="aiOk">Phê duyệt</button><button class="abtn danger" style="margin:0" data-a="opsSheet" data-v="reject">Từ chối</button></div>' +
+      '<div class="mut sm" style="margin-top:10px;text-align:center">Hết hạn sau <b data-cd="'+a.deadline+'">10:00</b> nếu không duyệt</div></div>';
+  } else if (st === 'approved'){
+    card = '<div class="acard" style="background:var(--green-t);border-color:#bfe3cc"><div class="b" style="color:var(--green-d);font-size:17px">✓ Đã phê duyệt</div><p style="margin:6px 0">Bật quạt thường hầm B2 ở 40 Hz từ 06:45. Ghi vào BACnet ưu tiên 12; hết giờ cao điểm hệ thống tự trả quyền (relinquish) về BMS.</p><div class="mut sm">Nhật ký lệnh #L-2032 · 06:41 · Tuấn duyệt</div></div>';
+  } else if (st === 'rejected'){
+    card = '<div class="acard"><div class="b">Đã từ chối</div><p class="mut" style="margin-top:4px">Lý do: '+esc(a.reason || '')+'. AI ghi nhận để hiệu chỉnh lần sau.</p><button class="abtn" style="margin-top:10px" data-a="aiAgain">Yêu cầu AI đề xuất lại</button></div>';
+  } else {
+    card = '<div class="acard" style="background:#f0f2f4"><div class="b">Đề xuất đã hết hạn</div><p class="mut" style="margin:4px 0 10px">Không ai duyệt trong 10 phút nên lệnh không được gửi xuống BMS.</p><button class="abtn" data-a="aiAgain">Yêu cầu AI đề xuất lại</button></div>';
+  }
+  const n = st === 'pending' ? 1 : 0;
+  return '<div class="scroll" data-sk="ops">'+oHead('Duyệt lệnh AI','Chờ duyệt ('+n+')')+card+(hist ? '<div class="acard"><div class="mut sm">Đã xử lý</div>'+hist+'</div>' : '')+'</div>';
+}
+function opsTasksScreen(){
+  const tk = S.ops.tickets.slice().sort((a, b) => (a.st === 'done') - (b.st === 'done') || LVORD[a.lv] - LVORD[b.lv]);
+  const rows = tk.map(x => '<div class="lrow" data-a="opsTicket" data-id="'+x.id+'" style="cursor:pointer;'+(x.st === 'done' ? 'opacity:.5' : '')+'">'+lvChip(x.lv)+'<div class="grow"><b style="font-size:16px">#'+x.id+'</b> '+x.title+'<div class="mut sm">'+x.loc+' · '+(x.st === 'done' ? 'đã xong' : x.st === 'doing' && x.due !== 'đang làm' ? 'đang làm' : x.due)+'</div></div>›</div>').join('');
+  return '<div class="scroll" data-sk="ops">'+oHead('Việc của tôi', tk.filter(x => x.st !== 'done').length+' phiếu đang mở')+'<div class="acard" style="padding:4px 14px">'+rows+'</div>' +
+    '<button class="abtn" data-a="opsSheet" data-v="scan">'+ic('scan', 22)+' Quét QR thiết bị</button><p class="mut sm" style="text-align:center;margin-top:8px">Quét mã trên thiết bị để mở lịch sử và phiếu liên quan</p></div>';
+}
+function opsSheet(){
+  const k = S.ops.sheet; if (!k) return '';
+  const wrap = h => '<div class="sheet" data-a="opsSheetClose" data-bg="1"><div>'+h+'</div></div>';
+  if (k === 'reject') return wrap('<h3>Lý do từ chối</h3>'+['CO thực tế thấp hơn dự báo','Đang có việc bảo trì quạt','Không phù hợp giờ này'].map(x => '<button class="abtn ghost" data-a="aiNo" data-r="'+x+'">'+x+'</button>').join(''));
+  if (k === 'live') return wrap('<h3>CAM-B2-17 · trực tiếp</h3><div class="camimg" style="height:200px"><span class="ts"><span class="dot" style="background:var(--red);margin-right:5px;animation:bl 1s infinite"></span>LIVE '+S.sec.at.slice(0, 5)+'</span><div style="margin-top:20px">'+personSvg(!S.sec.reveal, 70, 90)+'</div></div><p class="mut sm" style="margin:10px 0">Hình làm mờ mặc định; chỉ vai trò được phép mới xem rõ.</p><button class="abtn ghost" data-a="opsSheetClose">Đóng</button>');
+  if (k === 'scan') return wrap('<h3>Quét QR thiết bị</h3><div class="camimg" style="height:170px"><div style="width:110px;height:110px;border:3px solid var(--teal);border-radius:14px;display:grid;place-items:center;position:relative;overflow:hidden"><div style="opacity:.6">'+qrSvg('BTA-02', 80)+'</div></div></div><button class="abtn primary" style="margin-top:14px" data-a="opsScanOk">Giả lập: đã quét tem BTA-02</button><button class="abtn ghost" data-a="opsSheetClose">Hủy</button>');
+  if (k === 'device') return wrap('<h3>Bơm tăng áp 02 · BTA-02</h3><div class="row" style="margin-bottom:10px">'+lvChip('cao')+'<span>Sức khỏe 61/100</span></div><div class="note" style="margin-bottom:10px">Khởi động 70 lần hôm qua (nền 23). Nghi van một chiều không kín.</div><b>Lịch sử gần đây</b>'+[['14/10','Chạy thử, bình thường'],['08/10','Thay gioăng bích đẩy'],['02/09','Bảo dưỡng định kỳ']].map(x => '<div class="lrow"><div class="grow">'+x[1]+'</div><span class="mut sm">'+x[0]+'</span></div>').join('')+'<div style="margin-top:8px"><b>Phiếu liên quan</b></div>'+(S.ticketMade ? '<div class="lrow"><span class="chip cao">CAO</span><div class="grow"><b>#1047</b> Kiểm tra van một chiều</div></div>' : '<div class="mut" style="padding:8px 0">Chưa có phiếu. Tạo từ trang Thiết bị trên web.</div>')+'<button class="abtn ghost" style="margin-top:10px" data-a="opsSheetClose">Đóng</button>');
+  if (k === 'ticket'){
+    const x = S.ops.tickets.filter(t => t.id === S.ops.sel)[0]; if (!x) return '';
+    return wrap('<div class="row" style="margin-bottom:6px">'+lvChip(x.lv)+'<b style="color:var(--navy)">#'+x.id+'</b></div><h3 style="font-size:19px">'+x.title+'</h3><p class="mut" style="margin-bottom:14px">'+x.loc+' · '+x.due+'</p>'+
+      (x.st === 'new' ? '<button class="abtn primary" data-a="opsTicketSt" data-v="doing">Nhận việc</button>' : x.st === 'doing' ? '<button class="abtn primary" data-a="opsTicketSt" data-v="done">Hoàn thành</button>' : x.st === 'wait' ? '<button class="abtn primary" data-a="opsTicketSt" data-v="doing">Bắt đầu làm</button>' : '<div class="chip ok">Đã xong</div>')+'<button class="abtn ghost" data-a="opsSheetClose">Đóng</button>');
+  }
+  return '';
+}
+function opsPhone(){
+  const s = S.ops.screen, pend = S.ops.ai.st === 'pending' && Date.now() <= S.ops.ai.deadline;
+  const body = s === 'duyet' ? opsAiScreen() : s === 'viec' ? opsTasksScreen() : opsAlertScreen();
+  const tabs = [['canh-bao','bell','Cảnh báo'],['duyet','spark','Duyệt AI'],['viec','clip','Việc của tôi']];
+  const badge = { 'canh-bao': (S.sec.stage === 'detected' || S.sec.stage === 'accepted') ? 1 : 0, duyet: pend ? 1 : 0, viec: 0 };
+  return '<div class="phone"><div class="notch"></div><div class="screen"><div class="sbar"><span>9:41</span><span>5G ▮▮▮</span></div>'+body+
+    '<nav class="tabbar">'+tabs.map(x => '<button class="'+(x[0] === s ? 'on' : '')+'" data-a="opsNav" data-s="'+x[0]+'">'+ic(x[1], 22)+x[2]+(badge[x[0]] ? '<span class="bdg">'+badge[x[0]]+'</span>' : '')+'</button>').join('')+'</nav>'+opsSheet()+'</div></div>';
+}
+VIEWS.vanhanh = function(sub){
+  if (sub) S.ops.screen = sub;
+  const cur = S.ops.screen, idx = OPS_SCREENS.map(x => x[0]).indexOf(cur);
+  return '<div class="stage"><div class="list"><h2>App vận hành</h2><p>BQL, bảo vệ, kỹ thuật · điện thoại công vụ · đăng nhập theo ca</p>'+OPS_SCREENS.map(x => '<button class="'+(cur === x[0] ? 'on' : '')+'" data-a="opsNav" data-s="'+x[0]+'">'+x[1]+'<small>'+x[2]+'</small></button>').join('')+'</div>' +
+    opsPhone()+'<div class="notes">'+notesCard([OPS_NOTES[idx < 0 ? 0 : idx]])+'<div class="card" style="margin-top:12px"><h3>Thử ngay</h3><div class="mut sm" style="line-height:1.6">• Bấm “Tôi nhận xử lý”, sau đó mở web <a href="#/web/an-ninh">An ninh</a> để thấy trạng thái đổi theo.<br>• Duyệt lệnh AI có đếm ngược 10 phút.<br>• Tạo phiếu ở web <a href="#/web/thiet-bi">Thiết bị</a> rồi quay lại tab Việc của tôi.</div></div></div></div>';
+};
+ACT.opsNav = d => { opsNav(d.s); };
+ACT.opsSheet = d => { S.ops.sheet = d.v; render(); };
+ACT.opsSheetClose = (d, el, e) => { if (el.dataset.bg && e.target !== el) return; S.ops.sheet = null; render(); };
+ACT.opsLive = () => { S.ops.sheet = 'live'; render(); };
+ACT.aiOk = () => { S.ops.ai.st = 'approved'; toast('Đã phê duyệt · ghi nhật ký lệnh #L-2032'); render(); };
+ACT.aiNo = d => { S.ops.ai.st = 'rejected'; S.ops.ai.reason = d.r; S.ops.sheet = null; render(); };
+ACT.aiAgain = () => { S.ops.ai = { st:'pending', deadline:Date.now() + 10*60*1000, reason:null }; render(); };
+ACT.opsTicket = d => { S.ops.sel = +d.id; S.ops.sheet = 'ticket'; render(); };
+ACT.opsTicketSt = d => { const x = S.ops.tickets.filter(t => t.id === S.ops.sel)[0]; x.st = d.v; if (d.v === 'doing') x.due = 'đang làm'; S.ops.sheet = null; toast(d.v === 'done' ? 'Đã hoàn thành phiếu #'+x.id : 'Đã nhận phiếu #'+x.id); render(); };
+ACT.opsScanOk = () => { S.ops.sheet = 'device'; render(); };
+
+/* ===== Trang chủ, luồng K2 / K8, hệ thống thiết kế ===== */
+VIEWS[''] = function(){
+  const card = (ico, title, desc, items, to) => '<div class="pcard" data-a="go" data-to="'+to+'"><div class="ic">'+ic(ico, 24)+'</div><h3>'+title+'</h3><p>'+desc+'</p><ul>'+items.map(i => '<li>'+i+'</li>').join('')+'</ul><span class="btn primary" style="align-self:flex-start;margin-top:auto">Mở →</span></div>';
+  const per = [
+    ['Chủ đầu tư','“Tòa nhà vận hành tốt không, chi phí đang thế nào?”','Dashboard web → Tổng quan','CĐT','web/tong-quan'],
+    ['Trưởng ban quản lý','“Việc gì cần tôi quyết định ngay?”','Web → Cảnh báo · duyệt lệnh AI','BQL','web/canh-bao'],
+    ['Bảo vệ','“Có ai ở nơi không được phép không?”','Luồng K8 · An ninh & vào ra','Bảo vệ','k8'],
+    ['Kỹ thuật','“Thiết bị nào sắp hỏng, tôi sửa gì trước?”','App vận hành → Phiếu việc','Kỹ thuật','vanhanh/viec'],
+    ['Cư dân 16 căn hộ','“Khách tôi vào được chưa, tháng này hết bao nhiêu tiền?”','Luồng K2 · Mời khách · Hóa đơn','BQL','k2'],
+    ['Khách thuê thương mại','“Nhân viên tôi vào đúng giờ, hóa đơn khu thuê?”','App cư dân (tài khoản doanh nghiệp)','BQL','cudan/hoadon']
+  ];
+  return '<div class="land"><div class="row"><span class="chip work">Dự thảo 20/10/2026 · Tài liệu kèm hồ sơ đề xuất giải pháp</span></div>' +
+    '<h1 style="margin-top:12px">Tô Ngọc Vân Building · Smart Ops</h1><p class="lead">Prototype UX/UI tòa nhà thông minh tích hợp AI trên nền BMS. Ba sản phẩm dùng chung một nền tảng dữ liệu và phân quyền. Toàn bộ số liệu là dữ liệu minh họa, thao tác được ngay, không cần mạng.</p>' +
+    '<h2>Ba sản phẩm (★ = có trong bộ prototype)</h2><div class="cards3">' +
+    card('building','Web vận hành & dashboard','BQL, bảo vệ, kỹ thuật, CĐT · màn hình lớn',['Tổng quan (CĐT)','Trung tâm cảnh báo, duyệt lệnh AI','Năng lượng & nước','Thiết bị & bảo trì dự đoán','An ninh & vào ra','Trợ lý AI tiếng Việt'],'web/tong-quan') +
+    card('user','App cư dân','Cư dân, khách thuê · iOS, Android, song ngữ',['Trang chủ','Mời khách bằng QR','Thông báo khách đến','Hóa đơn điện, nước, sạc xe','Đăng ký khuôn mặt (đồng ý)'],'cudan/home') +
+    card('shield','App vận hành','BQL, bảo vệ, kỹ thuật · điện thoại',['Cảnh báo kèm hình','Duyệt lệnh AI đề xuất','Phiếu công việc, quét QR thiết bị'],'vanhanh/canh-bao') + '</div>' +
+    '<h2>Hai luồng xuyên suốt nhiều màn hình</h2><div class="cards2">' +
+    '<div class="pcard flow" data-a="go" data-to="k2"><div class="ic">'+ic('qr', 24)+'</div><div class="grow"><h3>K2 · Khách của cư dân</h3><p>Mời khách → QR → quét tại sảnh → ảnh khách → thang chỉ mở tầng 4 → mã tự hết hạn. Có ngoại lệ.</p></div><span class="btn primary">Chạy →</span></div>' +
+    '<div class="pcard flow" data-a="go" data-to="k8"><div class="ic">'+ic('camera', 24)+'</div><div class="grow"><h3>K8 · Người lạ, đi sai khu</h3><p>Camera AI → đối chiếu vào ra → cảnh báo ≤ 10 giây → bảo vệ nhận → xác minh → tóm tắt ca.</p></div><span class="btn primary">Chạy →</span></div></div>' +
+    '<h2>Sáu nhóm người dùng, mỗi nhóm một câu hỏi cần trả lời trong 10 giây</h2><div class="persona">' +
+    per.map(p => '<div class="p" data-a="persona" data-to="'+p[4]+'" data-role="'+p[3]+'"><b>'+p[0]+'</b><i>'+p[1]+'</i><span>'+p[2]+' →</span></div>').join('') + '</div>' +
+    '<h2>Gợi ý trình tự demo (khoảng 10 phút)</h2><div class="card"><ol style="margin-left:20px;line-height:2;color:var(--ink2)">' +
+    '<li><a href="#/web/tong-quan">Tổng quan CĐT</a>: 5 chỉ số, dự báo AI, hiệu quả AI (bấm “Ghi chú UX” để nói best practice).</li>' +
+    '<li><a href="#/web/canh-bao">Trung tâm cảnh báo</a>: rò rỉ 02:31 → AI giải thích → <b>Phê duyệt đóng van</b>.</li>' +
+    '<li><a href="#/k8">Luồng K8</a>: bấm “Mô phỏng”, bảo vệ nhận trên app, xác minh, rồi xem tóm tắt ca ở Trợ lý AI.</li>' +
+    '<li><a href="#/k2">Luồng K2</a>: cư dân mời khách, khách quét QR, thang mở tầng 4. Thử ngoại lệ chuông cửa / QR hết hạn.</li>' +
+    '<li><a href="#/web/tro-ly">Trợ lý AI</a>: hỏi “Bơm nào đang có vấn đề?”. Đổi vai trò sang Bảo vệ rồi hỏi về điện từng căn để thấy từ chối theo quyền.</li>' +
+    '<li><a href="#/cudan/khuonmat">Đăng ký khuôn mặt</a> và <a href="#/design">hệ thống thiết kế</a>.</li></ol></div>' +
+    '<p class="sub-foot">Tài liệu tham chiếu: Gimasys_Prototype_UXUI_TNV.pptx · Hồ sơ đề xuất giải pháp TNTM AI (dự thảo 0.1). Mọi tên, số liệu, mã thiết bị trong bản này là minh họa.</p></div>';
+};
+ACT.persona = d => { S.role = d.role; go(d.to); };
+
+/* ---------- K2 ---------- */
+function k2Reset(){
+  S.res.invite = null; S.res.screen = 'moi'; S.res.push = null; S.res.sheet = null;
+  S.res.form = { name:'Nguyễn Lan', phone:'0912 345 678', date:'Hôm nay, 20/10', slot:'15:00 – 18:00', car:true, plate:'30G-123.45' };
+  S.k2 = { reader:null, bell:null, log:[], init:true };
+}
+function stepBar(steps){
+  const firstOpen = steps.findIndex(s => !s[2]);
+  return '<div class="stepbar">'+steps.map((s, i) => '<div class="step '+(s[2] ? 'done' : i === firstOpen ? 'cur' : '')+'"><span class="num">'+(i+1)+'</span><b>'+s[0]+'</b><span>'+s[1]+'</span></div>').join('')+'</div>';
+}
+VIEWS.k2 = function(){
+  if (!S.k2.init) k2Reset();
+  const iv = S.res.invite, k = S.k2;
+  const off = iv && (iv.expired || iv.cancelled);
+  const steps = [['Cư dân tạo lời mời','App cư dân',!!iv],['Khách nhận QR','Zalo / SMS',!!(iv && iv.sent)],['Quét QR tại sảnh','Đầu đọc sảnh T1',!!(iv && iv.scanned)],['Cư dân nhận ảnh khách','App cư dân',!!(iv && iv.scanned)],['Thang chỉ mở tầng 4','Thang máy',!!(iv && iv.scanned)],['Mã tự hết hạn','Nền tảng',!!off]];
+  const canScan = iv && iv.sent && !iv.scanned && !off;
+  const reader = k.reader === 'ok' ? '<div class="note" style="background:var(--green-t)"><b style="color:var(--green-d)">✓ Mời vào</b> · Nguyễn Lan · mở cửa sảnh T1, thang chỉ tới tầng 4'+(iv && iv.car ? ' / hầm B2' : '')+'</div>'
+    : k.reader === 'denied' ? '<div class="redbox"><b style="color:var(--red-d)">✕ QR đã hết hạn</b><br>Màn hình đầu đọc: “Vui lòng liên hệ lễ tân”. Cửa không mở.</div>'
+    : k.bell === 'opened' ? '<div class="note" style="background:var(--green-t)"><b style="color:var(--green-d)">✓ Cư dân mở cửa từ xa</b> sau khi xem hình khách qua chuông IP.</div>'
+    : k.bell === 'rejected' ? '<div class="warnbox">Cư dân từ chối mở cửa. Khách được hướng dẫn liên hệ lễ tân.</div>'
+    : k.bell === 'ringing' ? '<div class="warnbox"><b>🔔 Khách bấm chuông sảnh</b> · đang gọi tới màn hình căn 4B (xem điện thoại bên trái).</div>'
+    : '<div class="mut">Đang chờ khách tới sảnh T1…</div>';
+  const zalo = iv && iv.sent ? '<div class="zalo"><b>'+(iv.sent === 'Zalo' ? 'Zalo' : 'SMS')+' · từ căn 4B</b><br>Anh/chị được mời tới Tô Ngọc Vân Building, hiệu lực '+iv.slot+' hôm nay.<div style="margin-top:8px;display:grid;place-items:center">'+qrSvg(iv.id + iv.name + iv.slot, 110)+'</div></div>' : '<div class="mut">Chưa có tin nhắn. Bấm “Gửi qua Zalo” trên app cư dân.</div>';
+  const floors = [5,4,3,2,1].map(f => '<div class="'+(iv && iv.scanned && !off && f === 4 ? 'on' : '')+'">'+f+'</div>').join('');
+  return '<div class="flowwrap"><div class="row"><div class="grow"><h1 style="font-size:22px;color:var(--navy)">K2 · Khách của cư dân</h1><div class="mut sm">Thao tác thật trên điện thoại bên trái; các thiết bị hiện trường bên phải là mô phỏng.</div></div><button class="btn ghost" data-a="k2Reset">↺ Làm lại luồng</button></div>' +
+    stepBar(steps) + '<div class="flowgrid">'+resPhone()+'<div class="sitepanel">' +
+    '<div class="g2e"><div class="card"><h3>1 · Khách nhận mã</h3>'+zalo+'</div><div class="card"><h3>2 · Đầu đọc sảnh T1</h3>'+reader+'<div class="col" style="margin-top:12px">' +
+      '<button class="btn primary" data-a="k2Scan" '+(canScan ? '' : 'disabled')+'>'+ic('scan', 16)+' Khách quét QR tại sảnh</button>' +
+      '<button class="btn" data-a="k2Bell" '+(k.bell === 'ringing' || (iv && iv.scanned) ? 'disabled' : '')+'>Ngoại lệ: không có lời mời, khách bấm chuông</button>' +
+      '<button class="btn" data-a="k2ScanOld" '+(off ? '' : 'disabled')+'>Ngoại lệ: khách quét QR đã hết hạn</button></div></div></div>' +
+    '<div class="g2e"><div class="card"><h3>3 · Thang máy</h3><div class="row" style="align-items:flex-end"><div class="elev">'+floors+'</div><div class="mut sm" style="padding-left:6px">'+(iv && iv.scanned && !off ? 'Chỉ cho phép tầng 4 (khách mời căn 4B).' : off && iv && iv.scanned ? 'Quyền tạm đã bị thu hồi.' : 'Chưa cấp quyền tầng.')+'</div></div></div>' +
+    '<div class="card"><h3>4 · Thời gian</h3><div class="mut sm" style="margin-bottom:10px">Khung giờ '+(iv ? iv.slot : '15:00 – 18:00')+'. Hết khung giờ, mã tự hết hạn và thu hồi quyền.</div><button class="btn" data-a="k2Expire" '+(iv && !off ? '' : 'disabled')+'>Tua tới 18:00: mã hết hạn</button></div></div>' +
+    '<div class="card"><h3>Nhật ký nền tảng</h3>'+logHtml(S.k2.log)+'</div></div></div></div>';
+};
+ACT.k2Reset = () => { k2Reset(); render(); };
+ACT.k2Scan = () => {
+  const i = S.res.invite; i.scanned = true; i.at = '15:04'; S.k2.reader = 'ok'; S.k2.bell = null;
+  logEvt(S.k2.log, '15:04', 'Đầu đọc sảnh T1', 'quét QR hợp lệ → mở cửa sảnh');
+  logEvt(S.k2.log, '15:04', 'Nền tảng', 'đẩy quyền tạm xuống thang máy: chỉ tầng 4'+(i.car ? ', hầm B2' : ''));
+  logEvt(S.k2.log, '15:04', 'Nền tảng', 'gửi thông báo + ảnh khách tới app căn 4B');
+  S.res.sheet = null; S.res.screen = 'den'; S.res.push = { title:'Khách '+i.name+' đã đến', text:'Quét QR tại sảnh T1 lúc 15:04 · thang đã mở tới tầng 4', to:'den' };
+  render();
+};
+ACT.k2Bell = () => {
+  S.k2.bell = 'ringing'; S.k2.reader = null; logEvt(S.k2.log, '15:06', 'Chuông sảnh', 'khách không có lời mời bấm chuông → gọi màn hình căn 4B');
+  S.res.sheet = 'bell'; S.res.screen = 'home'; S.res.push = null; render();
+};
+ACT.k2ScanOld = () => { S.k2.reader = 'denied'; S.k2.bell = null; logEvt(S.k2.log, '18:12', 'Đầu đọc sảnh T1', 'QR hết hạn → từ chối, hướng dẫn liên hệ lễ tân'); render(); };
+ACT.k2Expire = () => { const i = S.res.invite; i.expired = true; logEvt(S.k2.log, '18:00', 'Nền tảng', 'hết khung giờ → thu hồi QR '+i.id+' và quyền tạm thang máy'); S.res.screen = 'qr'; render(); };
+ACT.resBellOpen = () => { S.k2.bell = 'opened'; S.res.sheet = null; logEvt(S.k2.log, '15:06', 'Cư dân 4B', 'mở cửa sảnh từ xa (ghi nhật ký)'); render(); };
+ACT.resBellNo = () => { S.k2.bell = 'rejected'; S.res.sheet = null; logEvt(S.k2.log, '15:06', 'Cư dân 4B', 'từ chối mở cửa'); render(); };
+
+/* ---------- K8 ---------- */
+function k8Reset(){ S.sec = { stage:'idle', owner:null, at:'23:47:12', secs:7.9, live:false, reveal:false, esc:false }; S.k8 = { log:[], init:true }; S.ops.screen = 'canh-bao'; S.ops.sheet = null; }
+VIEWS.k8 = function(){
+  if (!S.k8.init) k8Reset();
+  const st = S.sec.stage, started = st !== 'idle', owned = st === 'accepted' || st === 'closed' || st === 'false', done = st === 'closed' || st === 'false';
+  const steps = [['Camera AI phát hiện','Máy chủ AI tại chỗ',started],['Đối chiếu nhật ký vào ra','Nền tảng',started],['Cảnh báo kèm hình ≤ 10 s','Trung tâm cảnh báo',started],['Bảo vệ nhận xử lý','App vận hành',owned],['Xác minh, đóng sự kiện','App vận hành',done],['Vào tóm tắt ca','Trợ lý AI',done]];
+  return '<div class="flowwrap"><div class="row"><div class="grow"><h1 style="font-size:22px;color:var(--navy)">K8 · Người lạ, đi sai khu</h1><div class="mut sm">Bên trái: màn hình web phòng bảo vệ B2. Bên phải: app vận hành của bảo vệ Tuấn. Hai bên dùng chung một sự kiện.</div></div><button class="btn ghost" data-a="k8Reset">↺ Làm lại luồng</button></div>' +
+    stepBar(steps) + '<div class="flowgrid k8"><div class="sitepanel">' +
+    '<div class="card"><h3>Điều khiển mô phỏng</h3><div class="row" style="flex-wrap:wrap"><button class="btn primary" data-a="k8Start" '+(started ? 'disabled' : '')+'>'+ic('play', 14)+' Camera AI phát hiện người ở Z10 (23:47)</button><button class="btn" data-a="k8Esc" '+(st === 'detected' && !S.sec.esc ? '' : 'disabled')+'>Ngoại lệ: 3 phút không ai nhận</button><a class="btn" href="#/web/tro-ly" '+(done ? '' : 'style="opacity:.45;pointer-events:none"')+'>Xem tóm tắt ca →</a></div></div>' +
+    secCard() +
+    '<div class="card"><h3>Nhật ký nền tảng</h3>'+logHtml(S.k8.log)+'</div></div>'+opsPhone()+'</div></div>';
+};
+ACT.k8Reset = () => { k8Reset(); render(); };
+ACT.k8Start = () => {
+  S.sec = { stage:'detected', owner:null, at:'23:47:12', secs:7.9, live:false, reveal:false, esc:false }; S.ops.screen = 'canh-bao';
+  logEvt(S.k8.log, '23:47:12', 'CAM-B2-17', 'phát hiện NGƯỜI (0,94) tại khu kỹ thuật Z10');
+  logEvt(S.k8.log, '23:47:13', 'Nền tảng', 'đối chiếu nhật ký vào ra: không có lượt quét hợp lệ trong 10 phút → bất thường');
+  logEvt(S.k8.log, '23:47:20', 'Trung tâm cảnh báo', 'đẩy cảnh báo kèm hình tới màn hình B2 và app Tuấn, Hùng (7,9 giây)');
+  render();
+};
+ACT.k8Esc = () => { S.sec.esc = true; logEvt(S.k8.log, '23:50', 'Nền tảng', 'không ai nhận sau 3 phút → leo thang Trưởng BQL qua app + SMS'); toast('Đã leo thang Trưởng BQL'); render(); };
+
+/* ---------- Hệ thống thiết kế ---------- */
+VIEWS.design = function(){
+  const sw = (c, n, u) => '<div class="s"><div class="swatch" style="background:'+c+';border:1px solid var(--line)"></div><b>'+n+'</b><span>'+c+' · '+u+'</span></div>';
+  const lv = (c, n, u) => '<div class="s"><div class="swatch" style="background:'+c+'"></div><b>'+n+'</b><span>'+u+'</span></div>';
+  return '<div class="land"><h1>Hệ thống thiết kế: màu chỉ dành cho bất thường</h1><p class="lead">Theo ISA-101 (giao diện vận hành hiệu năng cao) và ISA-18.2 (quản lý cảnh báo); độ tương phản theo WCAG 2.1 AA. Font: Arial.</p>' +
+    '<h2>Màu nền và thương hiệu</h2><div class="sw4">'+sw('#12324A','Navy','Điều hướng, tiêu đề')+sw('#1B7F79','Teal','Hành động chính')+sw('#F5F7F9','Xám nền','Nền làm việc')+sw('#6B7785','Xám chữ','Chữ phụ, nhãn')+sw('#D5DCE3','Đường kẻ','Viền, phân tách')+'</div>' +
+    '<h2>Mức cảnh báo (chỉ dùng khi có bất thường)</h2><div class="sw4">'+lv('#D64545','Khẩn','Xử lý ngay · âm thanh')+lv('#E8833A','Cao','≤ 30 phút')+lv('#D9A21B','Trung bình','Trong ca')+lv('#3B82C4','Thông tin','Không cần xử lý')+lv('#2E9E5B','Bình thường','Chỉ dùng để xác nhận')+'</div>' +
+    '<h2>Thành phần dùng chung</h2><div class="card"><div class="row" style="flex-wrap:wrap;gap:12px"><button class="btn primary">Phê duyệt</button><button class="btn">Từ chối</button>'+lvChip('khan')+lvChip('cao')+lvChip('tb')+lvChip('tin')+'<span class="chip work">ĐANG XỬ LÝ</span><div class="kpi" style="min-width:210px"><div class="l">Điện năng tháng</div><div class="v">48,2<small>MWh</small></div><div class="d">▼ 6% so dự báo</div></div></div></div>' +
+    '<h2>Năm nguyên tắc UX</h2><div class="cards3">' +
+    [['Xám trước, màu sau','Màn hình bình thường gần như xám; mắt người trực sẽ bắt ngay điểm có màu'],['Không chỉ dựa vào màu','Mức cảnh báo luôn có chữ và vị trí, người mù màu vẫn đọc được'],['AI đề xuất, người quyết','Mọi lệnh điều khiển hiện lý do, dữ liệu căn cứ và nút duyệt'],['Riêng tư theo thiết kế','Ảnh khuôn mặt làm mờ mặc định, chỉ vai trò được phép mới xem'],['Ưu tiên một tay trên điện thoại','Nút chính trong vùng ngón cái, cỡ chữ thân tối thiểu 16px']].map((p, i) => '<div class="card"><div class="bp" style="margin:0"><div class="n">'+(i+1)+'</div><div><b>'+p[0]+'</b><span>'+p[1]+'</span></div></div></div>').join('')+'</div></div>';
+};
+
+</script></body></html>
